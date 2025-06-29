@@ -2,6 +2,7 @@ import os
 from moviepy import ImageClip, concatenate_videoclips, AudioFileClip, CompositeVideoClip
 from PIL import Image
 import numpy as np
+import whisper
 
 def resize_image(image_path, target_size=(1920, 1080)):
     """Resize image to target size while maintaining aspect ratio and adding black padding."""
@@ -11,21 +12,14 @@ def resize_image(image_path, target_size=(1920, 1080)):
         target_ratio = target_size[0] / target_size[1]
         
         if img_ratio > target_ratio:
-            # Image is wider than target, scale by height
             new_height = target_size[1]
             new_width = int(new_height * img_ratio)
         else:
-            # Image is taller than target, scale by width
             new_width = target_size[0]
             new_height = int(new_width / img_ratio)
         
-        # Resize image
         img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        
-        # Create new blank image with target size and black background
         new_img = Image.new('RGB', target_size, (0, 0, 0))
-        
-        # Paste resized image in center
         offset = ((target_size[0] - new_width) // 2, (target_size[1] - new_height) // 2)
         new_img.paste(img, offset)
         
@@ -34,9 +28,35 @@ def resize_image(image_path, target_size=(1920, 1080)):
         print(f"Error processing image {image_path}: {str(e)}")
         return None
 
+def transcribe_audio_to_srt(audio_path, srt_output_path="subtitles.srt", model_size="base"):
+    """Transcribe audio to .srt subtitles using Whisper."""
+    print("🔤 Loading Whisper model...")
+    model = whisper.load_model(model_size)
+    print(f"🎙️ Transcribing: {audio_path}")
+    result = model.transcribe(audio_path, task="transcribe")
+
+    def format_time(seconds):
+        hrs = int(seconds // 3600)
+        mins = int((seconds % 3600) // 60)
+        secs = int(seconds % 60)
+        millis = int((seconds - int(seconds)) * 1000)
+        return f"{hrs:02}:{mins:02}:{secs:02},{millis:03}"
+
+    with open(srt_output_path, "w", encoding="utf-8") as f:
+        for i, segment in enumerate(result["segments"], start=1):
+            f.write(f"{i}\n")
+            f.write(f"{format_time(segment['start'])} --> {format_time(segment['end'])}\n")
+            f.write(f"{segment['text'].strip()}\n\n")
+    
+    print(f"✅ SRT generated: {srt_output_path}")
+
 def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
     """Generate a video from an audio file and a set of images."""
     try:
+        # Transcribe audio to subtitles before generating video
+        srt_output = os.path.splitext(output_path)[0] + ".srt"
+        transcribe_audio_to_srt(audio_path, srt_output)
+
         # Load audio
         audio = AudioFileClip(audio_path)
         audio_duration = audio.duration
@@ -53,11 +73,9 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             if not os.path.exists(img_path):
                 print(f"Image not found: {img_path}")
                 continue
-            # Resize image to 1920x1080
             img_array = resize_image(img_path)
             if img_array is None:
                 continue
-            # Create image clip with duration
             clip = ImageClip(img_array, duration=image_duration)
             clips.append(clip)
         
@@ -66,12 +84,10 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
         
         # Concatenate image clips
         video = concatenate_videoclips(clips, method="compose")
-        
-        # Ensure video is a CompositeVideoClip and set audio
         if not isinstance(video, CompositeVideoClip):
             video = CompositeVideoClip([video])
         video.audio = audio
-        
+
         # Write output video
         video.write_videofile(
             output_path,
@@ -82,13 +98,12 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             ffmpeg_params=['-crf', '23']
         )
         
-        print(f"Video generated successfully: {output_path}")
+        print(f"🎥 Video generated: {output_path}")
         
     except Exception as e:
-        print(f"Error generating video: {str(e)}")
+        print(f"💥 Error: {str(e)}")
         
     finally:
-        # Close clips to free memory
         if 'audio' in locals():
             audio.close()
         if 'video' in locals():
@@ -98,23 +113,12 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
                 clip.close()
 
 if __name__ == "__main__":
-    # Example usage
-    audio_file = "audio/audio.mp3"  # Replace with your audio file path
+    audio_file = "audio/audio.mp3"  # Replace with your audio file
+    image_folder = "images"
     image_files = [
-        "images/1.jpg",
-        "images/2.jpg",
-        "images/3.jpg",
-        "images/4.jpg",
-        "images/5.jpg",
-        "images/6.jpg",
-        "images/7.jpg",
-        "images/8.jpg",
-        "images/9.jpg",
-        "images/10.jpg",
-        "images/11.jpg",
-        "images/12.jpg",
-        "images/13.jpg",
-        "images/14.jpg"
+        os.path.join(image_folder, fname)
+        for fname in sorted(os.listdir(image_folder))
+        if fname.lower().endswith(".jpg")
     ]
     output_video = "output_video.mp4"
     
