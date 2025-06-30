@@ -1,1084 +1,768 @@
 1
-00:00:00,000 --> 00:00:01,760
-Welcome back to the Deep Dive.
+00:00:00,000 --> 00:00:01,880
+Welcome to The Deep Dive.
 
 2
-00:00:01,760 --> 00:00:06,520
-Today we're gonna unpack a really troubling incident
+00:00:01,880 --> 00:00:04,960
+Today, we're taking a closer look at the current movie scene,
 
 3
-00:00:06,520 --> 00:00:08,359
-out of Kolkata, India.
+00:00:04,960 --> 00:00:08,199
+everything from the big blockbusters to streaming stuff.
 
 4
-00:00:08,359 --> 00:00:10,160
-It's something that's caused quite a shock
+00:00:08,199 --> 00:00:10,560
+And yeah, maybe a few you're wondering about.
 
 5
-00:00:10,160 --> 00:00:12,640
-and honestly it touches on much bigger issues.
+00:00:10,560 --> 00:00:13,720
+Our mission really is to cut through all that chatter
 
 6
-00:00:12,640 --> 00:00:13,480
-It really does.
+00:00:13,720 --> 00:00:16,320
+and pull out the key bits from recent reviews
 
 7
-00:00:13,480 --> 00:00:17,879
-Issues like safety on campus, places we think should be secure.
+00:00:16,320 --> 00:00:18,000
+and box office numbers.
 
 8
-00:00:17,879 --> 00:00:20,559
-So our mission today is to give you a clear,
+00:00:18,000 --> 00:00:21,440
+We've been digging into this source called Real rundown.
 
 9
-00:00:20,559 --> 00:00:22,879
-fact-based look at what allegedly happened
+00:00:21,440 --> 00:00:23,679
+This week's Cinema Hits and Misses.
 
 10
-00:00:22,879 --> 00:00:24,560
-at South Calcutta Law College.
+00:00:23,679 --> 00:00:25,960
+And this source, it's pretty good at showing you what's
 
 11
-00:00:24,560 --> 00:00:26,560
-We'll look at the response, the implications.
+00:00:25,960 --> 00:00:29,600
+thought, what's not, and maybe what might make your popcorn
 
 12
-00:00:26,560 --> 00:00:27,400
-That's right.
+00:00:29,600 --> 00:00:30,960
+regret being poked.
 
 13
-00:00:27,399 --> 00:00:31,399
-While the details are frankly harrowing this kind of case,
+00:00:30,960 --> 00:00:32,719
+So yeah, we're set for a pretty engaging look
 
 14
-00:00:31,399 --> 00:00:33,920
-it forces a necessary conversation.
+00:00:32,719 --> 00:00:35,039
+at what makes a film land or bomb
 
 15
-00:00:33,920 --> 00:00:38,320
-It makes us ask tough questions about institutional responsibility,
+00:00:35,039 --> 00:00:36,719
+or become something else entirely.
 
 16
-00:00:38,320 --> 00:00:40,679
-about safety protocols and schools and colleges.
+00:00:36,719 --> 00:00:37,399
+Exactly.
 
 17
-00:00:40,679 --> 00:00:43,200
-So for you listening, getting the nuances here is important.
+00:00:37,399 --> 00:00:40,439
+And I think the real value here is how looking at both
 
 18
-00:00:43,200 --> 00:00:44,200
-Absolutely.
+00:00:40,439 --> 00:00:42,760
+the critical takes and the audience reactions
 
 19
-00:00:44,200 --> 00:00:45,599
-Okay, so let's dive into the timeline.
+00:00:42,760 --> 00:00:44,159
+gives you a shortcut.
 
 20
-00:00:45,599 --> 00:00:48,439
-It starts on June 25th, 2025.
+00:00:44,159 --> 00:00:45,960
+You get a real feel for the trends, you know?
 
 21
-00:00:48,439 --> 00:00:51,200
-A 24 year old woman, a first year law student,
+00:00:45,960 --> 00:00:48,400
+What actually connects with people beyond just the hype?
 
 22
-00:00:51,200 --> 00:00:52,759
-she went to South Calcutta Law College.
+00:00:48,400 --> 00:00:50,520
+Okay, so let's kick things off of the big screen buzz,
 
 23
-00:00:52,759 --> 00:00:53,920
-Just a routine visit, right?
+00:00:50,520 --> 00:00:51,880
+the theatrical hits.
 
 24
-00:00:53,920 --> 00:00:54,759
-Exactly.
+00:00:51,880 --> 00:00:54,159
+First up, Cetara's a mean par.
 
 25
-00:00:54,759 --> 00:00:56,159
-Just need to disemmit some exam documents.
+00:00:54,160 --> 00:00:56,640
+I'm here cons back, and wow, he's still got it.
 
 26
-00:00:56,159 --> 00:00:57,359
-But what allegedly happened next
+00:00:56,640 --> 00:01:00,360
+Pulling in what, 120 crore in just 10 days?
 
 27
-00:00:57,359 --> 00:00:59,559
-and where it happened inside the campus guard room
+00:01:00,360 --> 00:01:01,200
+That's impressive.
 
 28
-00:00:59,559 --> 00:01:00,559
-is just horrifying.
+00:01:01,200 --> 00:01:02,040
+Huge number.
 
 29
-00:01:00,559 --> 00:01:01,759
-Guard room, that's yeah.
+00:01:02,040 --> 00:01:02,880
+Definitely.
 
 30
-00:01:01,759 --> 00:01:02,959
-Yeah.
+00:01:02,880 --> 00:01:05,520
+Now, Real rundown mentions critics calling it important,
 
 31
-00:01:02,959 --> 00:01:05,359
-The allegation issue was kidnapped, undressed,
+00:01:05,520 --> 00:01:07,200
+but there's also this other view,
 
 32
-00:01:05,359 --> 00:01:06,519
-and then gang raped.
+00:01:07,200 --> 00:01:11,080
+like it's maybe Tari is a mean par 2.0 with Jersey's on.
 
 33
-00:01:06,519 --> 00:01:09,120
-And there's this alleged motive mentioned too.
+00:01:11,080 --> 00:01:14,480
+So big success, but maybe a question mark on originality.
 
 34
-00:01:09,120 --> 00:01:11,519
-Reportedly after she rejected American proposal,
+00:01:14,480 --> 00:01:16,800
+Yeah, that 2.0 comment is fascinating, isn't it?
 
 35
-00:01:11,519 --> 00:01:14,319
-it's profoundly disturbing on multiple levels.
+00:01:16,800 --> 00:01:20,480
+It shows the power of star like I'm here con still has.
 
 36
-00:01:14,319 --> 00:01:16,719
-And the location itself, the guard room,
+00:01:20,480 --> 00:01:24,000
+He can pull in huge crowds, even if critics aren't totally sold
 
 37
-00:01:16,719 --> 00:01:18,400
-that's incredibly significant, isn't it?
+00:01:24,000 --> 00:01:25,239
+on the freshness.
 
 38
-00:01:18,400 --> 00:01:20,879
-I mean, we're talking about a space within the college,
+00:01:25,239 --> 00:01:27,719
+It kind of makes you ask what audiences really want
 
 39
-00:01:20,879 --> 00:01:22,879
-supposedly under the eye of security.
+00:01:27,719 --> 00:01:30,319
+from actors they love or themes they know.
 
 40
-00:01:22,879 --> 00:01:23,719
-Right.
+00:01:30,319 --> 00:01:32,280
+Is it always about something brand new?
 
 41
-00:01:23,719 --> 00:01:26,200
-Completely upends any idea of campus safety.
+00:01:32,280 --> 00:01:35,719
+Or is it comfort, familiarity, especially now?
 
 42
-00:01:26,200 --> 00:01:27,640
-It's meant to be a protected zone.
+00:01:35,719 --> 00:01:39,200
+Right, maybe that feeling of a guaranteed emotional connection
 
 43
-00:01:27,640 --> 00:01:30,560
-So you have to ask, what went wrong with oversight?
+00:01:39,200 --> 00:01:42,599
+outweighs the need for pure originality sometimes.
 
 44
-00:01:30,560 --> 00:01:32,840
-How does something like this allegedly happen there?
+00:01:42,599 --> 00:01:44,079
+It certainly challenges the idea
 
 45
-00:01:32,840 --> 00:01:34,480
-It really speaks to a potential,
+00:01:44,079 --> 00:01:46,039
+that reviews alone drive success.
 
 46
-00:01:34,480 --> 00:01:36,920
-well, a catastrophic breakdown of trust.
+00:01:46,039 --> 00:01:46,879
+That's a really good point.
 
 47
-00:01:36,920 --> 00:01:40,439
-That betrayal of trust by the very location, it's jarring.
+00:01:46,879 --> 00:01:48,039
+It's being a big draw.
 
 48
-00:01:40,439 --> 00:01:42,759
-So let's talk about who was allegedly involved.
+00:01:48,039 --> 00:01:49,039
+Let's talk spectacle.
 
 49
-00:01:42,759 --> 00:01:44,599
-Because the roles here, they're distinct
+00:01:49,039 --> 00:01:52,280
+Canapa, Real rundown calls it mythological madness,
 
 50
-00:01:44,599 --> 00:01:46,519
-and add to the shock.
+00:01:52,280 --> 00:01:54,000
+the movie, which sounds about right.
 
 51
-00:01:46,519 --> 00:01:47,120
-They really do.
+00:01:54,000 --> 00:01:56,400
+It's like a pan-Indian Avengers basically.
 
 52
-00:01:47,120 --> 00:01:49,519
-Okay, so the sources identify the prime accused
+00:01:56,400 --> 00:02:00,200
+You've got fish numenchu, propas, Akshay Kumar,
 
 53
-00:01:49,519 --> 00:01:51,799
-as a man named Manojit Mishra.
+00:02:00,200 --> 00:02:02,120
+and Mohanlal, all in one film.
 
 54
-00:01:51,799 --> 00:01:53,759
-His background is, well, it's notable.
+00:02:02,120 --> 00:02:03,000
+Quite the lineup.
 
 55
-00:01:53,759 --> 00:01:55,480
-He's described as a former student,
-
-56
-00:01:55,480 --> 00:01:59,039
-apparently a former president of the college's TMC student wing.
-
-57
-00:01:59,039 --> 00:02:01,560
-TMC, that's the Trinimal Congress.
-
-58
-00:02:01,560 --> 00:02:04,879
-Yes, the ruling party in West Bengal.
-
-59
-00:02:04,879 --> 00:02:08,400
-And maybe most strikingly, he's reportedly
-
-60
-00:02:08,400 --> 00:02:09,879
-a practicing criminal lawyer now.
-
-61
-00:02:09,879 --> 00:02:11,680
-Wow, a lawyer.
-
-62
-00:02:11,680 --> 00:02:12,280
+00:02:03,000 --> 00:02:03,599
 Yeah.
 
+56
+00:02:03,599 --> 00:02:05,879
+The feedback mentioned in the sources specific, though,
+
+57
+00:02:05,879 --> 00:02:09,120
+has the first half kind of drags, but the climax,
+
+58
+00:02:09,120 --> 00:02:10,719
+just is fire emoji so.
+
+59
+00:02:10,719 --> 00:02:12,000
+Absolute fire, love it.
+
+60
+00:02:12,000 --> 00:02:14,960
+And that connects to this whole pan-Indian cinema trend,
+
+61
+00:02:14,960 --> 00:02:15,800
+doesn't it?
+
+62
+00:02:15,800 --> 00:02:19,159
+Strategically pulling huge stars from different industries
+
 63
-00:02:12,280 --> 00:02:14,759
-So that connection, former student leader,
+00:02:19,159 --> 00:02:22,639
+and makes you think, how much does sheer spectacle
 
 64
-00:02:14,759 --> 00:02:17,039
-now a lawyer, definitely raises questions.
+00:02:22,639 --> 00:02:27,159
+and star power compensate for maybe slower pacing,
 
 65
-00:02:17,039 --> 00:02:19,000
-Then you have the alleged accomplices.
+00:02:27,159 --> 00:02:29,719
+especially in these big mythological epics?
 
 66
-00:02:19,000 --> 00:02:20,879
-Zayab Ahmed, a first year student
+00:02:29,719 --> 00:02:30,319
+It's a question.
 
 67
-00:02:20,879 --> 00:02:23,120
-and Premet Mukherjee, who's in his second year.
+00:02:30,319 --> 00:02:32,079
+Yeah, maybe for these massive productions,
 
 68
-00:02:23,120 --> 00:02:24,240
-And their alleged role.
+00:02:32,079 --> 00:02:34,919
+the scale, the cast, that is the main event.
 
 69
-00:02:24,240 --> 00:02:26,560
-According to reports, they stood guard
+00:02:34,919 --> 00:02:36,919
+A slow start might not matter as much
 
 70
-00:02:26,560 --> 00:02:28,919
-while the assault allegedly took place.
+00:02:36,919 --> 00:02:40,599
+if the ending delivers that epic payoff people came for.
 
 71
-00:02:28,919 --> 00:02:31,319
-And legally, that's critical.
+00:02:40,599 --> 00:02:42,919
+Right, you forgive the journey of the destination's amazing.
 
 72
-00:02:31,319 --> 00:02:33,280
-Under Indian Supreme Court president,
+00:02:42,919 --> 00:02:45,319
+OK, let's switch over to the streaming side of things,
 
 73
-00:02:33,280 --> 00:02:35,400
-standing guard during a gang rape
+00:02:45,319 --> 00:02:48,439
+because things are definitely heating up on OTT platforms.
 
 74
-00:02:35,400 --> 00:02:37,199
-makes you just as liable as the person
+00:02:48,439 --> 00:02:51,000
+You've got Kajol and Ma, a horror thriller.
 
 75
-00:02:37,199 --> 00:02:38,439
-committed to the act itself.
+00:02:51,000 --> 00:02:52,159
+The description sounds great.
 
 76
-00:02:38,439 --> 00:02:41,120
-So no passive bystanders in the eyes of the law.
+00:02:52,159 --> 00:02:54,879
+Creepy temples, shadowy myths, sounds atmospheric.
 
 77
-00:02:41,120 --> 00:02:41,639
-Exactly.
+00:02:54,879 --> 00:02:55,879
+Promising setup.
 
 78
-00:02:41,639 --> 00:02:43,400
-It's seen as active facilitation.
+00:02:55,879 --> 00:02:59,280
+But the source says it ends up with predictable scares.
 
 79
-00:02:43,400 --> 00:02:45,000
-And then there's the campus security guard,
+00:02:59,280 --> 00:03:01,879
+Like it's into ordering Biriyani and getting pula.
 
 80
-00:02:45,000 --> 00:02:47,120
-Panaki Banerjee, who's also arrested.
+00:03:01,879 --> 00:03:02,639
+Ouch.
 
 81
-00:02:47,120 --> 00:02:50,400
-The accusation against him is particularly damning.
+00:03:02,639 --> 00:03:03,840
+You know that feeling, right?
 
 82
-00:02:50,400 --> 00:02:52,640
-He allegedly ignored the survivor's cries for help.
+00:03:03,840 --> 00:03:05,319
+Yes, disappointing.
 
 83
-00:02:52,640 --> 00:02:53,439
-Didn't intervene.
+00:03:05,319 --> 00:03:07,800
+It points to a real challenge for horror on streaming,
 
 84
-00:02:53,439 --> 00:02:54,480
-Just let it happen.
+00:03:07,800 --> 00:03:08,639
+I think.
 
 85
-00:02:54,480 --> 00:02:55,520
-That's the allegation.
+00:03:08,639 --> 00:03:11,560
+You need atmosphere, sharp, but you also need originality.
 
 86
-00:02:55,520 --> 00:02:57,319
-A complete failure of his duty, essentially
+00:03:11,560 --> 00:03:13,639
+Predictability just kills the tension,
 
 87
-00:02:57,319 --> 00:02:59,520
-willful negligence if proven true.
+00:03:13,639 --> 00:03:16,000
+even if it looks good or has a big star.
 
 88
-00:02:59,520 --> 00:03:01,200
-You see these different levels.
+00:03:16,000 --> 00:03:17,840
+It kind of proves that a familiar story,
 
 89
-00:03:01,200 --> 00:03:04,360
-A alleged direct perpetrator, alleged facilitators,
+00:03:17,840 --> 00:03:21,159
+even while made, struggles in a genre built on surprise.
 
 90
-00:03:04,360 --> 00:03:07,240
-and the alleged failure of the person tasked with protection.
+00:03:21,159 --> 00:03:22,080
+True.
 
 91
-00:03:07,240 --> 00:03:12,080
-So when you look at that list, a former student leader
+00:03:22,080 --> 00:03:25,680
+But then on the other hand, streaming also gives us F1,
 
 92
-00:03:12,080 --> 00:03:16,400
-who's now a lawyer, current students, the security guard,
+00:03:25,680 --> 00:03:27,520
+the movie with Brad Pitt.
 
 93
-00:03:17,800 --> 00:03:19,159
-it's not just an outsider attack.
+00:03:27,520 --> 00:03:29,640
+And critics are apparently raving about this one.
 
 94
-00:03:19,159 --> 00:03:21,439
-Is it these are people connected to the institution?
+00:03:29,640 --> 00:03:31,640
+Real rundown quotes them calling it
 
 95
-00:03:21,439 --> 00:03:22,960
-What does that suggest?
+00:03:31,640 --> 00:03:33,480
+the most enjoyable flick of the year.
 
 96
-00:03:22,960 --> 00:03:24,960
-Well, it's deeply disturbing, isn't it?
+00:03:33,480 --> 00:03:34,640
+High praise.
 
 97
-00:03:24,960 --> 00:03:27,480
-It points towards potential systemic issues,
+00:03:34,640 --> 00:03:38,080
+Yeah, he highlights the fast cars, slow-mo close-ups,
 
 98
-00:03:27,480 --> 00:03:30,080
-maybe a breakdown within the college's own environment,
+00:03:38,080 --> 00:03:41,879
+and apparently Brad Pitt looks like a human version
 
 99
-00:03:30,080 --> 00:03:31,640
-its own checks and balances.
+00:03:41,879 --> 00:03:45,360
+of nitrous oxide, which I guess means super charismatic
 
 100
-00:03:31,640 --> 00:03:32,480
-Right.
+00:03:45,360 --> 00:03:46,199
+and powerful.
 
 101
-00:03:32,480 --> 00:03:35,360
-It suggests the campus safety isn't just about locking
+00:03:46,199 --> 00:03:47,759
+I like that description.
 
 102
-00:03:35,360 --> 00:03:37,080
-gates or external threats.
+00:03:47,759 --> 00:03:50,000
+But what's interesting there is how a film can get such wide
 
 103
-00:03:37,080 --> 00:03:39,439
-It might also be about the culture inside.
+00:03:50,000 --> 00:03:54,879
+praise just by nailing its genre basics, adrenaline charm.
 
 104
-00:03:39,439 --> 00:03:42,200
-Our accountability and respect actually being upheld.
+00:03:54,879 --> 00:03:57,719
+The review doesn't seem to mention any real downsides.
 
 105
-00:03:42,200 --> 00:03:44,759
-When people within the system are allegedly involved,
+00:03:57,719 --> 00:04:00,399
+It just delivers pure entertainment really, really well.
 
 106
-00:03:44,759 --> 00:03:47,679
-it erodes that fundamental trust students need to have.
+00:04:00,399 --> 00:04:01,679
+Simple, but effective.
 
 107
-00:03:47,679 --> 00:03:50,359
-Yeah, it shifts the focus from just individual actions
-
-108
-00:03:50,359 --> 00:03:52,799
-to maybe broader institutional responsibility.
-
-109
-00:03:52,799 --> 00:03:53,399
-Precisely.
-
-110
-00:03:53,399 --> 00:03:55,519
-It calls for a hard look at internal safety culture.
-
-111
-00:03:55,519 --> 00:03:58,120
-OK, so after the initial shock and these details
-
-112
-00:03:58,120 --> 00:04:00,840
-about the accused emerged, one thing that happened very quickly
-
-113
-00:04:00,840 --> 00:04:02,799
-was the medical confirmation.
-
-114
-00:04:02,799 --> 00:04:03,959
-That seems crucial here.
-
-115
-00:04:03,959 --> 00:04:04,840
-Absolute vital.
-
-116
-00:04:04,840 --> 00:04:07,919
-In sexual assault cases, objective evidence like this
-
-117
-00:04:07,919 --> 00:04:10,799
-is paramount, especially when survivors often face
-
-118
-00:04:10,799 --> 00:04:11,560
-displeief.
-
-119
-00:04:11,560 --> 00:04:14,039
-So what did the medical exam find?
-
-120
-00:04:14,120 --> 00:04:18,000
-Well, it was conducted on June 26, the day after the alleged incident.
-
-121
-00:04:18,000 --> 00:04:20,959
-And the findings, according to sources, were stark.
-
-122
-00:04:20,959 --> 00:04:24,560
-They detailed forceful penetration, presence of bite marks,
-
-123
-00:04:24,560 --> 00:04:28,360
-nail scratches, other signs of assault on her neck and body.
-
-124
-00:04:28,360 --> 00:04:30,279
-So direct physical evidence?
-
-125
-00:04:30,279 --> 00:04:30,879
-Yes.
-
-126
-00:04:30,879 --> 00:04:33,039
-Powerful corroboration of her account.
-
-127
-00:04:33,039 --> 00:04:34,920
-It provides that objective validation, which
-
-128
-00:04:34,920 --> 00:04:37,719
-is so important for the investigation and, frankly,
-
-129
-00:04:37,719 --> 00:04:39,159
-for the survivor.
-
-130
-00:04:39,159 --> 00:04:40,480
-And there's more.
-
-131
-00:04:40,480 --> 00:04:43,319
-The police seized mobile phones from all the accused.
-
-132
-00:04:43,560 --> 00:04:44,680
-The digital angle.
-
-133
-00:04:44,680 --> 00:04:45,000
-Right.
-
-134
-00:04:45,000 --> 00:04:47,639
-They're looking into whether videos might
-
-135
-00:04:47,639 --> 00:04:48,360
-have been taken.
-
-136
-00:04:48,360 --> 00:04:51,519
-There's suspicion of potential recording, maybe even a blackmail
-
-137
-00:04:51,519 --> 00:04:52,920
-angle being explored.
-
-138
-00:04:52,920 --> 00:04:54,759
-If digital evidence like that exists,
-
-139
-00:04:54,759 --> 00:04:57,040
-it could be incredibly significant for the case.
-
-140
-00:04:57,040 --> 00:04:58,600
-And the speed of the investigation,
-
-141
-00:04:58,600 --> 00:05:01,680
-the arrests that also stands out, things move fast.
-
-142
-00:05:01,680 --> 00:05:02,680
-They really did.
-
-143
-00:05:02,680 --> 00:05:04,199
-Which usually signals that authorities
-
-144
-00:05:04,199 --> 00:05:07,480
-are treating it with extreme seriousness.
-
-145
-00:05:07,480 --> 00:05:11,360
-Mischro was arrested on June 26, right after those medical findings
-
-146
-00:05:11,360 --> 00:05:11,639
-came out.
-
-147
-00:05:11,639 --> 00:05:12,759
-So very next day.
-
-148
-00:05:13,639 --> 00:05:16,959
-Then, Ahmed and Mukherjee on the 27th and the guard,
-
-149
-00:05:16,959 --> 00:05:18,759
-Banerjee on the 28th.
-
-150
-00:05:18,759 --> 00:05:20,039
-So, boom, boom, boom.
-
-151
-00:05:20,039 --> 00:05:21,120
-Quick succession.
-
-152
-00:05:21,120 --> 00:05:24,279
-And importantly, they formed a special investigation team,
-
-153
-00:05:24,279 --> 00:05:28,839
-an SIT, led by ACP Pradip Kamargosal.
-
-154
-00:05:28,839 --> 00:05:30,800
-An SIT isn't just regular policing.
-
-155
-00:05:30,800 --> 00:05:32,439
-It's a dedicated unit.
-
-156
-00:05:32,439 --> 00:05:35,399
-Often for complex or sensitive cases like this one,
-
-157
-00:05:35,399 --> 00:05:38,920
-it shows a commitment to a thorough, hopefully swift
-
-158
-00:05:38,920 --> 00:05:39,920
-investigation.
-
-159
-00:05:39,920 --> 00:05:42,120
-That quick action sends a message, definitely.
-
-160
-00:05:42,120 --> 00:05:43,800
-Which brings us to the legal side of things.
-
-161
-00:05:43,800 --> 00:05:45,759
-You mentioned the complicity aspect earlier.
-
-162
-00:05:45,759 --> 00:05:47,120
-Let's unpack that a bit more.
-
-163
-00:05:47,120 --> 00:05:48,360
-How does the law view this?
-
-164
-00:05:48,360 --> 00:05:50,000
-OK, so what's really important here
-
-165
-00:05:50,000 --> 00:05:54,000
-is how Indian law, specifically shaped by Supreme Court rulings,
-
-166
-00:05:54,000 --> 00:05:55,560
-looks at gang rate.
-
-167
-00:05:55,560 --> 00:05:57,079
-The principle is pretty clear.
-
-168
-00:05:57,079 --> 00:06:00,280
-Everyone involved is considered equally liable, criminally.
-
-169
-00:06:00,280 --> 00:06:02,720
-Even if they didn't physically commit the assault itself.
-
-170
-00:06:02,720 --> 00:06:03,040
-Correct.
-
-171
-00:06:03,040 --> 00:06:05,759
-Even those who, like the two students, allegedly did,
-
-172
-00:06:05,759 --> 00:06:07,480
-just stood guard.
-
-173
-00:06:07,480 --> 00:06:10,040
-The legal thinking is that facilitating the crime,
-
-174
-00:06:10,040 --> 00:06:12,200
-ensuring it can happen without interruption,
-
-175
-00:06:12,200 --> 00:06:13,680
-makes you an active participant.
-
-176
-00:06:13,680 --> 00:06:15,600
-It's about deterring any kind of assistance.
-
-177
-00:06:15,600 --> 00:06:17,280
-So the charges reflect that.
-
-178
-00:06:17,280 --> 00:06:18,280
-Yes.
-
-179
-00:06:18,280 --> 00:06:21,920
-All four, they serious charges, including gang rape
-
-180
-00:06:21,920 --> 00:06:23,640
-and aiding the crime.
-
-181
-00:06:23,640 --> 00:06:26,040
-The penalties are severe, rightly so,
-
-182
-00:06:26,040 --> 00:06:29,480
-reflecting a societal stance against such violence.
-
-183
-00:06:29,480 --> 00:06:31,120
-The law basically tries to ensure
-
-184
-00:06:31,120 --> 00:06:33,200
-there's no loophole for thinking, oh,
-
-185
-00:06:33,200 --> 00:06:34,800
-I wasn't the main one involved.
-
-186
-00:06:34,800 --> 00:06:36,080
-That makes sense legally.
-
-187
-00:06:36,080 --> 00:06:38,320
-Now, given everything we've discussed,
-
-188
-00:06:38,319 --> 00:06:42,439
-the brutality, the location, the people involved,
-
-189
-00:06:42,439 --> 00:06:44,839
-the public reaction must have been intense.
-
-190
-00:06:44,839 --> 00:06:45,639
-Oh, absolutely.
-
-191
-00:06:45,639 --> 00:06:47,120
-Wide spread outrage.
-
-192
-00:06:47,120 --> 00:06:50,399
-Protests erupted, particularly on campuses across Kolkata.
-
-193
-00:06:50,399 --> 00:06:51,680
-It really struck a nerve.
-
-194
-00:06:51,680 --> 00:06:53,879
-And the sources mentioned this isn't the first time recently.
-
-195
-00:06:53,879 --> 00:06:55,360
-There were echoes of another case.
-
-196
-00:06:55,360 --> 00:06:55,879
-That's right.
-
-197
-00:06:55,879 --> 00:06:59,959
-The RGCAR medical student rate murder case from 2024.
-
-198
-00:06:59,959 --> 00:07:01,480
-People drew parallels.
-
-199
-00:07:01,480 --> 00:07:03,439
-Both involved horrific violence against students
-
-200
-00:07:03,439 --> 00:07:05,680
-connected to educational institutions.
-
-201
-00:07:05,680 --> 00:07:08,120
-It taps into this ongoing fear and frustration
-
-202
-00:07:08,120 --> 00:07:09,319
-about campus safety.
-
-203
-00:07:09,319 --> 00:07:10,879
-So it's not just anger about this one event,
-
-204
-00:07:10,879 --> 00:07:12,759
-but a pattern people are seeing.
-
-205
-00:07:12,759 --> 00:07:13,399
+00:04:01,679 --> 00:04:02,280
 Exactly.
 
-206
-00:07:13,399 --> 00:07:15,720
-It becomes a symbol of perceived failures.
-
-207
-00:07:15,720 --> 00:07:18,040
-Student groups, women's rights organizations,
-
-208
-00:07:18,040 --> 00:07:20,920
-they mobilize quickly, demanding justice for the survivor,
-
-209
-00:07:20,920 --> 00:07:23,040
-but also demanding systemic changes.
-
-210
-00:07:23,040 --> 00:07:25,240
-And predictably, it got political.
-
-211
-00:07:25,240 --> 00:07:26,000
-How so?
-
-212
-00:07:26,000 --> 00:07:29,000
-Well, the ruling party at West Bengal, the TMC,
-
-213
-00:07:29,000 --> 00:07:32,480
-you had ministers like Shashi Pongja, promising justice,
-
-214
-00:07:32,480 --> 00:07:36,399
-but also urging people to keep politics out of it,
-
-215
-00:07:36,399 --> 00:07:38,599
-treated as a crime-needing investigation.
-
-216
-00:07:38,599 --> 00:07:39,479
-And the opposition?
-
-217
-00:07:39,479 --> 00:07:42,239
-The BJP, the main opposition, they immediately
-
-218
-00:07:42,239 --> 00:07:44,319
-framed it as evidence of deteriorating
-
-219
-00:07:44,319 --> 00:07:46,279
-law and order under the TMC government,
-
-220
-00:07:46,279 --> 00:07:49,279
-saying student safety is at risk across the state.
-
-221
-00:07:49,279 --> 00:07:51,239
-So you see how personal tragedy instantly
-
-222
-00:07:51,239 --> 00:07:53,399
-becomes fodder for political arguments.
-
-223
-00:07:53,399 --> 00:07:57,319
-Yeah, that interplay is almost inevitable, unfortunately.
-
-224
-00:07:57,319 --> 00:08:00,959
-So looking ahead, where does the case stand now?
-
-225
-00:08:00,959 --> 00:08:02,919
-The investigation is ongoing.
-
-226
-00:08:02,919 --> 00:08:04,000
-Very much so.
-
-227
-00:08:04,000 --> 00:08:05,799
-The SIT is working meticulously.
-
-228
-00:08:05,800 --> 00:08:07,360
-They're collecting physical evidence,
-
-229
-00:08:07,360 --> 00:08:09,280
-analyzing that digital data from the phones
-
-230
-00:08:09,280 --> 00:08:11,160
-we mentioned, gathering witness statements,
-
-231
-00:08:11,160 --> 00:08:12,400
-its painstaking work.
-
-232
-00:08:12,400 --> 00:08:14,319
-And the phone data could be key.
-
-233
-00:08:14,319 --> 00:08:15,639
-Potentially, yes.
-
-234
-00:08:15,639 --> 00:08:18,240
-Especially if it confirms recordings or communication
-
-235
-00:08:18,240 --> 00:08:20,759
-related to the alleged crime, maybe shedding light
-
-236
-00:08:20,759 --> 00:08:23,600
-on intent or planning like that possible blackmail angle,
-
-237
-00:08:23,600 --> 00:08:24,680
-that could be crucial evidence.
-
-238
-00:08:24,680 --> 00:08:26,120
-What are the next steps in court?
-
-239
-00:08:26,120 --> 00:08:29,240
-We'll likely see bail hearing schedule soon for the accused.
-
-240
-00:08:29,240 --> 00:08:31,920
-After the investigation progresses further,
-
-241
-00:08:31,920 --> 00:08:34,840
-the prosecution will formally frame the charges against each
-
-242
-00:08:34,840 --> 00:08:35,680
-of them.
-
-243
-00:08:35,680 --> 00:08:37,600
-That's a major step towards trial.
-
-244
-00:08:37,600 --> 00:08:39,440
-The strength of the evidence collected now,
-
-245
-00:08:39,440 --> 00:08:42,440
-especially that forensic and potential digital evidence
-
-246
-00:08:42,440 --> 00:08:43,399
-will be vital.
-
-247
-00:08:43,399 --> 00:08:47,160
-This whole case is just, it's gut wrenching.
-
-248
-00:08:47,160 --> 00:08:49,519
-The alleged violence, the breach of trust
-
-249
-00:08:49,519 --> 00:08:52,280
-in a supposedly safe place, the alleged involvement
-
-250
-00:08:52,280 --> 00:08:55,360
-of people from within the institution, even security,
-
-251
-00:08:55,360 --> 00:08:57,040
-it's all deeply disturbing.
-
-252
-00:08:57,040 --> 00:08:57,960
-It truly is.
-
-253
-00:08:57,960 --> 00:09:01,960
-But maybe the swift medical confirmation, the fast arrests,
-
-254
-00:09:01,960 --> 00:09:04,040
-maybe that offers a small measure of hope
-
-255
-00:09:04,039 --> 00:09:07,199
-that the path to justice will be pursued seriously.
-
-256
-00:09:07,199 --> 00:09:10,919
-So reflecting on all this, what should you, the listener, take away?
-
-257
-00:09:10,919 --> 00:09:13,839
-I think this case is a powerful and painful reminder
-
-258
-00:09:13,839 --> 00:09:15,319
-that we constantly need to demand
-
-259
-00:09:15,319 --> 00:09:18,120
-that our educational institutions are truly safe,
-
-260
-00:09:18,120 --> 00:09:20,079
-not just on paper, but in reality.
-
-261
-00:09:20,079 --> 00:09:23,120
-It forces us to ask hard questions about accountability.
-
-262
-00:09:23,120 --> 00:09:25,959
-Who is responsible when safety fails so badly?
-
-263
-00:09:25,959 --> 00:09:28,000
-And it compels us to think about our own role
-
-264
-00:09:28,000 --> 00:09:29,639
-in demanding that accountability.
-
-265
-00:09:29,639 --> 00:09:31,799
-It's not just about this one terrible incident.
-
-266
-00:09:31,799 --> 00:09:33,559
-It's about the systems, the culture
-
-267
-00:09:33,559 --> 00:09:34,719
-that allowed it to happen.
-
-268
-00:09:34,719 --> 00:09:37,759
-We need institutions that don't just talk about safety,
-
-269
-00:09:37,759 --> 00:09:40,119
-but actively ensure it listen to survivors
-
-270
-00:09:40,119 --> 00:09:43,279
-and act decisively when trust is broken like this.
-
-271
-00:09:43,279 --> 00:09:45,679
-That promise of a safe campus has to be real.
+108
+00:04:02,280 --> 00:04:04,280
+It suggests maybe there's a real hunger for films
+
+109
+00:04:04,280 --> 00:04:07,759
+that just focus on doing one thing exceptionally well,
+
+110
+00:04:07,759 --> 00:04:09,639
+giving you that escapism without trying
+
+111
+00:04:09,639 --> 00:04:13,359
+to be too complex, just pure, well-executed fun.
+
+112
+00:04:13,359 --> 00:04:16,120
+OK, so that brings us to the verdict section.
+
+113
+00:04:16,120 --> 00:04:19,879
+Time for some brutal honesty based on real rundown,
+
+114
+00:04:19,879 --> 00:04:21,280
+what's worth your time.
+
+115
+00:04:21,280 --> 00:04:24,680
+First, House full five.
+
+116
+00:04:24,680 --> 00:04:26,360
+Apparently, it's still trying to be funny
+
+117
+00:04:26,360 --> 00:04:28,399
+with the same jokes from 2011.
+
+118
+00:04:28,399 --> 00:04:31,240
+Calls it a cringe fest, though, mentions a decent twist.
+
+119
+00:04:31,240 --> 00:04:32,720
+Ooh, same jokes.
+
+120
+00:04:32,720 --> 00:04:33,879
+Seems like it.
+
+121
+00:04:33,879 --> 00:04:37,120
+The advice, skip it unless you're drunk or nostalgic.
+
+122
+00:04:37,120 --> 00:04:37,600
+Harsh.
+
+123
+00:04:37,600 --> 00:04:38,959
+Yeah, fair enough.
+
+124
+00:04:38,959 --> 00:04:39,560
+What else?
+
+125
+00:04:39,560 --> 00:04:41,800
+Then there's Pixar's Iliot, described
+
+126
+00:04:41,800 --> 00:04:43,639
+as a cute space boy adventure.
+
+127
+00:04:43,639 --> 00:04:45,879
+Sounds nice, but the note is it's sweet,
+
+128
+00:04:45,879 --> 00:04:48,079
+but it doesn't hit those Pixar-level emotional gut
+
+129
+00:04:48,079 --> 00:04:48,879
+punches.
+
+130
+00:04:48,879 --> 00:04:50,719
+The picks are standard, high-barned, clear.
+
+131
+00:04:50,719 --> 00:04:51,399
+Definitely.
+
+132
+00:04:51,399 --> 00:04:54,079
+For horror fans, 28 years later is back.
+
+133
+00:04:54,079 --> 00:04:56,319
+The original Fast Zombies, described
+
+134
+00:04:56,319 --> 00:04:59,120
+as Fast, Furious, and Feral, sounds intense.
+
+135
+00:04:59,120 --> 00:05:01,519
+The source says it's a must if you're a fan of the original.
+
+136
+00:05:01,519 --> 00:05:03,159
+Good to know for genre fans.
+
+137
+00:05:03,159 --> 00:05:05,639
+And finally, a really intriguing one.
+
+138
+00:05:05,639 --> 00:05:08,680
+Vyasana Samatham, Ben Tumif, Therathigal.
+
+139
+00:05:08,680 --> 00:05:11,399
+It's a maleil in film, a dark comedy,
+
+140
+00:05:11,399 --> 00:05:13,680
+described as having surprising depth.
+
+141
+00:05:13,720 --> 00:05:16,639
+Specifically, it's a satire about funerals.
+
+142
+00:05:16,639 --> 00:05:19,079
+And the note is just, it works.
+
+143
+00:05:19,079 --> 00:05:21,319
+A satire about funerals, okay, that sounds unique.
+
+144
+00:05:21,319 --> 00:05:22,600
+And it works.
+
+145
+00:05:22,600 --> 00:05:23,439
+Interesting.
+
+146
+00:05:23,439 --> 00:05:25,720
+You know, looking at all these together,
+
+147
+00:05:25,720 --> 00:05:27,840
+it really shows the sheer range, doesn't it?
+
+148
+00:05:27,840 --> 00:05:32,040
+From like tired franchises to these really specific niche films
+
+149
+00:05:32,040 --> 00:05:34,120
+and sequels that actually land,
+
+150
+00:05:34,120 --> 00:05:37,000
+what's fascinating is just how much variety there is.
+
+151
+00:05:37,000 --> 00:05:38,439
+And how much your own tastes like,
+
+152
+00:05:38,439 --> 00:05:39,720
+are you feeling nostalgic?
+
+153
+00:05:39,720 --> 00:05:41,240
+Do you love a certain genre?
+
+154
+00:05:41,240 --> 00:05:43,319
+Are you open to something weird?
+
+155
+00:05:43,319 --> 00:05:45,360
+Really decides if it's a watch or skip for you?
+
+156
+00:05:45,360 --> 00:05:46,959
+There's no single answer anymore.
+
+157
+00:05:46,959 --> 00:05:48,040
+Totally.
+
+158
+00:05:48,040 --> 00:05:50,199
+So let's try and summarize with a quick cheat sheet
+
+159
+00:05:50,199 --> 00:05:51,599
+pulled from the source.
+
+160
+00:05:51,599 --> 00:05:53,920
+Sitire, zamine par.
+
+161
+00:05:53,920 --> 00:05:56,159
+Watch for the emotion, the amir factor.
+
+162
+00:05:56,159 --> 00:05:58,000
+Maybe skip if you want something totally new.
+
+163
+00:05:58,000 --> 00:05:58,839
+Got it.
+
+164
+00:05:58,839 --> 00:06:01,800
+Canapa, watch for that huge climax in the star power.
+
+165
+00:06:01,800 --> 00:06:03,719
+Skip if you can't handle a slow start.
+
+166
+00:06:03,719 --> 00:06:04,560
+Makes sense.
+
+167
+00:06:04,560 --> 00:06:07,560
+Not, watch for the creepy visuals, the horror mood.
+
+168
+00:06:07,560 --> 00:06:09,920
+Skip if predictable plots annoy you.
+
+169
+00:06:09,920 --> 00:06:11,600
+F1, the movie.
+
+170
+00:06:11,680 --> 00:06:13,480
+Watch for pure adrenaline and charm.
+
+171
+00:06:13,480 --> 00:06:15,640
+Seems like a safe bet, no reason given to skip.
+
+172
+00:06:15,640 --> 00:06:17,160
+Sounds like a crowd pleaser.
+
+173
+00:06:17,160 --> 00:06:18,560
+House full five.
+
+174
+00:06:20,240 --> 00:06:23,320
+Watch if you still find oxhave funny.
+
+175
+00:06:23,320 --> 00:06:24,480
+Otherwise, maybe skip.
+
+176
+00:06:24,480 --> 00:06:25,320
+Right.
+
+177
+00:06:25,320 --> 00:06:26,160
+And if you're not supposed to make them
+
+178
+00:06:26,160 --> 00:06:27,840
+bend them with radical,
+
+179
+00:06:27,840 --> 00:06:30,280
+watch if you like dark horse gems, something different.
+
+180
+00:06:30,280 --> 00:06:32,600
+Skip if niche isn't your thing right now.
+
+181
+00:06:32,600 --> 00:06:33,879
+That's a good rundown.
+
+182
+00:06:33,879 --> 00:06:35,720
+And it leaves you with a thought, doesn't it?
+
+183
+00:06:35,720 --> 00:06:38,600
+How we even define worth watching seems to be shifting
+
+184
+00:06:38,600 --> 00:06:39,439
+all the time.
+
+185
+00:06:39,519 --> 00:06:41,680
+The big star is at the rave reviews.
+
+186
+00:06:41,680 --> 00:06:44,959
+Or is it just a really unique idea that crabs you think about it?
+
+187
+00:06:44,959 --> 00:06:46,800
+How much does your own situation like,
+
+188
+00:06:46,800 --> 00:06:48,199
+are you looking for pure escape
+
+189
+00:06:48,199 --> 00:06:49,480
+or something to really chew on
+
+190
+00:06:49,480 --> 00:06:51,399
+or maybe do something everyone's talking about
+
+191
+00:06:51,399 --> 00:06:53,800
+shape what you actually decide to watch next.
+
+192
+00:06:53,800 --> 00:06:55,240
+What will you deep dive into?
 
