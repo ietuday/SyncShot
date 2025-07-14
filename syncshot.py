@@ -117,7 +117,15 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
                 clip.close()
 
 if __name__ == "__main__":
-    audio_file = "audio/audio.wav"  # Your audio file path
+    audio_folder = "audio"
+    audio_files = [
+        os.path.join(audio_folder, fname)
+        for fname in sorted(os.listdir(audio_folder))
+        if fname.lower().endswith(".wav")
+    ]
+    if not audio_files:
+        raise FileNotFoundError("No .wav files found in the audio folder.")
+    audio_file = audio_files[0]  # Pick the first .wav file found
     image_folder = "images"
     image_files = [
         os.path.join(image_folder, fname)

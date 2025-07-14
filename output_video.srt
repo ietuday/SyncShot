@@ -1,768 +1,1700 @@
 1
-00:00:00,000 --> 00:00:01,880
-Welcome to The Deep Dive.
+00:00:00,000 --> 00:00:02,399
+Welcome curious minds to another deep dive.
 
 2
-00:00:01,880 --> 00:00:04,960
-Today, we're taking a closer look at the current movie scene,
+00:00:02,399 --> 00:00:03,399
+Great to be here.
 
 3
-00:00:04,960 --> 00:00:08,199
-everything from the big blockbusters to streaming stuff.
+00:00:03,399 --> 00:00:06,879
+Today we're soaring high right into one of the most
 
 4
-00:00:08,199 --> 00:00:10,560
-And yeah, maybe a few you're wondering about.
+00:00:06,879 --> 00:00:09,080
+talked about films of the summer.
 
 5
-00:00:10,560 --> 00:00:13,720
-Our mission really is to cut through all that chatter
+00:00:09,080 --> 00:00:12,720
+James Gunn's Superman, the 2025 one obviously.
 
 6
-00:00:13,720 --> 00:00:16,320
-and pull out the key bits from recent reviews
+00:00:12,720 --> 00:00:14,560
+Yeah, a lot of anticipation for this one.
 
 7
-00:00:16,320 --> 00:00:18,000
-and box office numbers.
+00:00:14,560 --> 00:00:15,280
+Definitely.
 
 8
-00:00:18,000 --> 00:00:21,440
-We've been digging into this source called Real rundown.
+00:00:15,280 --> 00:00:17,080
+You've asked us to unpack the key insights
 
 9
-00:00:21,440 --> 00:00:23,679
-This week's Cinema Hits and Misses.
+00:00:17,080 --> 00:00:18,240
+from everything you shared.
 
 10
-00:00:23,679 --> 00:00:25,960
-And this source, it's pretty good at showing you what's
+00:00:18,240 --> 00:00:19,519
+So our mission today is basically
 
 11
-00:00:25,960 --> 00:00:29,600
-thought, what's not, and maybe what might make your popcorn
+00:00:19,519 --> 00:00:22,199
+to distill what makes this movie tick.
 
 12
-00:00:29,600 --> 00:00:30,960
-regret being poked.
+00:00:22,199 --> 00:00:24,719
+What it means for Superman as a character.
 
 13
-00:00:30,960 --> 00:00:32,719
-So yeah, we're set for a pretty engaging look
+00:00:24,719 --> 00:00:26,679
+And yeah, the huge implications
 
 14
-00:00:32,719 --> 00:00:35,039
-at what makes a film land or bomb
+00:00:26,679 --> 00:00:29,760
+for the whole DC cinematic universe going forward.
 
 15
-00:00:35,039 --> 00:00:36,719
-or become something else entirely.
+00:00:29,760 --> 00:00:32,359
+Which let's face it needed some implications.
 
 16
-00:00:36,719 --> 00:00:37,399
-Exactly.
+00:00:32,359 --> 00:00:34,079
+Good ones, hopefully.
 
 17
-00:00:37,399 --> 00:00:40,439
-And I think the real value here is how looking at both
-
-18
-00:00:40,439 --> 00:00:42,760
-the critical takes and the audience reactions
-
-19
-00:00:42,760 --> 00:00:44,159
-gives you a shortcut.
-
-20
-00:00:44,159 --> 00:00:45,960
-You get a real feel for the trends, you know?
-
-21
-00:00:45,960 --> 00:00:48,400
-What actually connects with people beyond just the hype?
-
-22
-00:00:48,400 --> 00:00:50,520
-Okay, so let's kick things off of the big screen buzz,
-
-23
-00:00:50,520 --> 00:00:51,880
-the theatrical hits.
-
-24
-00:00:51,880 --> 00:00:54,159
-First up, Cetara's a mean par.
-
-25
-00:00:54,160 --> 00:00:56,640
-I'm here cons back, and wow, he's still got it.
-
-26
-00:00:56,640 --> 00:01:00,360
-Pulling in what, 120 crore in just 10 days?
-
-27
-00:01:00,360 --> 00:01:01,200
-That's impressive.
-
-28
-00:01:01,200 --> 00:01:02,040
-Huge number.
-
-29
-00:01:02,040 --> 00:01:02,880
-Definitely.
-
-30
-00:01:02,880 --> 00:01:05,520
-Now, Real rundown mentions critics calling it important,
-
-31
-00:01:05,520 --> 00:01:07,200
-but there's also this other view,
-
-32
-00:01:07,200 --> 00:01:11,080
-like it's maybe Tari is a mean par 2.0 with Jersey's on.
-
-33
-00:01:11,080 --> 00:01:14,480
-So big success, but maybe a question mark on originality.
-
-34
-00:01:14,480 --> 00:01:16,800
-Yeah, that 2.0 comment is fascinating, isn't it?
-
-35
-00:01:16,800 --> 00:01:20,480
-It shows the power of star like I'm here con still has.
-
-36
-00:01:20,480 --> 00:01:24,000
-He can pull in huge crowds, even if critics aren't totally sold
-
-37
-00:01:24,000 --> 00:01:25,239
-on the freshness.
-
-38
-00:01:25,239 --> 00:01:27,719
-It kind of makes you ask what audiences really want
-
-39
-00:01:27,719 --> 00:01:30,319
-from actors they love or themes they know.
-
-40
-00:01:30,319 --> 00:01:32,280
-Is it always about something brand new?
-
-41
-00:01:32,280 --> 00:01:35,719
-Or is it comfort, familiarity, especially now?
-
-42
-00:01:35,719 --> 00:01:39,200
-Right, maybe that feeling of a guaranteed emotional connection
-
-43
-00:01:39,200 --> 00:01:42,599
-outweighs the need for pure originality sometimes.
-
-44
-00:01:42,599 --> 00:01:44,079
-It certainly challenges the idea
-
-45
-00:01:44,079 --> 00:01:46,039
-that reviews alone drive success.
-
-46
-00:01:46,039 --> 00:01:46,879
-That's a really good point.
-
-47
-00:01:46,879 --> 00:01:48,039
-It's being a big draw.
-
-48
-00:01:48,039 --> 00:01:49,039
-Let's talk spectacle.
-
-49
-00:01:49,039 --> 00:01:52,280
-Canapa, Real rundown calls it mythological madness,
-
-50
-00:01:52,280 --> 00:01:54,000
-the movie, which sounds about right.
-
-51
-00:01:54,000 --> 00:01:56,400
-It's like a pan-Indian Avengers basically.
-
-52
-00:01:56,400 --> 00:02:00,200
-You've got fish numenchu, propas, Akshay Kumar,
-
-53
-00:02:00,200 --> 00:02:02,120
-and Mohanlal, all in one film.
-
-54
-00:02:02,120 --> 00:02:03,000
-Quite the lineup.
-
-55
-00:02:03,000 --> 00:02:03,599
-Yeah.
-
-56
-00:02:03,599 --> 00:02:05,879
-The feedback mentioned in the sources specific, though,
-
-57
-00:02:05,879 --> 00:02:09,120
-has the first half kind of drags, but the climax,
-
-58
-00:02:09,120 --> 00:02:10,719
-just is fire emoji so.
-
-59
-00:02:10,719 --> 00:02:12,000
-Absolute fire, love it.
-
-60
-00:02:12,000 --> 00:02:14,960
-And that connects to this whole pan-Indian cinema trend,
-
-61
-00:02:14,960 --> 00:02:15,800
-doesn't it?
-
-62
-00:02:15,800 --> 00:02:19,159
-Strategically pulling huge stars from different industries
-
-63
-00:02:19,159 --> 00:02:22,639
-and makes you think, how much does sheer spectacle
-
-64
-00:02:22,639 --> 00:02:27,159
-and star power compensate for maybe slower pacing,
-
-65
-00:02:27,159 --> 00:02:29,719
-especially in these big mythological epics?
-
-66
-00:02:29,719 --> 00:02:30,319
-It's a question.
-
-67
-00:02:30,319 --> 00:02:32,079
-Yeah, maybe for these massive productions,
-
-68
-00:02:32,079 --> 00:02:34,919
-the scale, the cast, that is the main event.
-
-69
-00:02:34,919 --> 00:02:36,919
-A slow start might not matter as much
-
-70
-00:02:36,919 --> 00:02:40,599
-if the ending delivers that epic payoff people came for.
-
-71
-00:02:40,599 --> 00:02:42,919
-Right, you forgive the journey of the destination's amazing.
-
-72
-00:02:42,919 --> 00:02:45,319
-OK, let's switch over to the streaming side of things,
-
-73
-00:02:45,319 --> 00:02:48,439
-because things are definitely heating up on OTT platforms.
-
-74
-00:02:48,439 --> 00:02:51,000
-You've got Kajol and Ma, a horror thriller.
-
-75
-00:02:51,000 --> 00:02:52,159
-The description sounds great.
-
-76
-00:02:52,159 --> 00:02:54,879
-Creepy temples, shadowy myths, sounds atmospheric.
-
-77
-00:02:54,879 --> 00:02:55,879
-Promising setup.
-
-78
-00:02:55,879 --> 00:02:59,280
-But the source says it ends up with predictable scares.
-
-79
-00:02:59,280 --> 00:03:01,879
-Like it's into ordering Biriyani and getting pula.
-
-80
-00:03:01,879 --> 00:03:02,639
-Ouch.
-
-81
-00:03:02,639 --> 00:03:03,840
-You know that feeling, right?
-
-82
-00:03:03,840 --> 00:03:05,319
-Yes, disappointing.
-
-83
-00:03:05,319 --> 00:03:07,800
-It points to a real challenge for horror on streaming,
-
-84
-00:03:07,800 --> 00:03:08,639
-I think.
-
-85
-00:03:08,639 --> 00:03:11,560
-You need atmosphere, sharp, but you also need originality.
-
-86
-00:03:11,560 --> 00:03:13,639
-Predictability just kills the tension,
-
-87
-00:03:13,639 --> 00:03:16,000
-even if it looks good or has a big star.
-
-88
-00:03:16,000 --> 00:03:17,840
-It kind of proves that a familiar story,
-
-89
-00:03:17,840 --> 00:03:21,159
-even while made, struggles in a genre built on surprise.
-
-90
-00:03:21,159 --> 00:03:22,080
-True.
-
-91
-00:03:22,080 --> 00:03:25,680
-But then on the other hand, streaming also gives us F1,
-
-92
-00:03:25,680 --> 00:03:27,520
-the movie with Brad Pitt.
-
-93
-00:03:27,520 --> 00:03:29,640
-And critics are apparently raving about this one.
-
-94
-00:03:29,640 --> 00:03:31,640
-Real rundown quotes them calling it
-
-95
-00:03:31,640 --> 00:03:33,480
-the most enjoyable flick of the year.
-
-96
-00:03:33,480 --> 00:03:34,640
-High praise.
-
-97
-00:03:34,640 --> 00:03:38,080
-Yeah, he highlights the fast cars, slow-mo close-ups,
-
-98
-00:03:38,080 --> 00:03:41,879
-and apparently Brad Pitt looks like a human version
-
-99
-00:03:41,879 --> 00:03:45,360
-of nitrous oxide, which I guess means super charismatic
-
-100
-00:03:45,360 --> 00:03:46,199
-and powerful.
-
-101
-00:03:46,199 --> 00:03:47,759
-I like that description.
-
-102
-00:03:47,759 --> 00:03:50,000
-But what's interesting there is how a film can get such wide
-
-103
-00:03:50,000 --> 00:03:54,879
-praise just by nailing its genre basics, adrenaline charm.
-
-104
-00:03:54,879 --> 00:03:57,719
-The review doesn't seem to mention any real downsides.
-
-105
-00:03:57,719 --> 00:04:00,399
-It just delivers pure entertainment really, really well.
-
-106
-00:04:00,399 --> 00:04:01,679
-Simple, but effective.
-
-107
-00:04:01,679 --> 00:04:02,280
-Exactly.
-
-108
-00:04:02,280 --> 00:04:04,280
-It suggests maybe there's a real hunger for films
-
-109
-00:04:04,280 --> 00:04:07,759
-that just focus on doing one thing exceptionally well,
-
-110
-00:04:07,759 --> 00:04:09,639
-giving you that escapism without trying
-
-111
-00:04:09,639 --> 00:04:13,359
-to be too complex, just pure, well-executed fun.
-
-112
-00:04:13,359 --> 00:04:16,120
-OK, so that brings us to the verdict section.
-
-113
-00:04:16,120 --> 00:04:19,879
-Time for some brutal honesty based on real rundown,
-
-114
-00:04:19,879 --> 00:04:21,280
-what's worth your time.
-
-115
-00:04:21,280 --> 00:04:24,680
-First, House full five.
-
-116
-00:04:24,680 --> 00:04:26,360
-Apparently, it's still trying to be funny
-
-117
-00:04:26,360 --> 00:04:28,399
-with the same jokes from 2011.
-
-118
-00:04:28,399 --> 00:04:31,240
-Calls it a cringe fest, though, mentions a decent twist.
-
-119
-00:04:31,240 --> 00:04:32,720
-Ooh, same jokes.
-
-120
-00:04:32,720 --> 00:04:33,879
-Seems like it.
-
-121
-00:04:33,879 --> 00:04:37,120
-The advice, skip it unless you're drunk or nostalgic.
-
-122
-00:04:37,120 --> 00:04:37,600
-Harsh.
-
-123
-00:04:37,600 --> 00:04:38,959
-Yeah, fair enough.
-
-124
-00:04:38,959 --> 00:04:39,560
-What else?
-
-125
-00:04:39,560 --> 00:04:41,800
-Then there's Pixar's Iliot, described
-
-126
-00:04:41,800 --> 00:04:43,639
-as a cute space boy adventure.
-
-127
-00:04:43,639 --> 00:04:45,879
-Sounds nice, but the note is it's sweet,
-
-128
-00:04:45,879 --> 00:04:48,079
-but it doesn't hit those Pixar-level emotional gut
-
-129
-00:04:48,079 --> 00:04:48,879
-punches.
-
-130
-00:04:48,879 --> 00:04:50,719
-The picks are standard, high-barned, clear.
-
-131
-00:04:50,719 --> 00:04:51,399
-Definitely.
-
-132
-00:04:51,399 --> 00:04:54,079
-For horror fans, 28 years later is back.
-
-133
-00:04:54,079 --> 00:04:56,319
-The original Fast Zombies, described
-
-134
-00:04:56,319 --> 00:04:59,120
-as Fast, Furious, and Feral, sounds intense.
-
-135
-00:04:59,120 --> 00:05:01,519
-The source says it's a must if you're a fan of the original.
-
-136
-00:05:01,519 --> 00:05:03,159
-Good to know for genre fans.
-
-137
-00:05:03,159 --> 00:05:05,639
-And finally, a really intriguing one.
-
-138
-00:05:05,639 --> 00:05:08,680
-Vyasana Samatham, Ben Tumif, Therathigal.
-
-139
-00:05:08,680 --> 00:05:11,399
-It's a maleil in film, a dark comedy,
-
-140
-00:05:11,399 --> 00:05:13,680
-described as having surprising depth.
-
-141
-00:05:13,720 --> 00:05:16,639
-Specifically, it's a satire about funerals.
-
-142
-00:05:16,639 --> 00:05:19,079
-And the note is just, it works.
-
-143
-00:05:19,079 --> 00:05:21,319
-A satire about funerals, okay, that sounds unique.
-
-144
-00:05:21,319 --> 00:05:22,600
-And it works.
-
-145
-00:05:22,600 --> 00:05:23,439
-Interesting.
-
-146
-00:05:23,439 --> 00:05:25,720
-You know, looking at all these together,
-
-147
-00:05:25,720 --> 00:05:27,840
-it really shows the sheer range, doesn't it?
-
-148
-00:05:27,840 --> 00:05:32,040
-From like tired franchises to these really specific niche films
-
-149
-00:05:32,040 --> 00:05:34,120
-and sequels that actually land,
-
-150
-00:05:34,120 --> 00:05:37,000
-what's fascinating is just how much variety there is.
-
-151
-00:05:37,000 --> 00:05:38,439
-And how much your own tastes like,
-
-152
-00:05:38,439 --> 00:05:39,720
-are you feeling nostalgic?
-
-153
-00:05:39,720 --> 00:05:41,240
-Do you love a certain genre?
-
-154
-00:05:41,240 --> 00:05:43,319
-Are you open to something weird?
-
-155
-00:05:43,319 --> 00:05:45,360
-Really decides if it's a watch or skip for you?
-
-156
-00:05:45,360 --> 00:05:46,959
-There's no single answer anymore.
-
-157
-00:05:46,959 --> 00:05:48,040
-Totally.
-
-158
-00:05:48,040 --> 00:05:50,199
-So let's try and summarize with a quick cheat sheet
-
-159
-00:05:50,199 --> 00:05:51,599
-pulled from the source.
-
-160
-00:05:51,599 --> 00:05:53,920
-Sitire, zamine par.
-
-161
-00:05:53,920 --> 00:05:56,159
-Watch for the emotion, the amir factor.
-
-162
-00:05:56,159 --> 00:05:58,000
-Maybe skip if you want something totally new.
-
-163
-00:05:58,000 --> 00:05:58,839
-Got it.
-
-164
-00:05:58,839 --> 00:06:01,800
-Canapa, watch for that huge climax in the star power.
-
-165
-00:06:01,800 --> 00:06:03,719
-Skip if you can't handle a slow start.
-
-166
-00:06:03,719 --> 00:06:04,560
-Makes sense.
-
-167
-00:06:04,560 --> 00:06:07,560
-Not, watch for the creepy visuals, the horror mood.
-
-168
-00:06:07,560 --> 00:06:09,920
-Skip if predictable plots annoy you.
-
-169
-00:06:09,920 --> 00:06:11,600
-F1, the movie.
-
-170
-00:06:11,680 --> 00:06:13,480
-Watch for pure adrenaline and charm.
-
-171
-00:06:13,480 --> 00:06:15,640
-Seems like a safe bet, no reason given to skip.
-
-172
-00:06:15,640 --> 00:06:17,160
-Sounds like a crowd pleaser.
-
-173
-00:06:17,160 --> 00:06:18,560
-House full five.
-
-174
-00:06:20,240 --> 00:06:23,320
-Watch if you still find oxhave funny.
-
-175
-00:06:23,320 --> 00:06:24,480
-Otherwise, maybe skip.
-
-176
-00:06:24,480 --> 00:06:25,320
+00:00:34,079 --> 00:00:34,920
 Right.
 
+18
+00:00:34,920 --> 00:00:36,600
+I mean, the DC universe has felt kind of stuck, hasn't it?
+
+19
+00:00:36,600 --> 00:00:38,719
+Like a perpetual reboot cycle.
+
+20
+00:00:38,719 --> 00:00:40,439
+Yeah, less a cohesive world.
+
+21
+00:00:40,439 --> 00:00:43,280
+More a multi-versing crisis maybe.
+
+22
+00:00:43,280 --> 00:00:44,120
+Exactly.
+
+23
+00:00:44,120 --> 00:00:47,079
+From Justice League, then the Snyder cut.
+
+24
+00:00:47,079 --> 00:00:47,920
+Black Adam.
+
+25
+00:00:47,920 --> 00:00:48,760
+Oh, don't forget the flash.
+
+26
+00:00:48,760 --> 00:00:49,840
+That was certainly a ride.
+
+27
+00:00:49,840 --> 00:00:51,880
+The bewildering ride is one way to put it.
+
+28
+00:00:51,880 --> 00:00:54,040
+Just a lot of tonal whiplash.
+
+29
+00:00:54,040 --> 00:00:54,799
+For sure.
+
+30
+00:00:54,799 --> 00:00:56,120
+But now, okay, new blood.
+
+31
+00:00:56,120 --> 00:00:58,200
+We've got David Cornsweat and the Red Boots.
+
+32
+00:00:58,200 --> 00:00:59,679
+It's Clark Kent.
+
+33
+00:00:59,679 --> 00:01:02,359
+Rachel Brosnanhan is lowest lane.
+
+34
+00:01:02,359 --> 00:01:03,640
+That's exciting casting.
+
+35
+00:01:03,640 --> 00:01:04,480
+Very.
+
+36
+00:01:04,480 --> 00:01:06,159
+She's got that sharp energy you want for lowest.
+
+37
+00:01:06,159 --> 00:01:06,760
+Totally.
+
+38
+00:01:06,760 --> 00:01:09,640
+And James Gunn, the Guardians of the Galaxy Gay,
+
+39
+00:01:09,640 --> 00:01:11,400
+he's taking the reins.
+
+40
+00:01:11,400 --> 00:01:13,159
+So there's a real buzz.
+
+41
+00:01:13,159 --> 00:01:16,439
+A different kind of buzz than maybe we're used to for DC.
+
+42
+00:01:16,439 --> 00:01:17,079
+Right.
+
+43
+00:01:17,079 --> 00:01:19,840
+So the big question we're digging into is,
+
+44
+00:01:19,840 --> 00:01:24,600
+did James Gunn actually save the DC universe with this?
+
+45
+00:01:24,600 --> 00:01:27,000
+Or is it just another fresh coat of paint
+
+46
+00:01:27,079 --> 00:01:29,079
+on maybe a shaky foundation?
+
+47
+00:01:29,079 --> 00:01:30,079
+That's the core of it.
+
+48
+00:01:30,079 --> 00:01:30,920
+Yeah.
+
+49
+00:01:30,920 --> 00:01:32,319
+Okay, let's jump into the story itself.
+
+50
+00:01:32,319 --> 00:01:33,200
+No spoilers.
+
+51
+00:01:33,200 --> 00:01:34,040
+We promise.
+
+52
+00:01:34,040 --> 00:01:35,319
+Like, keep it spoiler free.
+
+53
+00:01:35,319 --> 00:01:36,359
+It kicks off in smallville.
+
+54
+00:01:36,359 --> 00:01:39,159
+We get a younger Superman still kind of figuring things out.
+
+55
+00:01:39,159 --> 00:01:41,560
+Grappling with his identity, his place.
+
+56
+00:01:41,560 --> 00:01:43,400
+Yeah, and morality too.
+
+57
+00:01:43,400 --> 00:01:44,240
+Yeah.
+
+58
+00:01:44,240 --> 00:01:47,480
+In this world that feels, well, pretty cynical.
+
+59
+00:01:47,480 --> 00:01:48,319
+I'm very online.
+
+60
+00:01:48,319 --> 00:01:50,480
+I think mine aspect is an interesting modern touch.
+
+61
+00:01:50,480 --> 00:01:51,319
+It is.
+
+62
+00:01:51,319 --> 00:01:55,159
+And Lex Luthor, he's there sort of simmering in the background.
+
+63
+00:01:55,159 --> 00:01:56,480
+You feel his presence.
+
+64
+00:01:56,480 --> 00:01:58,719
+He's always lurking the essential counterpoint.
+
+65
+00:01:58,719 --> 00:02:00,920
+Definitely, but what's kind of remarkable,
+
+66
+00:02:00,920 --> 00:02:03,120
+even with global stakes involved.
+
+67
+00:02:03,120 --> 00:02:04,719
+Would you expect with Superman?
+
+68
+00:02:04,719 --> 00:02:05,719
+Right.
+
+69
+00:02:05,719 --> 00:02:06,560
+You do.
+
+70
+00:02:06,560 --> 00:02:07,560
+Yeah.
+
+71
+00:02:07,560 --> 00:02:10,800
+But the film's soul feels smaller, more intimate.
+
+72
+00:02:10,800 --> 00:02:11,800
+Focused.
+
+73
+00:02:11,800 --> 00:02:12,800
+Focused.
+
+74
+00:02:12,800 --> 00:02:13,800
+Yeah.
+
+75
+00:02:13,800 --> 00:02:14,800
+It's really about the man behind the myth,
+
+76
+00:02:14,800 --> 00:02:15,800
+the hope behind the heat vision, you could say.
+
+77
+00:02:15,800 --> 00:02:16,800
+I like that.
+
+78
+00:02:16,800 --> 00:02:18,319
+Getting back to the core of Clark Kent.
+
+79
+00:02:18,319 --> 00:02:19,319
+Exactly.
+
+80
+00:02:19,319 --> 00:02:20,319
+And the tone.
+
+81
+00:02:20,319 --> 00:02:22,319
+This is where it gets really interesting, I think.
+
+82
+00:02:22,319 --> 00:02:26,040
+How does it feel compared to, say, recent entries?
+
+83
+00:02:26,039 --> 00:02:28,120
+Well, it's definitely brighter than Snyder's vision.
+
+84
+00:02:28,120 --> 00:02:29,120
+No question there.
+
+85
+00:02:29,120 --> 00:02:29,919
+OK.
+
+86
+00:02:29,919 --> 00:02:30,599
+That's a shift.
+
+87
+00:02:30,599 --> 00:02:31,400
+A big one.
+
+88
+00:02:31,400 --> 00:02:35,120
+And arguably smarter than Man of Steel in some ways.
+
+89
+00:02:35,120 --> 00:02:36,000
+Interesting.
+
+90
+00:02:36,000 --> 00:02:36,639
+How so?
+
+91
+00:02:36,639 --> 00:02:38,599
+Just in the character work, maybe.
+
+92
+00:02:38,599 --> 00:02:41,879
+And surprisingly, more grounded than you might expect
+
+93
+00:02:41,879 --> 00:02:42,879
+from James Gunn.
+
+94
+00:02:42,879 --> 00:02:43,239
+Right.
+
+95
+00:02:43,239 --> 00:02:47,519
+Given his track record with Guardians or the Suicide Squad,
+
+96
+00:02:47,519 --> 00:02:48,359
+Lesany.
+
+97
+00:02:48,359 --> 00:02:49,840
+Lesany, more earnest.
+
+98
+00:02:49,840 --> 00:02:50,359
+Yeah.
+
+99
+00:02:50,359 --> 00:02:53,239
+So what do you think this whole tonal shift really
+
+100
+00:02:53,240 --> 00:02:56,600
+means for how we see Superman now?
+
+101
+00:02:56,600 --> 00:02:59,320
+And maybe even for the whole superhero genre?
+
+102
+00:02:59,320 --> 00:03:02,280
+Well, it feels like a very deliberate recalibration
+
+103
+00:03:02,280 --> 00:03:04,240
+for Superman himself, bringing back
+
+104
+00:03:04,240 --> 00:03:08,320
+that inherent hopefulness, that sincerity.
+
+105
+00:03:08,320 --> 00:03:08,840
+Yeah.
+
+106
+00:03:08,840 --> 00:03:12,120
+It's a clear pivot from the darker, more angsty versions
+
+107
+00:03:12,120 --> 00:03:13,080
+we've had for a while.
+
+108
+00:03:13,080 --> 00:03:13,800
+It really is.
+
+109
+00:03:13,800 --> 00:03:16,719
+It feels like DC saying, OK, this is the kind of hero
+
+110
+00:03:16,719 --> 00:03:18,320
+we want at the center, you know?
+
+111
+00:03:18,320 --> 00:03:18,520
+Right.
+
+112
+00:03:18,520 --> 00:03:19,719
+Setting a new baseline.
+
+113
+00:03:19,719 --> 00:03:20,680
+Exactly.
+
+114
+00:03:20,680 --> 00:03:23,319
+And in a movie world where, let's be honest,
+
+115
+00:03:23,319 --> 00:03:27,040
+cynicism and deconstruction are almost the default.
+
+116
+00:03:27,040 --> 00:03:33,159
+And earnestly hopeful, Superman feels, well, almost radical.
+
+117
+00:03:33,159 --> 00:03:33,840
+It's refreshing.
+
+118
+00:03:33,840 --> 00:03:35,240
+Yeah, it does feel different right now.
+
+119
+00:03:35,240 --> 00:03:37,600
+It reminds you of that aspirational core,
+
+120
+00:03:37,600 --> 00:03:39,439
+why these characters clicked in the first place.
+
+121
+00:03:39,439 --> 00:03:41,840
+And that's a pretty powerful foundation
+
+122
+00:03:41,840 --> 00:03:43,520
+if you're trying to rebuild something.
+
+123
+00:03:43,520 --> 00:03:47,280
+And that foundation really extends to the casting, doesn't it?
+
+124
+00:03:47,280 --> 00:03:49,840
+David Carrantwett as Superman.
+
+125
+00:03:49,840 --> 00:03:51,680
+Wow, he certainly looks the part.
+
+126
+00:03:51,680 --> 00:03:53,200
+The resemblance is uncanny.
+
+127
+00:03:53,200 --> 00:03:54,360
+It really is.
+
+128
+00:03:54,360 --> 00:03:57,080
+He walks like Superman, talks like him.
+
+129
+00:03:57,080 --> 00:03:57,599
+Yeah.
+
+130
+00:03:57,599 --> 00:04:00,080
+He can even do that little thoughtful brood,
+
+131
+00:04:00,080 --> 00:04:01,280
+like a nod to Reeve.
+
+132
+00:04:01,280 --> 00:04:02,719
+A touch of the classic.
+
+133
+00:04:02,719 --> 00:04:05,719
+But the key thing, I think, the really significant shift
+
+134
+00:04:05,719 --> 00:04:08,439
+is that he smiles genuinely.
+
+135
+00:04:08,439 --> 00:04:09,159
+The warmth.
+
+136
+00:04:09,159 --> 00:04:10,480
+That boy's got warmth is back.
+
+137
+00:04:10,480 --> 00:04:15,000
+It makes him feel less like this distant alien god.
+
+138
+00:04:15,000 --> 00:04:17,720
+And more like just a good guy trying his best
+
+139
+00:04:17,720 --> 00:04:19,240
+in a really complicated world.
+
+140
+00:04:19,240 --> 00:04:20,639
+Relatable, even with the cape.
+
+141
+00:04:20,639 --> 00:04:21,680
+Exactly.
+
+142
+00:04:21,680 --> 00:04:23,439
+And Rachel Brosnahan is Lois.
+
+143
+00:04:23,439 --> 00:04:24,560
+What's the take on her?
+
+144
+00:04:24,560 --> 00:04:25,840
+Oh, she apparently owns it.
+
+145
+00:04:25,840 --> 00:04:26,680
+Yeah.
+
+146
+00:04:26,680 --> 00:04:27,519
+Just sharp, snappy.
+
+147
+00:04:27,519 --> 00:04:28,360
+Good.
+
+148
+00:04:28,360 --> 00:04:29,560
+Lois needs that edge.
+
+149
+00:04:29,560 --> 00:04:30,400
+Totally.
+
+150
+00:04:30,400 --> 00:04:33,120
+And crucially, not just a damsel, you know,
+
+151
+00:04:33,120 --> 00:04:34,360
+or an exposition bot.
+
+152
+00:04:34,360 --> 00:04:35,199
+Thank goodness.
+
+153
+00:04:35,199 --> 00:04:36,040
+Right.
+
+154
+00:04:36,040 --> 00:04:40,360
+And the dynamic between corn, sweat and Brosnahan,
+
+155
+00:04:40,360 --> 00:04:44,400
+their chemistry, it apparently evolves really nicely.
+
+156
+00:04:44,400 --> 00:04:45,240
+Right.
+
+157
+00:04:45,240 --> 00:04:48,759
+From that kind of classic fun newsroom flirtation
+
+158
+00:04:48,800 --> 00:04:52,959
+to moments that really pack an emotional punch later on.
+
+159
+00:04:52,959 --> 00:04:53,800
+That's key.
+
+160
+00:04:53,800 --> 00:04:54,959
+You need that heart.
+
+161
+00:04:54,959 --> 00:04:55,759
+You really do.
+
+162
+00:04:55,759 --> 00:04:56,599
+Yeah.
+
+163
+00:04:56,599 --> 00:04:57,199
+Huh.
+
+164
+00:04:57,199 --> 00:04:58,680
+And we have to mention crypto.
+
+165
+00:04:58,680 --> 00:05:00,680
+Ah, yes.
+
+166
+00:05:00,680 --> 00:05:01,959
+The super dog.
+
+167
+00:05:01,959 --> 00:05:02,879
+Devices, I hear.
+
+168
+00:05:02,879 --> 00:05:03,639
+Very divisive.
+
+169
+00:05:03,639 --> 00:05:05,240
+Some fans absolutely loved him.
+
+170
+00:05:05,240 --> 00:05:06,240
+Thought it was brilliant.
+
+171
+00:05:06,240 --> 00:05:07,319
+Others, well.
+
+172
+00:05:07,319 --> 00:05:08,920
+Wanted a laser-eyed out of existence.
+
+173
+00:05:08,920 --> 00:05:09,599
+Pretty much, yeah.
+
+174
+00:05:09,599 --> 00:05:11,159
+Personally, I found the idea charming,
+
+175
+00:05:11,159 --> 00:05:12,319
+but it definitely split opinions.
+
+176
+00:05:12,319 --> 00:05:14,480
+Always does, adding the animal sidekick.
+
 177
-00:06:25,320 --> 00:06:26,160
-And if you're not supposed to make them
+00:05:14,480 --> 00:05:16,879
+So thinking about this cast, these iconic roles,
 
 178
-00:06:26,160 --> 00:06:27,840
-bend them with radical,
+00:05:16,879 --> 00:05:19,800
+what really stands out to you about them and their chemistry?
 
 179
-00:06:27,840 --> 00:06:30,280
-watch if you like dark horse gems, something different.
+00:05:19,800 --> 00:05:21,319
+Well, it really seems like the casting is perfectly
 
 180
-00:06:30,280 --> 00:06:32,600
-Skip if niche isn't your thing right now.
+00:05:21,319 --> 00:05:23,959
+in service of that tonal shift we were talking about.
 
 181
-00:06:32,600 --> 00:06:33,879
-That's a good rundown.
+00:05:23,959 --> 00:05:27,079
+Corn, sweat, bringing that genuine warmth back.
 
 182
-00:06:33,879 --> 00:06:35,720
-And it leaves you with a thought, doesn't it?
+00:05:27,079 --> 00:05:28,279
+That's absolutely crucial.
 
 183
-00:06:35,720 --> 00:06:38,600
-How we even define worth watching seems to be shifting
+00:05:28,279 --> 00:05:30,279
+It lets the audience connect with Superman
 
 184
-00:06:38,600 --> 00:06:39,439
-all the time.
+00:05:30,279 --> 00:05:31,639
+on a more human level.
 
 185
-00:06:39,519 --> 00:06:41,680
-The big star is at the rave reviews.
+00:05:31,639 --> 00:05:32,680
+Yeah, it grounds him.
 
 186
-00:06:41,680 --> 00:06:44,959
-Or is it just a really unique idea that crabs you think about it?
+00:05:32,680 --> 00:05:33,279
+Right.
 
 187
-00:06:44,959 --> 00:06:46,800
-How much does your own situation like,
+00:05:33,279 --> 00:05:35,480
+Which you need for a character that powerful.
 
 188
-00:06:46,800 --> 00:06:48,199
-are you looking for pure escape
+00:05:35,480 --> 00:05:39,079
+And Brosnahan's lowest, it's not just being smart or snappy.
 
 189
-00:06:48,199 --> 00:06:49,480
-or something to really chew on
+00:05:39,079 --> 00:05:41,040
+It's about making her an equal.
 
 190
-00:06:49,480 --> 00:06:51,399
-or maybe do something everyone's talking about
+00:05:41,040 --> 00:05:42,240
+A force in her own right.
 
 191
-00:06:51,399 --> 00:06:53,800
-shape what you actually decide to watch next.
+00:05:42,240 --> 00:05:43,240
+Exactly.
 
 192
-00:06:53,800 --> 00:06:55,240
-What will you deep dive into?
+00:05:43,240 --> 00:05:45,399
+Which elevates their whole relationship,
+
+193
+00:05:45,400 --> 00:05:47,280
+that chemistry, that evolution you mentioned
+
+194
+00:05:47,280 --> 00:05:49,720
+from flutation to something deeper.
+
+195
+00:05:49,720 --> 00:05:51,440
+That's the emotional core.
+
+196
+00:05:51,440 --> 00:05:53,080
+Right, if you don't care about them.
+
+197
+00:05:53,080 --> 00:05:55,120
+Then the world-saving stuff just doesn't land
+
+198
+00:05:55,120 --> 00:05:56,160
+with the same impact.
+
+199
+00:05:56,160 --> 00:05:58,120
+Their dynamic is the anchor.
+
+200
+00:05:58,120 --> 00:06:01,400
+It really feels like a masterclass in how casting
+
+201
+00:06:01,400 --> 00:06:03,640
+can shape the whole essence of a character
+
+202
+00:06:03,640 --> 00:06:05,280
+for a new generation.
+
+203
+00:06:05,280 --> 00:06:06,600
+A masterclass, yeah.
+
+204
+00:06:06,600 --> 00:06:08,840
+And guiding this fresh take, that brings us
+
+205
+00:06:08,840 --> 00:06:11,160
+squarely to James Gunn's direction.
+
+206
+00:06:11,160 --> 00:06:13,400
+Because you hear James Gunn, you might think.
+
+207
+00:06:13,400 --> 00:06:15,960
+He's a peacemaker, the suicide squad.
+
+208
+00:06:15,960 --> 00:06:20,240
+That kind of wonderfully weird, maybe r-rated energy.
+
+209
+00:06:20,240 --> 00:06:23,840
+Exactly, eccentric, sometimes raunchy.
+
+210
+00:06:23,840 --> 00:06:26,560
+But here, apparently, he really reigns it in.
+
+211
+00:06:26,560 --> 00:06:28,000
+Shows remarkable restraint.
+
+212
+00:06:28,000 --> 00:06:29,160
+So less of that.
+
+213
+00:06:29,160 --> 00:06:33,440
+Way less, no gratuitous raunch, no deep nihilism.
+
+214
+00:06:33,440 --> 00:06:36,160
+Instead, the film's described as earnest.
+
+215
+00:06:36,160 --> 00:06:36,920
+Since here.
+
+216
+00:06:36,920 --> 00:06:37,840
+Hopeful, even.
+
+217
+00:06:37,840 --> 00:06:40,680
+Yeah, infused with this palpable sense of hope,
+
+218
+00:06:40,680 --> 00:06:42,240
+it's quite a departure for him in a way.
+
+219
+00:06:42,240 --> 00:06:43,080
+Interesting.
+
+220
+00:06:43,079 --> 00:06:45,159
+Where does he find his signature then?
+
+221
+00:06:45,159 --> 00:06:47,800
+Well, you can definitely feel the echoes of Richard Donner's
+
+222
+00:06:47,800 --> 00:06:48,800
+original Superman.
+
+223
+00:06:48,800 --> 00:06:51,719
+Ah, the 78 movie, The Touchstone.
+
+224
+00:06:51,719 --> 00:06:52,399
+Absolutely.
+
+225
+00:06:52,399 --> 00:06:56,079
+Those big, sweeping, wide shots, subtle music cues,
+
+226
+00:06:56,079 --> 00:06:59,639
+apparently even some riffs nodding to John Williams' score.
+
+227
+00:06:59,639 --> 00:07:00,919
+Wow, OK.
+
+228
+00:07:00,919 --> 00:07:02,799
+So leaning into the legacy.
+
+229
+00:07:02,799 --> 00:07:03,560
+Definitely.
+
+230
+00:07:03,560 --> 00:07:07,439
+Even the title card is apparently a direct nod to the 78 classic.
+
+231
+00:07:07,439 --> 00:07:09,199
+But it's not just a retro throwback.
+
+232
+00:07:09,199 --> 00:07:12,719
+He's walking this tightrope between that
+
+233
+00:07:12,720 --> 00:07:15,120
+reverence for the classic stuff.
+
+234
+00:07:15,120 --> 00:07:15,920
+Retro reverence.
+
+235
+00:07:15,920 --> 00:07:19,760
+And making sure it actually resonates today with a modern audience.
+
+236
+00:07:19,760 --> 00:07:20,880
+That's the trick, isn't it?
+
+237
+00:07:20,880 --> 00:07:23,320
+Balancing nostalgia with a fresh perspective.
+
+238
+00:07:23,320 --> 00:07:23,960
+Totally.
+
+239
+00:07:23,960 --> 00:07:25,320
+And from what we're hearing, he mostly
+
+240
+00:07:25,320 --> 00:07:27,880
+sticks the landing, which is huge for a character
+
+241
+00:07:27,880 --> 00:07:29,000
+that's beloved this old.
+
+242
+00:07:29,000 --> 00:07:31,080
+Yeah, that balancing act is just, it's
+
+243
+00:07:31,080 --> 00:07:33,920
+so critical for a franchise trying to hit reset.
+
+244
+00:07:33,920 --> 00:07:38,880
+The fact that gun could weave in that Donner DNA, as you said,
+
+245
+00:07:38,880 --> 00:07:41,640
+without making it feel like a museum piece,
+
+246
+00:07:41,639 --> 00:07:44,919
+that's a lot about his understanding of Superman's appeal.
+
+247
+00:07:44,919 --> 00:07:46,399
+Yeah, it shows he gets it.
+
+248
+00:07:46,399 --> 00:07:49,519
+He's honoring the legacy for the long-time fans,
+
+249
+00:07:49,519 --> 00:07:51,599
+the ones who remember that classic hero.
+
+250
+00:07:51,599 --> 00:07:52,919
+With the Christopher Reeve feeling.
+
+251
+00:07:52,919 --> 00:07:53,759
+Exactly.
+
+252
+00:07:53,759 --> 00:07:57,240
+But he's also making him accessible, relevant
+
+253
+00:07:57,240 --> 00:08:01,800
+for a new generation who maybe doesn't have that same connection.
+
+254
+00:08:01,800 --> 00:08:02,319
+It's smart.
+
+255
+00:08:02,319 --> 00:08:04,360
+It's a calculated risk, really.
+
+256
+00:08:04,360 --> 00:08:07,759
+Leaning into nostalgia while trying to forge something new,
+
+257
+00:08:07,759 --> 00:08:09,120
+the fact that it seems to have worked
+
+258
+00:08:09,120 --> 00:08:11,439
+suggests a pretty clear strategic vision.
+
+259
+00:08:11,439 --> 00:08:13,240
+Yeah, like they actually have a plan this time.
+
+260
+00:08:13,240 --> 00:08:17,439
+It means maybe the DCU can finally learn from its past wins
+
+261
+00:08:17,439 --> 00:08:19,439
+without being totally shackled by them.
+
+262
+00:08:19,439 --> 00:08:20,519
+Let's hope so.
+
+263
+00:08:20,519 --> 00:08:22,839
+OK, beyond the creative choices, the numbers always
+
+264
+00:08:22,839 --> 00:08:24,000
+tell the story, right?
+
+265
+00:08:24,000 --> 00:08:24,800
+The box office.
+
+266
+00:08:24,800 --> 00:08:26,160
+Always the bottom line, isn't it?
+
+267
+00:08:26,160 --> 00:08:26,879
+How did it do?
+
+268
+00:08:26,879 --> 00:08:27,399
+Pretty well.
+
+269
+00:08:27,399 --> 00:08:31,120
+Pulled in a global opening weekend of $217 million.
+
+270
+00:08:31,120 --> 00:08:32,000
+Solid start.
+
+271
+00:08:32,000 --> 00:08:35,919
+Yeah, $122 million, that was domestic, North America.
+
+272
+00:08:35,919 --> 00:08:38,200
+$95 million, international.
+
+273
+00:08:38,200 --> 00:08:39,960
+And in the US, it really took off
+
+274
+00:08:39,960 --> 00:08:42,400
+biggest solo superman debut ever.
+
+275
+00:08:42,400 --> 00:08:42,920
+Wow.
+
+276
+00:08:42,920 --> 00:08:45,120
+OK, bigger than Man of Steel's opening.
+
+277
+00:08:45,120 --> 00:08:48,520
+Yep, domestically at least, now internationally.
+
+278
+00:08:48,520 --> 00:08:50,120
+The picture's a bit more nuanced.
+
+279
+00:08:50,120 --> 00:08:51,560
+Oh, how so?
+
+280
+00:08:51,560 --> 00:08:55,600
+Well, like in India, it did well-raked in about 25.5 crore,
+
+281
+00:08:55,600 --> 00:09:00,680
+which is strong, but it got out muscled by a drastic world.
+
+282
+00:09:00,680 --> 00:09:01,759
+Rebirth, apparently.
+
+283
+00:09:01,759 --> 00:09:05,000
+Huh, dinosaurs still rule the earth, it seems.
+
+284
+00:09:05,000 --> 00:09:06,520
+Seems like it in some places.
+
+285
+00:09:06,520 --> 00:09:08,040
+It suggests maybe some countries
+
+286
+00:09:08,039 --> 00:09:09,360
+didn't connect quite as strongly.
+
+287
+00:09:09,360 --> 00:09:11,319
+Any theories why?
+
+288
+00:09:11,319 --> 00:09:14,839
+The thinking is, maybe the film's inherent Americana.
+
+289
+00:09:14,839 --> 00:09:18,759
+Smallville, Clark's journey in that very US context.
+
+290
+00:09:18,759 --> 00:09:20,639
+Maybe it doesn't travel quite as universally.
+
+291
+00:09:20,639 --> 00:09:21,639
+That's possible.
+
+292
+00:09:21,639 --> 00:09:25,319
+Superman's roots are very tied to that specific American ideal
+
+293
+00:09:25,319 --> 00:09:26,120
+historically.
+
+294
+00:09:26,120 --> 00:09:26,599
+Right.
+
+295
+00:09:26,599 --> 00:09:28,799
+But even with those regional differences,
+
+296
+00:09:28,799 --> 00:09:32,639
+the overall vibe, reception-wise, seems largely positive.
+
+297
+00:09:32,639 --> 00:09:34,240
+What are the scores looking like?
+
+298
+00:09:34,240 --> 00:09:37,159
+Rotten Tomatoes landed at a solid 82%.
+
+299
+00:09:37,159 --> 00:09:38,600
+Cinema score gave it an A-.
+
+300
+00:09:38,600 --> 00:09:39,439
+May minus is good.
+
+301
+00:09:39,439 --> 00:09:41,079
+Means audiences walking out were happy.
+
+302
+00:09:41,079 --> 00:09:41,839
+Yeah, definitely.
+
+303
+00:09:41,839 --> 00:09:44,439
+And online buzz, like on Reddit, mostly love.
+
+304
+00:09:44,439 --> 00:09:47,079
+You still get a few, why did they nerflex debates, of course.
+
+305
+00:09:47,079 --> 00:09:47,879
+Always something.
+
+306
+00:09:47,879 --> 00:09:48,959
+Always something.
+
+307
+00:09:48,959 --> 00:09:51,639
+But generally positive.
+
+308
+00:09:51,639 --> 00:09:56,240
+Critics, like real views, call it a popcorn film with heart.
+
+309
+00:09:56,240 --> 00:09:59,000
+Nice, hits that sweet spot.
+
+310
+00:09:59,000 --> 00:10:01,240
+And yes, some critics felt it leaned maybe a bit too much
+
+311
+00:10:01,240 --> 00:10:04,159
+into nostalgia or too much setup for the future.
+
+312
+00:10:04,159 --> 00:10:05,600
+Which is fair, maybe.
+
+313
+00:10:05,639 --> 00:10:08,279
+It's a fair point, but you kind of expect that, right?
+
+314
+00:10:08,279 --> 00:10:10,840
+For a franchise rebirth, you have to plan some seeds.
+
+315
+00:10:10,840 --> 00:10:12,879
+Absolutely, you've got to lay that groundwork.
+
+316
+00:10:12,879 --> 00:10:14,159
+Can't just be a standalone.
+
+317
+00:10:14,159 --> 00:10:15,680
+Exactly, you have to set the stage.
+
+318
+00:10:15,680 --> 00:10:18,159
+And visually, speaking of setting the stage,
+
+319
+00:10:18,159 --> 00:10:20,720
+this film is apparently just gorgeous.
+
+320
+00:10:20,720 --> 00:10:22,480
+Oh yeah, what's the look?
+
+321
+00:10:22,480 --> 00:10:25,040
+Kansas has apparently never looked so cinematic.
+
+322
+00:10:25,040 --> 00:10:27,240
+Just beautiful, sprawling.
+
+323
+00:10:27,240 --> 00:10:31,200
+And Metropolis glows with this kind of early 2000s
+
+324
+00:10:31,200 --> 00:10:32,560
+meets modernist vibe.
+
+325
+00:10:32,560 --> 00:10:34,000
+Hmm, interesting blend.
+
+326
+00:10:34,000 --> 00:10:37,360
+Yeah, and the score hurt it absolutely slaps.
+
+327
+00:10:37,360 --> 00:10:38,639
+Okay, good music is key.
+
+328
+00:10:38,639 --> 00:10:41,159
+You'll be humming the theme for days, trust me.
+
+329
+00:10:41,159 --> 00:10:42,000
+Or so they say.
+
+330
+00:10:42,000 --> 00:10:42,840
+Nice.
+
+331
+00:10:42,840 --> 00:10:44,720
+And for the die-hard DC fans, the Easter eggs
+
+332
+00:10:44,720 --> 00:10:45,799
+are apparently everywhere.
+
+333
+00:10:45,799 --> 00:10:47,240
+Oh, give us some examples.
+
+334
+00:10:47,240 --> 00:10:49,519
+Okay, subtle Star Labs nods.
+
+335
+00:10:49,519 --> 00:10:50,840
+A mention of Karazor L.
+
+336
+00:10:50,840 --> 00:10:51,879
+Super girl T's.
+
+337
+00:10:51,879 --> 00:10:54,240
+Exactly, and apparently there's a fortress upgrade,
+
+338
+00:10:54,240 --> 00:10:57,000
+blueprint that's just chef's kiss.
+
+339
+00:10:57,000 --> 00:10:58,879
+Nice little details for the fans.
+
+340
+00:10:58,879 --> 00:11:00,320
+Loads of them.
+
+341
+00:11:00,320 --> 00:11:03,120
+So, okay, pulling back to the bigger picture.
+
+342
+00:11:03,120 --> 00:11:06,120
+Where does all this leave the wider DCU?
+
+343
+00:11:06,120 --> 00:11:07,799
+The billion dollar question.
+
+344
+00:11:07,799 --> 00:11:08,639
+Right.
+
+345
+00:11:08,639 --> 00:11:11,279
+This Superman is really being described
+
+346
+00:11:11,279 --> 00:11:15,080
+as laying the first, like, true foundational brick
+
+347
+00:11:15,080 --> 00:11:19,600
+in this new, hopefully coherent DC cinematic universe.
+
+348
+00:11:19,600 --> 00:11:21,120
+The first step on a long road.
+
+349
+00:11:21,120 --> 00:11:22,240
+A very long road.
+
+350
+00:11:22,240 --> 00:11:25,039
+We know Supergirl, woman of tomorrow is next up.
+
+351
+00:11:25,039 --> 00:11:25,879
+Yeah.
+
+352
+00:11:25,879 --> 00:11:27,799
+And a fresh Batman is definitely coming down the line.
+
+353
+00:11:27,799 --> 00:11:28,680
+Building out the world.
+
+354
+00:11:28,680 --> 00:11:29,519
+Yeah.
+
+355
+00:11:29,519 --> 00:11:33,080
+And the real significance here isn't just about one successful movie.
+
+356
+00:11:33,120 --> 00:11:36,720
+It's about establishing a clear plan, a unified plan.
+
+357
+00:11:36,720 --> 00:11:39,120
+Moving away from the disconnected chaos,
+
+358
+00:11:39,120 --> 00:11:40,720
+the tonal whiplash we talked about.
+
+359
+00:11:40,720 --> 00:11:42,520
+Right, which plagued them for so long.
+
+360
+00:11:42,520 --> 00:11:43,600
+It really did.
+
+361
+00:11:43,600 --> 00:11:47,400
+This suggests that maybe DC is finally getting its act together.
+
+362
+00:11:47,400 --> 00:11:50,080
+And that's probably the most critical takeaway here, isn't it?
+
+363
+00:11:50,080 --> 00:11:50,920
+I think so.
+
+364
+00:11:50,920 --> 00:11:53,080
+Because, look, one film can absolutely set a tone,
+
+365
+00:11:53,080 --> 00:11:54,560
+get people excited again.
+
+366
+00:11:54,560 --> 00:11:56,040
+Superman seems to have done that.
+
+367
+00:11:56,040 --> 00:11:57,200
+Yeah, seems like it.
+
+368
+00:11:57,200 --> 00:12:01,120
+But the real test, the true test of this new dawn
+
+369
+00:12:01,120 --> 00:12:03,679
+for the DCU, it's going to be consistency.
+
+370
+00:12:03,679 --> 00:12:04,840
+Can they keep it up?
+
+371
+00:12:04,840 --> 00:12:05,440
+Exactly.
+
+372
+00:12:05,440 --> 00:12:08,799
+Can they maintain this quality, this narrative coherence,
+
+373
+00:12:08,799 --> 00:12:13,879
+this tonal balance across multiple films, multiple series?
+
+374
+00:12:13,879 --> 00:12:14,799
+It's a huge challenge.
+
+375
+00:12:14,799 --> 00:12:16,600
+It's an immense undertaking.
+
+376
+00:12:16,600 --> 00:12:19,600
+Especially when you look at how other big cinematic universes
+
+377
+00:12:19,600 --> 00:12:21,000
+have stumbled, you know?
+
+378
+00:12:21,000 --> 00:12:24,080
+Superman has given them a strong blueprint, it seems.
+
+379
+00:12:24,080 --> 00:12:26,519
+But the real question is execution.
+
+380
+00:12:26,519 --> 00:12:30,399
+Can they build on this reliably over the next, what, five, 10
+
+381
+00:12:30,399 --> 00:12:31,399
+years?
+
+382
+00:12:31,399 --> 00:12:32,399
+Just the long game.
+
+383
+00:12:32,399 --> 00:12:33,399
+That's the long game.
+
+384
+00:12:33,399 --> 00:12:35,000
+Building something that feels genuinely interconnected
+
+385
+00:12:35,000 --> 00:12:38,319
+and stays compelling, that will be the ultimate decider on whether
+
+386
+00:12:38,319 --> 00:12:42,959
+this was just a hopeful first step or a real lasting reset.
+
+387
+00:12:42,959 --> 00:12:43,959
+Well said.
+
+388
+00:12:43,959 --> 00:12:48,279
+So, after diving deep into all of this, is Superman 2025
+
+389
+00:12:48,279 --> 00:12:51,159
+the definitive, like, ultimate Superman movie?
+
+390
+00:12:51,159 --> 00:12:52,159
+Probably not ultimate.
+
+391
+00:12:52,159 --> 00:12:53,159
+That's a high bar.
+
+392
+00:12:53,159 --> 00:12:54,159
+It is a high bar.
+
+393
+00:12:54,159 --> 00:12:55,159
+Maybe not the ultimate one.
+
+394
+00:12:55,159 --> 00:12:56,159
+No.
+
+395
+00:12:56,159 --> 00:12:57,720
+But is it the Superman we kind of desperately needed right now?
+
+396
+00:12:57,720 --> 00:12:58,919
+Based on everything we've discussed.
+
+397
+00:12:58,920 --> 00:13:01,360
+Paul signs point to yes, I think, a resounding yes.
+
+398
+00:13:01,360 --> 00:13:02,360
+It feels like it.
+
+399
+00:13:02,360 --> 00:13:06,320
+It's a film that brings back the heart, the humor, that pure sense
+
+400
+00:13:06,320 --> 00:13:09,840
+of heroism that maybe felt a bit lost for a while.
+
+401
+00:13:09,840 --> 00:13:10,840
+Recapturing the essence.
+
+402
+00:13:10,840 --> 00:13:11,840
+Yeah.
+
+403
+00:13:11,840 --> 00:13:14,240
+It doesn't, like, totally reinvent the wheel.
+
+404
+00:13:14,240 --> 00:13:15,240
+No.
+
+405
+00:13:15,240 --> 00:13:16,240
+Sounds more like course correction.
+
+406
+00:13:16,240 --> 00:13:17,240
+Exactly.
+
+407
+00:13:17,240 --> 00:13:18,760
+It realigns the compass.
+
+408
+00:13:18,760 --> 00:13:20,800
+And maybe for the whole DC universe.
+
+409
+00:13:20,800 --> 00:13:22,520
+A much needed realignment.
+
+410
+00:13:22,520 --> 00:13:23,520
+For sure.
+
+411
+00:13:23,520 --> 00:13:26,680
+So, that's our take, pulling together all the insights you shared
+
+412
+00:13:26,680 --> 00:13:27,680
+with us.
+
+413
+00:13:27,680 --> 00:13:28,680
+But what about you listening in?
+
+414
+00:13:28,680 --> 00:13:29,680
+Yeah.
+
+415
+00:13:29,680 --> 00:13:30,680
+What's your verdict?
+
+416
+00:13:30,680 --> 00:13:33,120
+Was this Superman everything you hoped for?
+
+417
+00:13:33,120 --> 00:13:38,440
+Or maybe did it feel a bit too safe, too nostalgic maybe?
+
+418
+00:13:38,440 --> 00:13:40,680
+Not bold enough for today's superhero landscape.
+
+419
+00:13:40,680 --> 00:13:41,680
+It's a fair question.
+
+420
+00:13:41,680 --> 00:13:44,520
+It's definitely a fascinating moment for DC.
+
+421
+00:13:44,520 --> 00:13:48,400
+We really invite you to mull over what this new era might truly mean for the future of
+
+422
+00:13:48,400 --> 00:13:50,040
+capes and crusaders.
+
+423
+00:13:50,040 --> 00:13:51,040
+Lots to think about.
+
+424
+00:13:51,040 --> 00:13:52,040
+Definitely.
+
+425
+00:13:52,040 --> 00:13:53,520
+Until next time, stay super.
 
