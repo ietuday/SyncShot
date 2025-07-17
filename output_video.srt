@@ -1,1700 +1,1664 @@
 1
-00:00:00,000 --> 00:00:02,399
-Welcome curious minds to another deep dive.
+00:00:00,000 --> 00:00:01,199
+Welcome to The Deep Dive.
 
 2
-00:00:02,399 --> 00:00:03,399
-Great to be here.
+00:00:01,199 --> 00:00:04,160
+Today, we're setting our sites on Argo CD.
 
 3
-00:00:03,399 --> 00:00:06,879
-Today we're soaring high right into one of the most
+00:00:04,160 --> 00:00:06,520
+We're going to peel back the layers on its role
 
 4
-00:00:06,879 --> 00:00:09,080
-talked about films of the summer.
+00:00:06,520 --> 00:00:09,880
+in modern DevOps and GitOps.
 
 5
-00:00:09,080 --> 00:00:12,720
-James Gunn's Superman, the 2025 one obviously.
+00:00:09,880 --> 00:00:13,480
+Our mission, like always, is to sift through a whole stack
 
 6
-00:00:12,720 --> 00:00:14,560
-Yeah, a lot of anticipation for this one.
+00:00:13,480 --> 00:00:16,480
+of sources, articles, research notes, expert takes,
 
 7
-00:00:14,560 --> 00:00:15,280
-Definitely.
+00:00:16,480 --> 00:00:19,480
+and basically pull out the absolute must-know stuff.
 
 8
-00:00:15,280 --> 00:00:17,080
-You've asked us to unpack the key insights
+00:00:19,480 --> 00:00:21,559
+Give you a shortcut to being genuinely
 
 9
-00:00:17,080 --> 00:00:18,240
-from everything you shared.
+00:00:21,559 --> 00:00:24,519
+clued in on this really powerful tool.
 
 10
-00:00:18,240 --> 00:00:19,519
-So our mission today is basically
+00:00:24,519 --> 00:00:26,440
+We'll cover what Argo CD actually is.
 
 11
-00:00:19,519 --> 00:00:22,199
-to distill what makes this movie tick.
+00:00:26,440 --> 00:00:29,039
+It's core features, why it's such a big deal for developers,
 
 12
-00:00:22,199 --> 00:00:24,719
-What it means for Superman as a character.
+00:00:29,039 --> 00:00:31,919
+how it scales up for those really complex setups,
 
 13
-00:00:24,719 --> 00:00:26,679
-And yeah, the huge implications
+00:00:31,919 --> 00:00:33,600
+and even touch on some real-world uses.
 
 14
-00:00:26,679 --> 00:00:29,760
-for the whole DC cinematic universe going forward.
+00:00:33,600 --> 00:00:34,200
+Exactly.
 
 15
-00:00:29,760 --> 00:00:32,359
-Which let's face it needed some implications.
+00:00:34,200 --> 00:00:37,759
+And we're aiming to go beyond just the surface level here.
 
 16
-00:00:32,359 --> 00:00:34,079
-Good ones, hopefully.
+00:00:37,759 --> 00:00:39,200
+We'll take you from the basics right
 
 17
-00:00:34,079 --> 00:00:34,920
-Right.
+00:00:39,200 --> 00:00:41,519
+through to the more advanced capabilities.
 
 18
-00:00:34,920 --> 00:00:36,600
-I mean, the DC universe has felt kind of stuck, hasn't it?
+00:00:41,519 --> 00:00:44,000
+The goal is making sure you don't just get the what,
 
 19
-00:00:36,600 --> 00:00:38,719
-Like a perpetual reboot cycle.
+00:00:44,000 --> 00:00:45,480
+but really understand the why.
 
 20
-00:00:38,719 --> 00:00:40,439
-Yeah, less a cohesive world.
+00:00:45,480 --> 00:00:48,200
+Why this tool represents, well, a pretty fundamental shift
 
 21
-00:00:40,439 --> 00:00:43,280
-More a multi-versing crisis maybe.
+00:00:48,200 --> 00:00:49,519
+in managing cloud native apps.
 
 22
-00:00:43,280 --> 00:00:44,120
-Exactly.
+00:00:49,519 --> 00:00:51,399
+It's about grasping why it matters.
 
 23
-00:00:44,120 --> 00:00:47,079
-From Justice League, then the Snyder cut.
+00:00:51,399 --> 00:00:54,359
+OK, let's dive in and let's unpack this Argo CD thing.
 
 24
-00:00:47,079 --> 00:00:47,920
-Black Adam.
+00:00:54,359 --> 00:00:57,719
+So fundamentally, it's described as a declarative GitOps
 
 25
-00:00:47,920 --> 00:00:48,760
-Oh, don't forget the flash.
+00:00:57,719 --> 00:01:00,960
+continuous delivery tool, specifically for Kubernetes.
 
 26
-00:00:48,760 --> 00:00:49,840
-That was certainly a ride.
+00:01:00,960 --> 00:01:02,000
+Right, that's the label.
 
 27
-00:00:49,840 --> 00:00:51,880
-The bewildering ride is one way to put it.
+00:01:02,000 --> 00:01:03,439
+Yeah, it's a bit of a mouthful.
 
 28
-00:00:51,880 --> 00:00:54,040
-Just a lot of tonal whiplash.
+00:01:03,439 --> 00:01:05,760
+So declarative.
 
 29
-00:00:54,040 --> 00:00:54,799
-For sure.
+00:01:05,760 --> 00:01:07,159
+What does that mean in practice?
 
 30
-00:00:54,799 --> 00:00:56,120
-But now, okay, new blood.
+00:01:07,159 --> 00:01:09,719
+It means you tell it the end state you want.
 
 31
-00:00:56,120 --> 00:00:58,200
-We've got David Cornsweat and the Red Boots.
+00:01:09,719 --> 00:01:11,439
+You describe and get, like, this
 
 32
-00:00:58,200 --> 00:00:59,679
-It's Clark Kent.
+00:01:11,439 --> 00:01:14,319
+is how my application and infrastructure should look,
 
 33
-00:00:59,679 --> 00:01:02,359
-Rachel Brosnanhan is lowest lane.
+00:01:14,319 --> 00:01:17,439
+instead of writing a script with step-by-step instructions
 
 34
-00:01:02,359 --> 00:01:03,640
-That's exciting casting.
+00:01:17,439 --> 00:01:18,280
+on how to get there.
 
 35
-00:01:03,640 --> 00:01:04,480
-Very.
+00:01:18,280 --> 00:01:18,799
+Got it.
 
 36
-00:01:04,480 --> 00:01:06,159
-She's got that sharp energy you want for lowest.
+00:01:18,799 --> 00:01:22,079
+Define the goal, not the journey, and the GitOps part.
 
 37
-00:01:06,159 --> 00:01:06,760
-Totally.
-
-38
-00:01:06,760 --> 00:01:09,640
-And James Gunn, the Guardians of the Galaxy Gay,
-
-39
-00:01:09,640 --> 00:01:11,400
-he's taking the reins.
-
-40
-00:01:11,400 --> 00:01:13,159
-So there's a real buzz.
-
-41
-00:01:13,159 --> 00:01:16,439
-A different kind of buzz than maybe we're used to for DC.
-
-42
-00:01:16,439 --> 00:01:17,079
-Right.
-
-43
-00:01:17,079 --> 00:01:19,840
-So the big question we're digging into is,
-
-44
-00:01:19,840 --> 00:01:24,600
-did James Gunn actually save the DC universe with this?
-
-45
-00:01:24,600 --> 00:01:27,000
-Or is it just another fresh coat of paint
-
-46
-00:01:27,079 --> 00:01:29,079
-on maybe a shaky foundation?
-
-47
-00:01:29,079 --> 00:01:30,079
-That's the core of it.
-
-48
-00:01:30,079 --> 00:01:30,920
-Yeah.
-
-49
-00:01:30,920 --> 00:01:32,319
-Okay, let's jump into the story itself.
-
-50
-00:01:32,319 --> 00:01:33,200
-No spoilers.
-
-51
-00:01:33,200 --> 00:01:34,040
-We promise.
-
-52
-00:01:34,040 --> 00:01:35,319
-Like, keep it spoiler free.
-
-53
-00:01:35,319 --> 00:01:36,359
-It kicks off in smallville.
-
-54
-00:01:36,359 --> 00:01:39,159
-We get a younger Superman still kind of figuring things out.
-
-55
-00:01:39,159 --> 00:01:41,560
-Grappling with his identity, his place.
-
-56
-00:01:41,560 --> 00:01:43,400
-Yeah, and morality too.
-
-57
-00:01:43,400 --> 00:01:44,240
-Yeah.
-
-58
-00:01:44,240 --> 00:01:47,480
-In this world that feels, well, pretty cynical.
-
-59
-00:01:47,480 --> 00:01:48,319
-I'm very online.
-
-60
-00:01:48,319 --> 00:01:50,480
-I think mine aspect is an interesting modern touch.
-
-61
-00:01:50,480 --> 00:01:51,319
-It is.
-
-62
-00:01:51,319 --> 00:01:55,159
-And Lex Luthor, he's there sort of simmering in the background.
-
-63
-00:01:55,159 --> 00:01:56,480
-You feel his presence.
-
-64
-00:01:56,480 --> 00:01:58,719
-He's always lurking the essential counterpoint.
-
-65
-00:01:58,719 --> 00:02:00,920
-Definitely, but what's kind of remarkable,
-
-66
-00:02:00,920 --> 00:02:03,120
-even with global stakes involved.
-
-67
-00:02:03,120 --> 00:02:04,719
-Would you expect with Superman?
-
-68
-00:02:04,719 --> 00:02:05,719
-Right.
-
-69
-00:02:05,719 --> 00:02:06,560
-You do.
-
-70
-00:02:06,560 --> 00:02:07,560
-Yeah.
-
-71
-00:02:07,560 --> 00:02:10,800
-But the film's soul feels smaller, more intimate.
-
-72
-00:02:10,800 --> 00:02:11,800
-Focused.
-
-73
-00:02:11,800 --> 00:02:12,800
-Focused.
-
-74
-00:02:12,800 --> 00:02:13,800
-Yeah.
-
-75
-00:02:13,800 --> 00:02:14,800
-It's really about the man behind the myth,
-
-76
-00:02:14,800 --> 00:02:15,800
-the hope behind the heat vision, you could say.
-
-77
-00:02:15,800 --> 00:02:16,800
-I like that.
-
-78
-00:02:16,800 --> 00:02:18,319
-Getting back to the core of Clark Kent.
-
-79
-00:02:18,319 --> 00:02:19,319
-Exactly.
-
-80
-00:02:19,319 --> 00:02:20,319
-And the tone.
-
-81
-00:02:20,319 --> 00:02:22,319
-This is where it gets really interesting, I think.
-
-82
-00:02:22,319 --> 00:02:26,040
-How does it feel compared to, say, recent entries?
-
-83
-00:02:26,039 --> 00:02:28,120
-Well, it's definitely brighter than Snyder's vision.
-
-84
-00:02:28,120 --> 00:02:29,120
-No question there.
-
-85
-00:02:29,120 --> 00:02:29,919
-OK.
-
-86
-00:02:29,919 --> 00:02:30,599
-That's a shift.
-
-87
-00:02:30,599 --> 00:02:31,400
-A big one.
-
-88
-00:02:31,400 --> 00:02:35,120
-And arguably smarter than Man of Steel in some ways.
-
-89
-00:02:35,120 --> 00:02:36,000
-Interesting.
-
-90
-00:02:36,000 --> 00:02:36,639
-How so?
-
-91
-00:02:36,639 --> 00:02:38,599
-Just in the character work, maybe.
-
-92
-00:02:38,599 --> 00:02:41,879
-And surprisingly, more grounded than you might expect
-
-93
-00:02:41,879 --> 00:02:42,879
-from James Gunn.
-
-94
-00:02:42,879 --> 00:02:43,239
-Right.
-
-95
-00:02:43,239 --> 00:02:47,519
-Given his track record with Guardians or the Suicide Squad,
-
-96
-00:02:47,519 --> 00:02:48,359
-Lesany.
-
-97
-00:02:48,359 --> 00:02:49,840
-Lesany, more earnest.
-
-98
-00:02:49,840 --> 00:02:50,359
-Yeah.
-
-99
-00:02:50,359 --> 00:02:53,239
-So what do you think this whole tonal shift really
-
-100
-00:02:53,240 --> 00:02:56,600
-means for how we see Superman now?
-
-101
-00:02:56,600 --> 00:02:59,320
-And maybe even for the whole superhero genre?
-
-102
-00:02:59,320 --> 00:03:02,280
-Well, it feels like a very deliberate recalibration
-
-103
-00:03:02,280 --> 00:03:04,240
-for Superman himself, bringing back
-
-104
-00:03:04,240 --> 00:03:08,320
-that inherent hopefulness, that sincerity.
-
-105
-00:03:08,320 --> 00:03:08,840
-Yeah.
-
-106
-00:03:08,840 --> 00:03:12,120
-It's a clear pivot from the darker, more angsty versions
-
-107
-00:03:12,120 --> 00:03:13,080
-we've had for a while.
-
-108
-00:03:13,080 --> 00:03:13,800
-It really is.
-
-109
-00:03:13,800 --> 00:03:16,719
-It feels like DC saying, OK, this is the kind of hero
-
-110
-00:03:16,719 --> 00:03:18,320
-we want at the center, you know?
-
-111
-00:03:18,320 --> 00:03:18,520
-Right.
-
-112
-00:03:18,520 --> 00:03:19,719
-Setting a new baseline.
-
-113
-00:03:19,719 --> 00:03:20,680
-Exactly.
-
-114
-00:03:20,680 --> 00:03:23,319
-And in a movie world where, let's be honest,
-
-115
-00:03:23,319 --> 00:03:27,040
-cynicism and deconstruction are almost the default.
-
-116
-00:03:27,040 --> 00:03:33,159
-And earnestly hopeful, Superman feels, well, almost radical.
-
-117
-00:03:33,159 --> 00:03:33,840
-It's refreshing.
-
-118
-00:03:33,840 --> 00:03:35,240
-Yeah, it does feel different right now.
-
-119
-00:03:35,240 --> 00:03:37,600
-It reminds you of that aspirational core,
-
-120
-00:03:37,600 --> 00:03:39,439
-why these characters clicked in the first place.
-
-121
-00:03:39,439 --> 00:03:41,840
-And that's a pretty powerful foundation
-
-122
-00:03:41,840 --> 00:03:43,520
-if you're trying to rebuild something.
-
-123
-00:03:43,520 --> 00:03:47,280
-And that foundation really extends to the casting, doesn't it?
-
-124
-00:03:47,280 --> 00:03:49,840
-David Carrantwett as Superman.
-
-125
-00:03:49,840 --> 00:03:51,680
-Wow, he certainly looks the part.
-
-126
-00:03:51,680 --> 00:03:53,200
-The resemblance is uncanny.
-
-127
-00:03:53,200 --> 00:03:54,360
-It really is.
-
-128
-00:03:54,360 --> 00:03:57,080
-He walks like Superman, talks like him.
-
-129
-00:03:57,080 --> 00:03:57,599
-Yeah.
-
-130
-00:03:57,599 --> 00:04:00,080
-He can even do that little thoughtful brood,
-
-131
-00:04:00,080 --> 00:04:01,280
-like a nod to Reeve.
-
-132
-00:04:01,280 --> 00:04:02,719
-A touch of the classic.
-
-133
-00:04:02,719 --> 00:04:05,719
-But the key thing, I think, the really significant shift
-
-134
-00:04:05,719 --> 00:04:08,439
-is that he smiles genuinely.
-
-135
-00:04:08,439 --> 00:04:09,159
-The warmth.
-
-136
-00:04:09,159 --> 00:04:10,480
-That boy's got warmth is back.
-
-137
-00:04:10,480 --> 00:04:15,000
-It makes him feel less like this distant alien god.
-
-138
-00:04:15,000 --> 00:04:17,720
-And more like just a good guy trying his best
-
-139
-00:04:17,720 --> 00:04:19,240
-in a really complicated world.
-
-140
-00:04:19,240 --> 00:04:20,639
-Relatable, even with the cape.
-
-141
-00:04:20,639 --> 00:04:21,680
-Exactly.
-
-142
-00:04:21,680 --> 00:04:23,439
-And Rachel Brosnahan is Lois.
-
-143
-00:04:23,439 --> 00:04:24,560
-What's the take on her?
-
-144
-00:04:24,560 --> 00:04:25,840
-Oh, she apparently owns it.
-
-145
-00:04:25,840 --> 00:04:26,680
-Yeah.
-
-146
-00:04:26,680 --> 00:04:27,519
-Just sharp, snappy.
-
-147
-00:04:27,519 --> 00:04:28,360
-Good.
-
-148
-00:04:28,360 --> 00:04:29,560
-Lois needs that edge.
-
-149
-00:04:29,560 --> 00:04:30,400
-Totally.
-
-150
-00:04:30,400 --> 00:04:33,120
-And crucially, not just a damsel, you know,
-
-151
-00:04:33,120 --> 00:04:34,360
-or an exposition bot.
-
-152
-00:04:34,360 --> 00:04:35,199
-Thank goodness.
-
-153
-00:04:35,199 --> 00:04:36,040
-Right.
-
-154
-00:04:36,040 --> 00:04:40,360
-And the dynamic between corn, sweat and Brosnahan,
-
-155
-00:04:40,360 --> 00:04:44,400
-their chemistry, it apparently evolves really nicely.
-
-156
-00:04:44,400 --> 00:04:45,240
-Right.
-
-157
-00:04:45,240 --> 00:04:48,759
-From that kind of classic fun newsroom flirtation
-
-158
-00:04:48,800 --> 00:04:52,959
-to moments that really pack an emotional punch later on.
-
-159
-00:04:52,959 --> 00:04:53,800
+00:01:22,079 --> 00:01:22,879
 That's key.
 
-160
-00:04:53,800 --> 00:04:54,959
-You need that heart.
+38
+00:01:22,879 --> 00:01:25,879
+It means Git becomes your single source of truth,
 
-161
-00:04:54,959 --> 00:04:55,759
-You really do.
+39
+00:01:25,879 --> 00:01:28,879
+the absolute definitive place for everything
 
-162
-00:04:55,759 --> 00:04:56,599
-Yeah.
+40
+00:01:28,879 --> 00:01:30,000
+about your deployment.
 
-163
-00:04:56,599 --> 00:04:57,199
-Huh.
+41
+00:01:30,000 --> 00:01:32,000
+OK, so Git is king.
 
-164
-00:04:57,199 --> 00:04:58,680
-And we have to mention crypto.
+42
+00:01:32,000 --> 00:01:34,280
+But how does that actually change things day-to-day?
 
-165
-00:04:58,680 --> 00:05:00,680
-Ah, yes.
+43
+00:01:34,280 --> 00:01:35,759
+What makes that single source of truth
 
-166
-00:05:00,680 --> 00:05:01,959
-The super dog.
+44
+00:01:35,759 --> 00:01:39,280
+concept so transformative?
 
-167
-00:05:01,959 --> 00:05:02,879
-Devices, I hear.
+45
+00:01:39,280 --> 00:01:41,799
+Well, it's transformative because Argo CD doesn't just
 
-168
-00:05:02,879 --> 00:05:03,639
-Very divisive.
+46
+00:01:41,799 --> 00:01:43,679
+like glance at your Git repo occasionally.
 
-169
-00:05:03,639 --> 00:05:05,240
-Some fans absolutely loved him.
+47
+00:01:43,679 --> 00:01:45,000
+It actively monitors it.
 
-170
-00:05:05,240 --> 00:05:06,240
-Thought it was brilliant.
+48
+00:01:45,000 --> 00:01:48,640
+Think of it like a dedicated Kubernetes controller,
 
-171
-00:05:06,240 --> 00:05:07,319
-Others, well.
+49
+00:01:48,640 --> 00:01:51,280
+and it's constantly comparing that desired state
 
-172
-00:05:07,319 --> 00:05:08,920
-Wanted a laser-eyed out of existence.
+50
+00:01:51,280 --> 00:01:52,959
+you define and Git with what's actually
 
-173
-00:05:08,920 --> 00:05:09,599
-Pretty much, yeah.
+51
+00:01:52,960 --> 00:01:56,480
+running live in your cluster, non-stop reconciliation.
 
-174
-00:05:09,599 --> 00:05:11,159
-Personally, I found the idea charming,
+52
+00:01:56,480 --> 00:01:58,120
+So it catches discrepancies.
 
-175
-00:05:11,159 --> 00:05:12,319
-but it definitely split opinions.
-
-176
-00:05:12,319 --> 00:05:14,480
-Always does, adding the animal sidekick.
-
-177
-00:05:14,480 --> 00:05:16,879
-So thinking about this cast, these iconic roles,
-
-178
-00:05:16,879 --> 00:05:19,800
-what really stands out to you about them and their chemistry?
-
-179
-00:05:19,800 --> 00:05:21,319
-Well, it really seems like the casting is perfectly
-
-180
-00:05:21,319 --> 00:05:23,959
-in service of that tonal shift we were talking about.
-
-181
-00:05:23,959 --> 00:05:27,079
-Corn, sweat, bringing that genuine warmth back.
-
-182
-00:05:27,079 --> 00:05:28,279
-That's absolutely crucial.
-
-183
-00:05:28,279 --> 00:05:30,279
-It lets the audience connect with Superman
-
-184
-00:05:30,279 --> 00:05:31,639
-on a more human level.
-
-185
-00:05:31,639 --> 00:05:32,680
-Yeah, it grounds him.
-
-186
-00:05:32,680 --> 00:05:33,279
-Right.
-
-187
-00:05:33,279 --> 00:05:35,480
-Which you need for a character that powerful.
-
-188
-00:05:35,480 --> 00:05:39,079
-And Brosnahan's lowest, it's not just being smart or snappy.
-
-189
-00:05:39,079 --> 00:05:41,040
-It's about making her an equal.
-
-190
-00:05:41,040 --> 00:05:42,240
-A force in her own right.
-
-191
-00:05:42,240 --> 00:05:43,240
+53
+00:01:58,120 --> 00:01:58,760
 Exactly.
 
-192
-00:05:43,240 --> 00:05:45,399
-Which elevates their whole relationship,
+54
+00:01:58,760 --> 00:02:03,160
+It nails things like config drift, where your live system slowly
 
-193
-00:05:45,400 --> 00:05:47,280
-that chemistry, that evolution you mentioned
+55
+00:02:03,160 --> 00:02:06,160
+wanders away from what you thought it was configured as.
 
-194
-00:05:47,280 --> 00:05:49,720
-from flutation to something deeper.
+56
+00:02:06,160 --> 00:02:08,360
+That disappears, and it completely
 
-195
-00:05:49,720 --> 00:05:51,440
-That's the emotional core.
+57
+00:02:08,360 --> 00:02:10,920
+stops those rogue deployment.
 
-196
-00:05:51,440 --> 00:05:53,080
-Right, if you don't care about them.
+58
+00:02:10,920 --> 00:02:12,840
+Right, the ones that bypass the official process.
 
-197
-00:05:53,080 --> 00:05:55,120
-Then the world-saving stuff just doesn't land
+59
+00:02:12,840 --> 00:02:14,159
+Yeah, no more that.
 
-198
-00:05:55,120 --> 00:05:56,160
-with the same impact.
+60
+00:02:14,159 --> 00:02:16,600
+It's like having, I don't know, Quebec's all apply,
 
-199
-00:05:56,160 --> 00:05:58,120
-Their dynamic is the anchor.
+61
+00:02:16,600 --> 00:02:19,680
+but on steroids, fully automated, constantly
 
-200
-00:05:58,120 --> 00:06:01,400
-It really feels like a masterclass in how casting
+62
+00:02:19,680 --> 00:02:21,800
+enforcing that clean, consistent state
 
-201
-00:06:01,400 --> 00:06:03,640
-can shape the whole essence of a character
+63
+00:02:21,800 --> 00:02:24,120
+you defined every single time.
 
-202
-00:06:03,640 --> 00:06:05,280
-for a new generation.
+64
+00:02:24,120 --> 00:02:27,480
+That sounds really robust, that tight integration.
 
-203
-00:06:05,280 --> 00:06:06,600
-A masterclass, yeah.
+65
+00:02:27,480 --> 00:02:31,439
+So what are the building blocks, the core components that
 
-204
-00:06:06,600 --> 00:06:08,840
-And guiding this fresh take, that brings us
+66
+00:02:31,439 --> 00:02:34,800
+let Argo CD do all this enforcing and syncing?
 
-205
-00:06:08,840 --> 00:06:11,160
-squarely to James Gunn's direction.
+67
+00:02:34,800 --> 00:02:36,680
+Yeah, it's got a really well thought out architecture.
 
-206
-00:06:11,160 --> 00:06:13,400
-Because you hear James Gunn, you might think.
+68
+00:02:36,680 --> 00:02:38,760
+First up, there's the application CRD.
 
-207
-00:06:13,400 --> 00:06:15,960
-He's a peacemaker, the suicide squad.
+69
+00:02:38,760 --> 00:02:41,200
+CRD, custom resource definition.
 
-208
-00:06:15,960 --> 00:06:20,240
-That kind of wonderfully weird, maybe r-rated energy.
+70
+00:02:41,200 --> 00:02:41,879
+Exactly.
 
-209
-00:06:20,240 --> 00:06:23,840
-Exactly, eccentric, sometimes raunchy.
+71
+00:02:41,879 --> 00:02:43,360
+This isn't just some config file.
 
-210
-00:06:23,840 --> 00:06:26,560
-But here, apparently, he really reigns it in.
+72
+00:02:43,360 --> 00:02:46,159
+It actually extends Kubernetes itself.
 
-211
-00:06:26,560 --> 00:06:28,000
-Shows remarkable restraint.
+73
+00:02:46,159 --> 00:02:48,920
+It teaches Kubernetes this new concept and application
 
-212
-00:06:28,000 --> 00:06:29,160
-So less of that.
+74
+00:02:48,960 --> 00:02:50,960
+specifically in the get ups context.
 
-213
-00:06:29,160 --> 00:06:33,440
-Way less, no gratuitous raunch, no deep nihilism.
+75
+00:02:50,960 --> 00:02:54,200
+It defines what to sync from get and where it goes in your cluster.
 
-214
-00:06:33,440 --> 00:06:36,160
-Instead, the film's described as earnest.
+76
+00:02:54,200 --> 00:02:56,240
+OK, so it makes Kubernetes get ups aware.
 
-215
-00:06:36,160 --> 00:06:36,920
-Since here.
+77
+00:02:56,240 --> 00:02:57,080
+Pretty much.
 
-216
-00:06:36,920 --> 00:06:37,840
-Hopeful, even.
+78
+00:02:57,080 --> 00:02:58,560
+Then you've got repositories.
 
-217
-00:06:37,840 --> 00:06:40,680
-Yeah, infused with this palpable sense of hope,
+79
+00:02:58,560 --> 00:03:00,680
+Argo CD is super flexible here.
 
-218
-00:06:40,680 --> 00:06:42,240
-it's quite a departure for him in a way.
+80
+00:03:00,680 --> 00:03:03,640
+It works with standard get repos, obviously,
 
-219
-00:06:42,240 --> 00:06:43,080
-Interesting.
+81
+00:03:03,640 --> 00:03:07,800
+but also understands things like Helm charts, customized
 
-220
-00:06:43,079 --> 00:06:45,159
-Where does he find his signature then?
+82
+00:03:07,800 --> 00:03:08,320
+templates.
 
-221
-00:06:45,159 --> 00:06:47,800
-Well, you can definitely feel the echoes of Richard Donner's
+83
+00:03:08,320 --> 00:03:09,680
+You can use your existing tools.
 
-222
-00:06:47,800 --> 00:06:48,800
-original Superman.
+84
+00:03:09,680 --> 00:03:11,840
+Right, you don't have to throw everything out.
 
-223
-00:06:48,800 --> 00:06:51,719
-Ah, the 78 movie, The Touchstone.
+85
+00:03:11,840 --> 00:03:13,560
+Then there are sync policies.
 
-224
-00:06:51,719 --> 00:06:52,399
-Absolutely.
+86
+00:03:13,560 --> 00:03:14,280
+You get choices.
 
-225
-00:06:52,399 --> 00:06:56,079
-Those big, sweeping, wide shots, subtle music cues,
+87
+00:03:14,280 --> 00:03:17,120
+You can sync manually, set it to fully automatic,
 
-226
-00:06:56,079 --> 00:06:59,639
-apparently even some riffs nodding to John Williams' score.
+88
+00:03:17,120 --> 00:03:19,759
+or even use smart syncs with hooks
 
-227
-00:06:59,639 --> 00:07:00,919
-Wow, OK.
+89
+00:03:19,759 --> 00:03:21,960
+for custom actions before or after.
 
-228
-00:07:00,919 --> 00:07:02,799
-So leaning into the legacy.
+90
+00:03:21,960 --> 00:03:24,400
+Books, OK, for complex workflows.
 
-229
-00:07:02,799 --> 00:07:03,560
+91
+00:03:24,400 --> 00:03:25,000
+Yeah.
+
+92
+00:03:25,000 --> 00:03:27,000
+And really important for bigger places,
+
+93
+00:03:27,000 --> 00:03:30,439
+there's solid RBC, role-based access control.
+
+94
+00:03:30,439 --> 00:03:33,560
+It plays nicely with existing single sign-on systems, too.
+
+95
+00:03:33,560 --> 00:03:34,920
+Good for enterprise adoption.
+
+96
+00:03:34,920 --> 00:03:35,599
 Definitely.
 
+97
+00:03:35,599 --> 00:03:38,759
+And to manage all this, you get both options.
+
+98
+00:03:38,759 --> 00:03:41,040
+A really nice UI, a web dashboard,
+
+99
+00:03:41,040 --> 00:03:44,159
+and a powerful CLI for anyone who loves the panliner
+
+100
+00:03:44,159 --> 00:03:45,319
+needs to automate stuff.
+
+101
+00:03:45,319 --> 00:03:47,359
+It sounds like it really bundles a lot of best practices
+
+102
+00:03:47,359 --> 00:03:47,840
+right in.
+
+103
+00:03:47,840 --> 00:03:49,799
+Now, connecting back to that bigger picture,
+
+104
+00:03:49,799 --> 00:03:51,479
+get as the single source of truth.
+
+105
+00:03:51,479 --> 00:03:54,199
+What's the real impact for developers
+
+106
+00:03:54,199 --> 00:03:56,039
+on their day-to-day work?
+
+107
+00:03:56,039 --> 00:03:58,000
+Oh, it's huge for developer workflow,
+
+108
+00:03:58,000 --> 00:04:00,959
+because you shift from just like pushing code
+
+109
+00:04:00,959 --> 00:04:02,759
+to deploying intent.
+
+110
+00:04:02,759 --> 00:04:03,919
+Deploying intent?
+
+111
+00:04:03,919 --> 00:04:04,599
+Yeah.
+
+112
+00:04:04,599 --> 00:04:06,560
+Your whole application definition,
+
+113
+00:04:06,560 --> 00:04:10,319
+code, config, infrastructure, dependencies, everything
+
+114
+00:04:10,319 --> 00:04:11,840
+lives together and get.
+
+115
+00:04:11,840 --> 00:04:15,039
+And Argo CD enforces this model, which automatically
+
+116
+00:04:15,039 --> 00:04:16,879
+gives you amazing benefits.
+
+117
+00:04:16,879 --> 00:04:17,839
+Like what?
+
+118
+00:04:17,839 --> 00:04:21,039
+Well, every single change becomes an auditable event.
+
+119
+00:04:21,039 --> 00:04:23,360
+You get a built-in log, automatically.
+
+120
+00:04:23,360 --> 00:04:24,680
+Your infrastructure config gets
+
+121
+00:04:24,680 --> 00:04:26,800
+a version right alongside your application code.
+
+122
+00:04:26,800 --> 00:04:29,599
+And if something breaks, rollbacks become
+
+123
+00:04:29,599 --> 00:04:32,759
+like a standard, easy operation, not some five alarm
+
+124
+00:04:32,759 --> 00:04:33,560
+fire drill.
+
+125
+00:04:33,560 --> 00:04:34,920
+Right, just revert to get commit.
+
+126
+00:04:34,920 --> 00:04:35,519
+Exactly.
+
+127
+00:04:35,519 --> 00:04:37,319
+It just simplifies things and cuts down
+
+128
+00:04:37,319 --> 00:04:40,439
+so much on potential human error.
+
+129
+00:04:40,439 --> 00:04:42,039
+Takes a load off the developer's mind.
+
+130
+00:04:42,039 --> 00:04:43,279
+That makes a ton of sense.
+
+131
+00:04:43,280 --> 00:04:46,040
+So thinking about new people joining a team,
+
+132
+00:04:46,040 --> 00:04:48,840
+how does Argo CD change that onboarding experience?
+
+133
+00:04:48,840 --> 00:04:49,920
+Is it easier?
+
+134
+00:04:49,920 --> 00:04:51,440
+Oh, dramatically easier.
+
+135
+00:04:51,440 --> 00:04:54,520
+Forget spending days waiting through complex setup docs
+
+136
+00:04:54,520 --> 00:04:56,760
+or trying to run flaky manual deployment scripts.
+
+137
+00:04:56,760 --> 00:04:57,480
+Been there.
+
+138
+00:04:57,480 --> 00:04:58,480
+Right.
+
+139
+00:04:58,480 --> 00:05:00,080
+With Argo CD, a new developer can basically
+
+140
+00:05:00,080 --> 00:05:03,280
+get a fully working consistent environment spun up
+
+141
+00:05:03,280 --> 00:05:06,320
+with essentially one command, get clone.
+
+142
+00:05:06,320 --> 00:05:06,840
+What?
+
+143
+00:05:06,840 --> 00:05:09,240
+Yeah, because the entire environment definition
+
+144
+00:05:09,240 --> 00:05:11,920
+is right there in get standardized inversion control.
+
+145
+00:05:11,920 --> 00:05:13,240
+It's just clean.
+
+146
+00:05:13,400 --> 00:05:16,240
+Simple and totally repeatable consistency
+
+147
+00:05:16,240 --> 00:05:19,079
+across the whole team, all their dev environments.
+
+148
+00:05:19,079 --> 00:05:22,240
+It's kind of like, I don't know, Ikea for Kubernetes setup.
+
+149
+00:05:22,240 --> 00:05:23,480
+Ikea for Kubernetes.
+
+150
+00:05:23,480 --> 00:05:24,160
+I like that.
+
+151
+00:05:24,160 --> 00:05:25,560
+OK, so we've talked about getting stuff
+
+152
+00:05:25,560 --> 00:05:29,120
+into Kubernetes smoothly, version, all that good stuff.
+
+153
+00:05:29,120 --> 00:05:31,040
+But what about the deployment itself?
+
+154
+00:05:31,040 --> 00:05:32,360
+You know, pushing changes live.
+
+155
+00:05:32,360 --> 00:05:35,720
+Nobody wants to new production on a Friday, right?
+
+156
+00:05:35,720 --> 00:05:38,600
+How does Argo help us deploy more safely?
+
+157
+00:05:38,600 --> 00:05:40,160
+Right, that's absolutely critical.
+
+158
+00:05:40,160 --> 00:05:42,639
+And that's where another piece of the Argo puzzle,
+
+159
+00:05:42,639 --> 00:05:44,439
+Argo rollouts, comes into play.
+
+160
+00:05:44,439 --> 00:05:47,680
+It directly tackles that need for safe progressive delivery.
+
+161
+00:05:47,680 --> 00:05:48,479
+Argo rollouts.
+
+162
+00:05:48,479 --> 00:05:49,839
+OK, so the separate component.
+
+163
+00:05:49,839 --> 00:05:52,479
+Yeah, it's a Kubernetes controller specifically designed
+
+164
+00:05:52,479 --> 00:05:54,319
+for managing the application lifecycle
+
+165
+00:05:54,319 --> 00:05:55,639
+during a deployment.
+
+166
+00:05:55,639 --> 00:05:57,519
+It integrates really deeply with Kubernetes
+
+167
+00:05:57,519 --> 00:06:00,199
+itself to enable sophisticated rollout strategies.
+
+168
+00:06:00,199 --> 00:06:00,719
+A play.
+
+169
+00:06:00,719 --> 00:06:02,680
+Like, canary deployments for starters.
+
+170
+00:06:02,680 --> 00:06:05,159
+You roll out the new version to just a tiny fraction
+
+171
+00:06:05,159 --> 00:06:07,240
+of users first, watch carefully,
+
+172
+00:06:07,240 --> 00:06:08,719
+and then gradually increase exposure
+
+173
+00:06:08,719 --> 00:06:09,959
+if everything looks good.
+
+174
+00:06:09,959 --> 00:06:11,120
+OK, this low bleed approach.
+
+175
+00:06:11,120 --> 00:06:11,680
+Exactly.
+
+176
+00:06:11,680 --> 00:06:13,480
+Or blue green deployments.
+
+177
+00:06:13,480 --> 00:06:16,480
+You spin up a whole new version of your app alongside the old one
+
+178
+00:06:16,480 --> 00:06:18,680
+run tests, and then instantly switch
+
+179
+00:06:18,680 --> 00:06:20,439
+all the traffic over when you're confident.
+
+180
+00:06:20,439 --> 00:06:21,240
+Less risk there.
+
+181
+00:06:21,240 --> 00:06:22,319
+Much less risk.
+
+182
+00:06:22,319 --> 00:06:24,560
+It even supports more experimental rollouts
+
+183
+00:06:24,560 --> 00:06:26,800
+like for AB testing features.
+
+184
+00:06:26,800 --> 00:06:29,280
+And what's really cool is how much more powerful
+
+185
+00:06:29,280 --> 00:06:32,680
+becomes when you pair it with a service mesh, something
+
+186
+00:06:32,680 --> 00:06:35,319
+like Istio for the traffic shifting.
+
+187
+00:06:35,319 --> 00:06:36,079
+Precisely.
+
+188
+00:06:36,079 --> 00:06:38,240
+You get incredibly fine-grained control
+
+189
+00:06:38,240 --> 00:06:42,759
+over traffic splitting, routing, and crucially observability
+
+190
+00:06:42,759 --> 00:06:44,840
+during these critical rollout phases.
+
+191
+00:06:44,840 --> 00:06:46,280
+You can measure everything.
+
+192
+00:06:46,280 --> 00:06:49,920
+That level of control during deployment is huge.
+
+193
+00:06:49,920 --> 00:06:53,319
+Now, you mentioned Argo rollouts as part of a puzzle.
+
+194
+00:06:53,319 --> 00:06:57,040
+Is Argo CD itself part of a bigger family of tools?
+
+195
+00:06:57,040 --> 00:06:58,000
+Oh, very much so.
+
+196
+00:06:58,000 --> 00:07:00,600
+The Argo project isn't just CD and rollouts.
+
+197
+00:07:00,600 --> 00:07:03,800
+It's a whole ecosystem of family of tools, really.
+
+198
+00:07:03,800 --> 00:07:06,519
+All designed around bringing these get-ops principles
+
+199
+00:07:06,519 --> 00:07:08,639
+to different parts of your Kubernetes operations.
+
+200
+00:07:08,639 --> 00:07:10,159
+OK, what else is in the family?
+
+201
+00:07:10,159 --> 00:07:13,120
+Well, beyond Argo CD, you've got Argo events
+
+202
+00:07:13,120 --> 00:07:15,879
+that's all about building event-driven workflows,
+
+203
+00:07:15,879 --> 00:07:19,159
+reacting to things happening inside or outside the cluster.
+
+204
+00:07:19,159 --> 00:07:19,719
+Interesting.
+
+205
+00:07:19,719 --> 00:07:21,839
+Then there's Argo workflows that's
+
+206
+00:07:21,839 --> 00:07:24,259
+for orchestrating complex compute jobs,
+
+207
+00:07:24,259 --> 00:07:25,959
+often stuff that can be represented
+
+208
+00:07:25,959 --> 00:07:29,519
+as a directed a cyclic graph, a DAG,
+
+209
+00:07:29,519 --> 00:07:34,359
+think data processing, ML pipelines, even complex CI steps.
+
+210
+00:07:34,359 --> 00:07:35,799
+OK, for heavier orchestration.
+
+211
+00:07:35,799 --> 00:07:36,399
+Right.
+
+212
+00:07:36,400 --> 00:07:39,040
+And speaking of CI, there's Argo pipelines,
+
+213
+00:07:39,040 --> 00:07:40,880
+which gives you a Kubernetes native way
+
+214
+00:07:40,880 --> 00:07:43,760
+to build your CI CD pipelines directly.
+
+215
+00:07:43,760 --> 00:07:46,920
+And one more that's super useful, Argo Image Updater.
+
+216
+00:07:46,920 --> 00:07:47,640
+What does that do?
+
+217
+00:07:47,640 --> 00:07:49,600
+It automates another tedious step.
+
+218
+00:07:49,600 --> 00:07:51,600
+It watches your container registries.
+
+219
+00:07:51,600 --> 00:07:53,360
+And when a new image version is published,
+
+220
+00:07:53,360 --> 00:07:56,040
+it can automatically update the image tag in your Git
+
+221
+00:07:56,040 --> 00:07:58,120
+manifest and commit the change.
+
+222
+00:07:58,120 --> 00:07:59,800
+So it keeps your Git state aligned
+
+223
+00:07:59,800 --> 00:08:01,320
+with the latest builds automatically.
+
+224
+00:08:01,320 --> 00:08:01,840
+Exactly.
+
+225
+00:08:01,840 --> 00:08:03,160
+It keeps your deployments evergreen
+
+226
+00:08:03,160 --> 00:08:04,640
+without manual intervention.
+
+227
+00:08:04,639 --> 00:08:06,399
+It's all about that automation.
+
+228
+00:08:06,399 --> 00:08:08,919
+This ecosystem sounds powerful.
+
+229
+00:08:08,919 --> 00:08:10,680
+Let's talk about scale.
+
 230
-00:07:03,560 --> 00:07:07,439
-Even the title card is apparently a direct nod to the 78 classic.
+00:08:10,680 --> 00:08:13,279
+Big organizations, maybe hundreds, even thousands
 
 231
-00:07:07,439 --> 00:07:09,199
-But it's not just a retro throwback.
+00:08:13,279 --> 00:08:16,479
+of applications, maybe multiple Kubernetes clusters spread
 
 232
-00:07:09,199 --> 00:07:12,719
-He's walking this tightrope between that
+00:08:16,479 --> 00:08:17,639
+all over.
 
 233
-00:07:12,720 --> 00:07:15,120
-reverence for the classic stuff.
+00:08:17,639 --> 00:08:20,839
+How does Argo CD handle that kind of complexity?
 
 234
-00:07:15,120 --> 00:07:15,920
-Retro reverence.
+00:08:20,839 --> 00:08:24,839
+How do you do GitOps at, well, hyper scale?
 
 235
-00:07:15,920 --> 00:07:19,760
-And making sure it actually resonates today with a modern audience.
+00:08:24,839 --> 00:08:26,879
+Yeah, that's a critical question.
 
 236
-00:07:19,760 --> 00:07:20,880
-That's the trick, isn't it?
+00:08:26,879 --> 00:08:29,719
+And the answer there is another Argo component,
 
 237
-00:07:20,880 --> 00:07:23,320
-Balancing nostalgia with a fresh perspective.
+00:08:29,719 --> 00:08:31,120
+application sets.
 
 238
-00:07:23,320 --> 00:07:23,960
-Totally.
+00:08:31,120 --> 00:08:32,039
+Application sets.
 
 239
-00:07:23,960 --> 00:07:25,320
-And from what we're hearing, he mostly
+00:08:32,039 --> 00:08:32,539
+OK.
 
 240
-00:07:25,320 --> 00:07:27,880
-sticks the landing, which is huge for a character
+00:08:32,539 --> 00:08:35,899
+Application sets as a templating engine
 
 241
-00:07:27,880 --> 00:07:29,000
-that's beloved this old.
+00:08:35,899 --> 00:08:37,620
+for Argo CD applications.
 
 242
-00:07:29,000 --> 00:07:31,080
-Yeah, that balancing act is just, it's
+00:08:37,620 --> 00:08:39,699
+They're specifically designed to tackle that problem
 
 243
-00:07:31,080 --> 00:07:33,920
-so critical for a franchise trying to hit reset.
+00:08:39,699 --> 00:08:42,539
+of managing deployments across tons of clusters
 
 244
-00:07:33,920 --> 00:07:38,880
-The fact that gun could weave in that Donner DNA, as you said,
+00:08:42,539 --> 00:08:44,099
+or namespaces or environments.
 
 245
-00:07:38,880 --> 00:07:41,640
-without making it feel like a museum piece,
+00:08:44,099 --> 00:08:46,099
+So instead of defining each app individually.
 
 246
-00:07:41,639 --> 00:07:44,919
-that's a lot about his understanding of Superman's appeal.
+00:08:46,099 --> 00:08:46,599
+Right.
 
 247
-00:07:44,919 --> 00:07:46,399
-Yeah, it shows he gets it.
+00:08:46,599 --> 00:08:48,500
+Instead of creating potentially hundreds
 
 248
-00:07:46,399 --> 00:07:49,519
-He's honoring the legacy for the long-time fans,
+00:08:48,500 --> 00:08:51,659
+or thousands of separate Argo CD application resources
 
 249
-00:07:49,519 --> 00:07:51,599
-the ones who remember that classic hero.
+00:08:51,659 --> 00:08:54,379
+manually, you define one application set template.
 
 250
-00:07:51,599 --> 00:07:52,919
-With the Christopher Reeve feeling.
+00:08:54,379 --> 00:08:55,620
+A template, like a blueprint?
 
 251
-00:07:52,919 --> 00:07:53,759
+00:08:55,620 --> 00:08:56,219
 Exactly.
 
 252
-00:07:53,759 --> 00:07:57,240
-But he's also making him accessible, relevant
+00:08:56,219 --> 00:08:56,740
+A blueprint.
 
 253
-00:07:57,240 --> 00:08:01,800
-for a new generation who maybe doesn't have that same connection.
+00:08:56,740 --> 00:08:58,059
+You define the structure once, maybe,
 
 254
-00:08:01,800 --> 00:08:02,319
-It's smart.
+00:08:58,059 --> 00:08:59,699
+with some parameters or variables.
 
 255
-00:08:02,319 --> 00:08:04,360
-It's a calculated risk, really.
+00:08:59,699 --> 00:09:01,740
+And then application sets act like a generator.
 
 256
-00:08:04,360 --> 00:08:07,759
-Leaning into nostalgia while trying to forge something new,
+00:09:01,779 --> 00:09:03,779
+It automatically stamps out and manages
 
 257
-00:08:07,759 --> 00:08:09,120
-the fact that it seems to have worked
+00:09:03,779 --> 00:09:05,460
+all the individual application resources
 
 258
-00:08:09,120 --> 00:08:11,439
-suggests a pretty clear strategic vision.
+00:09:05,460 --> 00:09:07,100
+across all your target environments.
 
 259
-00:08:11,439 --> 00:08:13,240
-Yeah, like they actually have a plan this time.
+00:09:07,100 --> 00:09:08,860
+Different clusters, different namespaces,
 
 260
-00:08:13,240 --> 00:08:17,439
-It means maybe the DCU can finally learn from its past wins
+00:09:08,860 --> 00:09:11,220
+plugging in the right parameters for each one.
 
 261
-00:08:17,439 --> 00:08:19,439
-without being totally shackled by them.
-
-262
-00:08:19,439 --> 00:08:20,519
-Let's hope so.
-
-263
-00:08:20,519 --> 00:08:22,839
-OK, beyond the creative choices, the numbers always
-
-264
-00:08:22,839 --> 00:08:24,000
-tell the story, right?
-
-265
-00:08:24,000 --> 00:08:24,800
-The box office.
-
-266
-00:08:24,800 --> 00:08:26,160
-Always the bottom line, isn't it?
-
-267
-00:08:26,160 --> 00:08:26,879
-How did it do?
-
-268
-00:08:26,879 --> 00:08:27,399
-Pretty well.
-
-269
-00:08:27,399 --> 00:08:31,120
-Pulled in a global opening weekend of $217 million.
-
-270
-00:08:31,120 --> 00:08:32,000
-Solid start.
-
-271
-00:08:32,000 --> 00:08:35,919
-Yeah, $122 million, that was domestic, North America.
-
-272
-00:08:35,919 --> 00:08:38,200
-$95 million, international.
-
-273
-00:08:38,200 --> 00:08:39,960
-And in the US, it really took off
-
-274
-00:08:39,960 --> 00:08:42,400
-biggest solo superman debut ever.
-
-275
-00:08:42,400 --> 00:08:42,920
+00:09:11,220 --> 00:09:11,539
 Wow.
 
+262
+00:09:11,539 --> 00:09:14,460
+So define once, deploy everywhere, basically.
+
+263
+00:09:14,460 --> 00:09:15,060
+Pretty much.
+
+264
+00:09:15,060 --> 00:09:18,180
+It scales deployments like, well, the source material
+
+265
+00:09:18,180 --> 00:09:21,419
+said, like, butter on hot parathas, which is a great image.
+
+266
+00:09:21,419 --> 00:09:24,139
+It standardizes everything across a massive fleet,
+
+267
+00:09:24,139 --> 00:09:26,379
+cuts down drastically on manual work,
+
+268
+00:09:26,379 --> 00:09:28,220
+and ensures consistency.
+
+269
+00:09:28,220 --> 00:09:30,019
+It's GitOps at hyper scale, truly.
+
+270
+00:09:30,019 --> 00:09:31,659
+That sounds incredibly efficient.
+
+271
+00:09:31,939 --> 00:09:34,819
+Let's switch gears slightly to a really practical use case.
+
+272
+00:09:34,819 --> 00:09:37,459
+I know a lot of teams wrestle with getting quick feedback
+
+273
+00:09:37,459 --> 00:09:38,459
+on new features.
+
+274
+00:09:38,459 --> 00:09:42,699
+How does Argo CD help with, say, temporary preview environments?
+
+275
+00:09:42,699 --> 00:09:45,139
+Oh, yes, a femoral environments.
+
 276
-00:08:42,920 --> 00:08:45,120
-OK, bigger than Man of Steel's opening.
+00:09:45,139 --> 00:09:47,459
+Argo CD is actually perfect for this.
 
 277
-00:08:45,120 --> 00:08:48,520
-Yep, domestically at least, now internationally.
+00:09:47,459 --> 00:09:50,219
+It makes spinning up these temporary isolated
 
 278
-00:08:48,520 --> 00:08:50,120
-The picture's a bit more nuanced.
+00:09:50,219 --> 00:09:52,659
+production-like environments really straightforward.
 
 279
-00:08:50,120 --> 00:08:51,560
-Oh, how so?
+00:09:52,659 --> 00:09:54,299
+And is that work triggered by?
 
 280
-00:08:51,560 --> 00:08:55,600
-Well, like in India, it did well-raked in about 25.5 crore,
+00:09:54,299 --> 00:09:57,259
+Often triggered directly by a pull request in Git.
 
 281
-00:08:55,600 --> 00:09:00,680
-which is strong, but it got out muscled by a drastic world.
+00:09:57,259 --> 00:09:59,860
+A developer pushes a feature branch, opens a PR,
 
 282
-00:09:00,680 --> 00:09:01,759
-Rebirth, apparently.
+00:09:59,860 --> 00:10:01,860
+and boom, Argo CD can automatically
 
 283
-00:09:01,759 --> 00:09:05,000
-Huh, dinosaurs still rule the earth, it seems.
+00:10:01,860 --> 00:10:04,980
+deploy that specific branch into a dedicated temporary
 
 284
-00:09:05,000 --> 00:09:06,520
-Seems like it in some places.
+00:10:04,980 --> 00:10:06,460
+namespace in Kubernetes.
 
 285
-00:09:06,520 --> 00:09:08,040
-It suggests maybe some countries
+00:10:06,460 --> 00:10:09,060
+So the dev gets a live environment for just their changes?
 
 286
-00:09:08,039 --> 00:09:09,360
-didn't connect quite as strongly.
+00:10:09,060 --> 00:10:09,779
+Exactly.
 
 287
-00:09:09,360 --> 00:09:11,319
-Any theories why?
+00:10:09,779 --> 00:10:13,379
+They can test their feature in a fully integrated realistic setting
 
 288
-00:09:11,319 --> 00:09:14,839
-The thinking is, maybe the film's inherent Americana.
+00:10:13,379 --> 00:10:15,259
+before merging the code.
 
 289
-00:09:14,839 --> 00:09:18,759
-Smallville, Clark's journey in that very US context.
+00:10:15,259 --> 00:10:18,300
+This is gold, especially in microservices setups.
 
 290
-00:09:18,759 --> 00:09:20,639
-Maybe it doesn't travel quite as universally.
+00:10:18,300 --> 00:10:19,060
+Oh, yeah, I can see that.
 
 291
-00:09:20,639 --> 00:09:21,639
-That's possible.
+00:10:19,060 --> 00:10:20,820
+Testing interactions between services.
 
 292
-00:09:21,639 --> 00:09:25,319
-Superman's roots are very tied to that specific American ideal
+00:10:20,820 --> 00:10:21,419
+Totally.
 
 293
-00:09:25,319 --> 00:09:26,120
-historically.
+00:10:21,419 --> 00:10:24,420
+If you've got dozens of services talking to each other,
 
 294
-00:09:26,120 --> 00:09:26,599
-Right.
+00:10:24,420 --> 00:10:27,500
+being able to validate your changes in an isolated sandbox
 
 295
-00:09:26,599 --> 00:09:28,799
-But even with those regional differences,
+00:10:27,539 --> 00:10:29,259
+before potentially breaking something
 
 296
-00:09:28,799 --> 00:09:32,639
-the overall vibe, reception-wise, seems largely positive.
+00:10:29,259 --> 00:10:32,259
+in the main development branch, that's incredibly valuable.
 
 297
-00:09:32,639 --> 00:09:34,240
-What are the scores looking like?
+00:10:32,259 --> 00:10:35,700
+It gives you that immediate, comprehensive feedback loop.
 
 298
-00:09:34,240 --> 00:09:37,159
-Rotten Tomatoes landed at a solid 82%.
+00:10:35,700 --> 00:10:39,980
+Plus, as one source noted, it looks dope in a demo.
 
 299
-00:09:37,159 --> 00:09:38,600
-Cinema score gave it an A-.
+00:10:39,980 --> 00:10:42,500
+Huh, always a bonus.
 
 300
-00:09:38,600 --> 00:09:39,439
-May minus is good.
+00:10:42,500 --> 00:10:44,139
+OK, that's a powerful feature.
 
 301
-00:09:39,439 --> 00:09:41,079
-Means audiences walking out were happy.
+00:10:44,139 --> 00:10:45,580
+Now, let's zoom out again and look
 
 302
-00:09:41,079 --> 00:09:41,839
-Yeah, definitely.
+00:10:45,580 --> 00:10:47,580
+at the wider tool landscape.
 
 303
-00:09:41,839 --> 00:09:44,439
-And online buzz, like on Reddit, mostly love.
+00:10:47,580 --> 00:10:50,980
+How does Argo CD stack up against other popular CICD
 
 304
-00:09:44,439 --> 00:09:47,079
-You still get a few, why did they nerflex debates, of course.
+00:10:50,980 --> 00:10:52,379
+or GitOps tools?
 
 305
-00:09:47,079 --> 00:09:47,879
-Always something.
+00:10:52,379 --> 00:10:56,100
+Things like, say, Seneca or Jenkins X or Tecton,
 
 306
-00:09:47,879 --> 00:09:48,959
-Always something.
+00:10:56,100 --> 00:10:58,019
+when would you pick Argo CD over those
 
 307
-00:09:48,959 --> 00:09:51,639
-But generally positive.
+00:10:58,019 --> 00:10:59,460
+or maybe choose one of them instead?
 
 308
-00:09:51,639 --> 00:09:56,240
-Critics, like real views, call it a popcorn film with heart.
+00:10:59,460 --> 00:11:00,340
+Yeah, good question.
 
 309
-00:09:56,240 --> 00:09:59,000
-Nice, hits that sweet spot.
+00:11:00,340 --> 00:11:02,740
+They all have their strengths, their sweet spots.
 
 310
-00:09:59,000 --> 00:10:01,240
-And yes, some critics felt it leaned maybe a bit too much
+00:11:02,740 --> 00:11:05,300
+The key differentiator for Argo CD, I'd say,
 
 311
-00:10:01,240 --> 00:10:04,159
-into nostalgia or too much setup for the future.
+00:11:05,300 --> 00:11:07,220
+is that it's fundamentally GitOps first.
 
 312
-00:10:04,159 --> 00:10:05,600
-Which is fair, maybe.
+00:11:07,220 --> 00:11:09,420
+It's built entirely around that declarative model
 
 313
-00:10:05,639 --> 00:10:08,279
-It's a fair point, but you kind of expect that, right?
+00:11:09,420 --> 00:11:11,379
+with Git as the absolute source of truth
 
 314
-00:10:08,279 --> 00:10:10,840
-For a franchise rebirth, you have to plan some seeds.
+00:11:11,379 --> 00:11:13,379
+and that continuous reconciliation loop.
 
 315
-00:10:10,840 --> 00:10:12,879
-Absolutely, you've got to lay that groundwork.
+00:11:13,379 --> 00:11:15,100
+OK, so pure GitOps focus.
 
 316
-00:10:12,879 --> 00:10:14,159
-Can't just be a standalone.
+00:11:15,100 --> 00:11:17,139
+How does that compare to, say, Jenkins X?
 
 317
-00:10:14,159 --> 00:10:15,680
-Exactly, you have to set the stage.
+00:11:17,139 --> 00:11:20,500
+Jenkins X also embraces GitOps, but it tends to be a bit more
 
 318
-00:10:15,680 --> 00:10:18,159
-And visually, speaking of setting the stage,
+00:11:20,500 --> 00:11:24,660
+maybe prescriptive about the entire CICD pipeline, bringing
 
 319
-00:10:18,159 --> 00:10:20,720
-this film is apparently just gorgeous.
+00:11:24,659 --> 00:11:27,620
+in tecton underneath and having opinions about the whole flow.
 
 320
-00:10:20,720 --> 00:10:22,480
-Oh yeah, what's the look?
+00:11:27,620 --> 00:11:30,939
+Argo CD is more focused purely on the continuous delivery
 
 321
-00:10:22,480 --> 00:10:25,040
-Kansas has apparently never looked so cinematic.
+00:11:30,939 --> 00:11:33,899
+part, the sinking from Git to Kubernetes.
 
 322
-00:10:25,040 --> 00:10:27,240
-Just beautiful, sprawling.
+00:11:33,899 --> 00:11:34,379
+Got it.
 
 323
-00:10:27,240 --> 00:10:31,200
-And Metropolis glows with this kind of early 2000s
+00:11:34,379 --> 00:11:35,259
+And Spinnaker.
 
 324
-00:10:31,200 --> 00:10:32,560
-meets modernist vibe.
+00:11:35,259 --> 00:11:37,699
+Spinnaker is, well, it's a powerhouse
 
 325
-00:10:32,560 --> 00:10:34,000
-Hmm, interesting blend.
+00:11:37,699 --> 00:11:39,899
+for deployment orchestration, especially
 
 326
-00:10:34,000 --> 00:10:37,360
-Yeah, and the score hurt it absolutely slaps.
+00:11:39,899 --> 00:11:42,939
+across different cloud providers, not just Kubernetes.
 
 327
-00:10:37,360 --> 00:10:38,639
-Okay, good music is key.
+00:11:42,939 --> 00:11:45,939
+If you have complex canary deployments spanning VMs
 
 328
-00:10:38,639 --> 00:10:41,159
-You'll be humming the theme for days, trust me.
+00:11:45,939 --> 00:11:47,899
+and Kubernetes in multiple clouds,
 
 329
-00:10:41,159 --> 00:10:42,000
-Or so they say.
+00:11:47,899 --> 00:11:49,620
+Spinnaker might still have an edge there
 
 330
-00:10:42,000 --> 00:10:42,840
-Nice.
+00:11:49,620 --> 00:11:51,980
+due to its broader integration capabilities.
 
 331
-00:10:42,840 --> 00:10:44,720
-And for the die-hard DC fans, the Easter eggs
+00:11:51,980 --> 00:11:54,100
+OK, multi-cloud specialist.
 
 332
-00:10:44,720 --> 00:10:45,799
-are apparently everywhere.
+00:11:54,980 --> 00:11:57,460
+Tecton is really about building the pipeline itself.
 
 333
-00:10:45,799 --> 00:10:47,240
-Oh, give us some examples.
+00:11:57,460 --> 00:11:59,740
+It provides the fundamental building blocks,
 
 334
-00:10:47,240 --> 00:10:49,519
-Okay, subtle Star Labs nods.
+00:11:59,740 --> 00:12:03,180
+tasks, pipelines, in a very Kubernetes native way.
 
 335
-00:10:49,519 --> 00:10:50,840
-A mention of Karazor L.
+00:12:03,180 --> 00:12:06,100
+It's fantastic if you want maximum control and customization
 
 336
-00:10:50,840 --> 00:10:51,879
-Super girl T's.
+00:12:06,100 --> 00:12:08,019
+over your CICD process.
 
 337
-00:10:51,879 --> 00:10:54,240
-Exactly, and apparently there's a fortress upgrade,
+00:12:08,019 --> 00:12:10,820
+You could even use tecton with Argo CD potentially.
 
 338
-00:10:54,240 --> 00:10:57,000
-blueprint that's just chef's kiss.
+00:12:10,820 --> 00:12:12,620
+Right, they're not necessarily mutually exclusive.
 
 339
-00:10:57,000 --> 00:10:58,879
-Nice little details for the fans.
+00:12:12,620 --> 00:12:14,540
+Not at all, but at the end of the day,
 
 340
-00:10:58,879 --> 00:11:00,320
-Loads of them.
+00:12:14,540 --> 00:12:18,180
+Argo CD often wins on its sort of simplicity
 
 341
-00:11:00,320 --> 00:11:03,120
-So, okay, pulling back to the bigger picture.
+00:12:18,180 --> 00:12:20,139
+for the core GitOps CD task.
 
 342
-00:11:03,120 --> 00:11:06,120
-Where does all this leave the wider DCU?
+00:12:20,139 --> 00:12:22,300
+It's deep Kubernetes native feel,
 
 343
-00:11:06,120 --> 00:11:07,799
-The billion dollar question.
+00:12:22,300 --> 00:12:25,100
+and it's unwavering principle that Git is the boss.
 
 344
-00:11:07,799 --> 00:11:08,639
-Right.
+00:12:25,100 --> 00:12:25,820
+Makes sense.
 
 345
-00:11:08,639 --> 00:11:11,279
-This Superman is really being described
+00:12:25,820 --> 00:12:28,580
+Stick to the core GitOps principle.
 
 346
-00:11:11,279 --> 00:11:15,080
-as laying the first, like, true foundational brick
+00:12:28,580 --> 00:12:31,620
+Now, it's always great to see how these tools work in the wild.
 
 347
-00:11:15,080 --> 00:11:19,600
-in this new, hopefully coherent DC cinematic universe.
+00:12:31,620 --> 00:12:33,260
+Can you share some specific examples
 
 348
-00:11:19,600 --> 00:11:21,120
-The first step on a long road.
+00:12:33,260 --> 00:12:34,220
+from the sources?
 
 349
-00:11:21,120 --> 00:11:22,240
-A very long road.
+00:12:34,220 --> 00:12:37,540
+Real-world situations where Argo CD is making a difference?
 
 350
-00:11:22,240 --> 00:11:25,039
-We know Supergirl, woman of tomorrow is next up.
+00:12:37,540 --> 00:12:38,060
+Absolutely.
 
 351
-00:11:25,039 --> 00:11:25,879
-Yeah.
+00:12:38,060 --> 00:12:39,140
+There are some cool examples.
 
 352
-00:11:25,879 --> 00:11:27,799
-And a fresh Batman is definitely coming down the line.
+00:12:39,140 --> 00:12:41,020
+One was Cubeflow GitOps.
 
 353
-00:11:27,799 --> 00:11:28,680
-Building out the world.
+00:12:41,020 --> 00:12:43,500
+Teams doing machine learning are using Argo CD
 
 354
-00:11:28,680 --> 00:11:29,519
-Yeah.
+00:12:43,500 --> 00:12:47,620
+to manage their entire Cubeflow setup pipelines, models,
 
 355
-00:11:29,519 --> 00:11:33,080
-And the real significance here isn't just about one successful movie.
+00:12:47,620 --> 00:12:51,220
+notebooks, the whole shebang declaratively from Git.
 
 356
-00:11:33,120 --> 00:11:36,720
-It's about establishing a clear plan, a unified plan.
+00:12:51,500 --> 00:12:53,220
+Bringing reproducibility to MLO.
 
 357
-00:11:36,720 --> 00:11:39,120
-Moving away from the disconnected chaos,
+00:12:53,220 --> 00:12:54,139
+Exactly.
 
 358
-00:11:39,120 --> 00:11:40,720
-the tonal whiplash we talked about.
+00:12:54,139 --> 00:12:54,980
+Yeah.
 
 359
-00:11:40,720 --> 00:11:42,520
-Right, which plagued them for so long.
+00:12:54,980 --> 00:12:57,899
+Huge for auditing and consistency and ML work clothes.
 
 360
-00:11:42,520 --> 00:11:43,600
-It really did.
+00:12:57,899 --> 00:13:00,379
+Another one mentioned was managing large couch-based
 
 361
-00:11:43,600 --> 00:11:47,400
-This suggests that maybe DC is finally getting its act together.
+00:13:00,379 --> 00:13:03,460
+Kubernetes clusters using GitOps via Argo CD,
 
 362
-00:11:47,400 --> 00:11:50,080
-And that's probably the most critical takeaway here, isn't it?
+00:13:03,460 --> 00:13:06,740
+ensuring that complex, stateful database setup stays perfectly
 
 363
-00:11:50,080 --> 00:11:50,920
-I think so.
+00:13:06,740 --> 00:13:08,259
+aligned with its Git definition.
 
 364
-00:11:50,920 --> 00:11:53,080
-Because, look, one film can absolutely set a tone,
+00:13:08,259 --> 00:13:10,340
+OK, managing stateful applications.
 
 365
-00:11:53,080 --> 00:11:54,560
-get people excited again.
+00:13:10,340 --> 00:13:12,740
+Right, and maybe one of the most powerful combinations
 
 366
-00:11:54,560 --> 00:11:56,040
-Superman seems to have done that.
+00:13:12,740 --> 00:13:15,460
+discussed was crossplane plus Argo CD.
 
 367
-00:11:56,040 --> 00:11:57,200
-Yeah, seems like it.
+00:13:15,460 --> 00:13:17,660
+Crossplane, that's for infrastructure provisioning.
 
 368
-00:11:57,200 --> 00:12:01,120
-But the real test, the true test of this new dawn
+00:13:17,660 --> 00:13:19,139
+Yeah, crossplane lets you define
 
 369
-00:12:01,120 --> 00:12:03,679
-for the DCU, it's going to be consistency.
+00:13:19,139 --> 00:13:22,259
+and manage external cloud resources like RDS databases,
 
 370
-00:12:03,679 --> 00:12:04,840
-Can they keep it up?
+00:13:22,259 --> 00:13:25,539
+SQSQs, cloud provider stuff using Kubernetes APIs.
 
 371
-00:12:04,840 --> 00:12:05,440
-Exactly.
+00:13:25,539 --> 00:13:27,340
+So you pair that with Argo Kedi.
 
 372
-00:12:05,440 --> 00:12:08,799
-Can they maintain this quality, this narrative coherence,
+00:13:27,340 --> 00:13:29,500
+And you manage your cloud infrastructure from Git.
 
 373
-00:12:08,799 --> 00:12:13,879
-this tonal balance across multiple films, multiple series?
+00:13:29,500 --> 00:13:30,340
+Bingo.
 
 374
-00:12:13,879 --> 00:12:14,799
-It's a huge challenge.
+00:13:30,340 --> 00:13:33,699
+You get infrastructure as code plus GitOps.
 
 375
-00:12:14,799 --> 00:12:16,600
-It's an immense undertaking.
+00:13:33,699 --> 00:13:36,699
+Your entire system from the underlying cloud resources
 
 376
-00:12:16,600 --> 00:12:19,600
-Especially when you look at how other big cinematic universes
+00:13:36,699 --> 00:13:39,740
+provisioned by crossplane right up to the applications
 
 377
-00:12:19,600 --> 00:12:21,000
-have stumbled, you know?
+00:13:39,740 --> 00:13:43,860
+deployed by Argo CD is all defined declaratively in Git
 
 378
-00:12:21,000 --> 00:12:24,080
-Superman has given them a strong blueprint, it seems.
+00:13:43,860 --> 00:13:45,899
+and continuously reconciled.
 
 379
-00:12:24,080 --> 00:12:26,519
-But the real question is execution.
+00:13:45,899 --> 00:13:48,899
+The whole lifecycle manage from one place.
 
 380
-00:12:26,519 --> 00:12:30,399
-Can they build on this reliably over the next, what, five, 10
+00:13:48,939 --> 00:13:52,139
+Wow, that's pretty comprehensive.
 
 381
-00:12:30,399 --> 00:12:31,399
-years?
+00:13:52,139 --> 00:13:53,579
+Managing everything from Git.
 
 382
-00:12:31,399 --> 00:12:32,399
-Just the long game.
+00:13:53,579 --> 00:13:55,259
+It's a really compelling vision.
 
 383
-00:12:32,399 --> 00:12:33,399
-That's the long game.
+00:13:55,259 --> 00:13:57,259
+Well, this has been a fantastic deep dive.
 
 384
-00:12:33,399 --> 00:12:35,000
-Building something that feels genuinely interconnected
+00:13:57,259 --> 00:13:59,500
+We've covered a lot of ground from the basics
 
 385
-00:12:35,000 --> 00:12:38,319
-and stays compelling, that will be the ultimate decider on whether
+00:13:59,500 --> 00:14:01,539
+of what Argo CD is through its core features,
 
 386
-00:12:38,319 --> 00:12:42,959
-this was just a hopeful first step or a real lasting reset.
+00:14:01,539 --> 00:14:04,659
+rollouts, the ecosystem, scaling with application sets,
 
 387
-00:12:42,959 --> 00:12:43,959
-Well said.
+00:14:04,659 --> 00:14:06,939
+practical uses like preview environments
 
 388
-00:12:43,959 --> 00:12:48,279
-So, after diving deep into all of this, is Superman 2025
+00:14:06,939 --> 00:14:08,819
+and how it fits into the broader landscape.
 
 389
-00:12:48,279 --> 00:12:51,159
-the definitive, like, ultimate Superman movie?
+00:14:08,819 --> 00:14:09,819
+It really seems like whether you're
 
 390
-00:12:51,159 --> 00:12:52,159
-Probably not ultimate.
+00:14:09,819 --> 00:14:12,539
+trying to standardize deployments across a huge company,
 
 391
-00:12:52,159 --> 00:12:53,159
-That's a high bar.
+00:14:12,539 --> 00:14:15,460
+scale up your GitOps practice, or maybe just automate those
 
 392
-00:12:53,159 --> 00:12:54,159
-It is a high bar.
+00:14:15,460 --> 00:14:17,300
+home chart updates you're still doing manually.
 
 393
-00:12:54,159 --> 00:12:55,159
-Maybe not the ultimate one.
+00:14:17,300 --> 00:14:21,500
+Argo CD offers a really solid and elegant approach.
 
 394
-00:12:55,159 --> 00:12:56,159
-No.
+00:14:21,500 --> 00:14:22,660
+It really does.
 
 395
-00:12:56,159 --> 00:12:57,720
-But is it the Superman we kind of desperately needed right now?
+00:14:22,660 --> 00:14:24,460
+And maybe the final thought to leave people with
 
 396
-00:12:57,720 --> 00:12:58,919
-Based on everything we've discussed.
+00:14:24,460 --> 00:14:27,700
+is how profoundly tools like Argo CD
 
 397
-00:12:58,920 --> 00:13:01,360
-Paul signs point to yes, I think, a resounding yes.
+00:14:27,700 --> 00:14:30,940
+shift our whole mindset about infrastructure.
 
 398
-00:13:01,360 --> 00:13:02,360
-It feels like it.
+00:14:30,940 --> 00:14:34,259
+Git stops being just the place where your code lives.
 
 399
-00:13:02,360 --> 00:13:06,320
-It's a film that brings back the heart, the humor, that pure sense
+00:14:34,259 --> 00:14:37,540
+It becomes the living, breathing, definitive blueprint
 
 400
-00:13:06,320 --> 00:13:09,840
-of heroism that maybe felt a bit lost for a while.
+00:14:37,540 --> 00:14:39,180
+for your entire system.
 
 401
-00:13:09,840 --> 00:13:10,840
-Recapturing the essence.
+00:14:39,180 --> 00:14:41,500
+Your applications, yes, but also your configurations,
 
 402
-00:13:10,840 --> 00:13:11,840
-Yeah.
+00:14:41,500 --> 00:14:43,780
+your deployment strategies, even your underlying cloud
 
 403
-00:13:11,840 --> 00:13:14,240
-It doesn't, like, totally reinvent the wheel.
+00:14:43,780 --> 00:14:45,340
+infrastructure potentially.
 
 404
-00:13:14,240 --> 00:13:15,240
-No.
+00:14:45,340 --> 00:14:47,139
+Every Git commit becomes effectively
 
 405
-00:13:15,240 --> 00:13:16,240
-Sounds more like course correction.
+00:14:47,139 --> 00:14:48,580
+an infrastructure change request.
 
 406
-00:13:16,240 --> 00:13:17,240
-Exactly.
+00:14:48,580 --> 00:14:50,700
+It makes your whole system inherently
 
 407
-00:13:17,240 --> 00:13:18,760
-It realigns the compass.
+00:14:50,700 --> 00:14:54,300
+auditable, versioned, reproducible, and way more resilient.
 
 408
-00:13:18,760 --> 00:13:20,800
-And maybe for the whole DC universe.
+00:14:54,300 --> 00:14:56,540
+It's a fundamental paradigm shift, really.
 
 409
-00:13:20,800 --> 00:13:22,520
-A much needed realignment.
+00:14:56,540 --> 00:14:58,460
+It empowers teams to handle complexity
 
 410
-00:13:22,520 --> 00:13:23,520
-For sure.
+00:14:58,460 --> 00:14:59,860
+with the level of clarity and control
 
 411
-00:13:23,520 --> 00:13:26,680
-So, that's our take, pulling together all the insights you shared
+00:14:59,860 --> 00:15:03,379
+that was, frankly, hard to imagine before.
 
 412
-00:13:26,680 --> 00:13:27,680
-with us.
+00:15:03,379 --> 00:15:06,580
+So maybe the takeaway is, give your Git repo a hug.
 
 413
-00:13:27,680 --> 00:13:28,680
-But what about you listening in?
+00:15:06,580 --> 00:15:07,460
+Ah, yeah, maybe.
 
 414
-00:13:28,680 --> 00:13:29,680
-Yeah.
+00:15:07,460 --> 00:15:09,860
+It deserves it for holding all that critical knowledge now.
 
 415
-00:13:29,680 --> 00:13:30,680
-What's your verdict?
+00:15:09,860 --> 00:15:11,780
+Definitely something to think about how this changes
 
 416
-00:13:30,680 --> 00:13:33,120
-Was this Superman everything you hoped for?
-
-417
-00:13:33,120 --> 00:13:38,440
-Or maybe did it feel a bit too safe, too nostalgic maybe?
-
-418
-00:13:38,440 --> 00:13:40,680
-Not bold enough for today's superhero landscape.
-
-419
-00:13:40,680 --> 00:13:41,680
-It's a fair question.
-
-420
-00:13:41,680 --> 00:13:44,520
-It's definitely a fascinating moment for DC.
-
-421
-00:13:44,520 --> 00:13:48,400
-We really invite you to mull over what this new era might truly mean for the future of
-
-422
-00:13:48,400 --> 00:13:50,040
-capes and crusaders.
-
-423
-00:13:50,040 --> 00:13:51,040
-Lots to think about.
-
-424
-00:13:51,040 --> 00:13:52,040
-Definitely.
-
-425
-00:13:52,040 --> 00:13:53,520
-Until next time, stay super.
+00:15:11,780 --> 00:15:14,259
+the very nature of managing systems.
 

@@ -1,9 +1,13 @@
 import os
-from moviepy import ImageClip, concatenate_videoclips, AudioFileClip, CompositeVideoClip
-from PIL import Image
+import subprocess
 import numpy as np
-from faster_whisper import WhisperModel
 from tqdm import tqdm
+from PIL import Image
+from moviepy import (
+    ImageClip, concatenate_videoclips,
+    AudioFileClip, CompositeVideoClip
+)
+from faster_whisper import WhisperModel
 
 def resize_image(image_path, target_size=(1920, 1080)):
     """Resize image to target size while maintaining aspect ratio and adding black padding."""
@@ -39,7 +43,7 @@ def format_time(seconds):
 def transcribe_audio_to_srt(audio_path, srt_output_path="subtitles.srt", model_size="base"):
     """Transcribe audio to .srt subtitles using Faster-Whisper."""
     print("🚀 Loading Faster-Whisper model...")
-    model = WhisperModel(model_size, compute_type="auto")  # auto = GPU if available
+    model = WhisperModel(model_size, compute_type="auto")  # Use GPU if available
 
     print(f"🎙️ Transcribing: {audio_path}")
     segments, info = model.transcribe(audio_path, beam_size=5)
@@ -55,10 +59,25 @@ def transcribe_audio_to_srt(audio_path, srt_output_path="subtitles.srt", model_s
 
     print(f"✅ SRT generated: {srt_output_path}")
 
-def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
-    """Generate a video from an audio file and a set of images."""
+def burn_subtitles(video_path, srt_path, output_path_with_subs):
+    """Burn .srt subtitles into video using ffmpeg."""
     try:
-        # Transcribe audio to subtitles before generating video
+        print("🔥 Burning subtitles into the video...")
+        cmd = [
+            "ffmpeg", "-y", "-i", video_path,
+            "-vf", f"subtitles={srt_path}",
+            "-c:a", "copy",
+            output_path_with_subs
+        ]
+        subprocess.run(cmd, check=True)
+        print(f"🎉 Subtitle-burned video saved to: {output_path_with_subs}")
+    except Exception as e:
+        print(f"💥 Failed to burn subtitles: {str(e)}")
+
+def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
+    """Generate a video from an audio file and a set of images, then burn subtitles into it."""
+    try:
+        # Transcribe audio to subtitles
         srt_output = os.path.splitext(output_path)[0] + ".srt"
         transcribe_audio_to_srt(audio_path, srt_output)
 
@@ -73,7 +92,7 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
         image_duration = audio_duration / num_images
 
         clips = []
-        for img_path in image_paths:
+        for img_path in tqdm(image_paths, desc="🖼️ Processing Images"):
             if not os.path.exists(img_path):
                 print(f"⚠️ Image not found: {img_path}")
                 continue
@@ -92,7 +111,8 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             video = CompositeVideoClip([video])
         video.audio = audio
 
-        # Write output video
+        # Write video without subtitles
+        print("📽️ Writing raw video without subtitles...")
         video.write_videofile(
             output_path,
             codec='libx264',
@@ -102,7 +122,9 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             ffmpeg_params=['-crf', '23']
         )
 
-        print(f"🎥 Video generated: {output_path}")
+        # Burn subtitles
+        output_with_subs = os.path.splitext(output_path)[0] + "_subtitled.mp4"
+        burn_subtitles(output_path, srt_output, output_with_subs)
 
     except Exception as e:
         print(f"💥 Error: {str(e)}")
@@ -125,12 +147,16 @@ if __name__ == "__main__":
     ]
     if not audio_files:
         raise FileNotFoundError("No .wav files found in the audio folder.")
-    audio_file = audio_files[0]  # Pick the first .wav file found
+    audio_file = audio_files[0]  # Use the first .wav file found
+
     image_folder = "images"
     image_files = [
         os.path.join(image_folder, fname)
         for fname in sorted(os.listdir(image_folder))
-        if fname.lower().endswith((".jpg", ".png"))
+        if fname.lower().endswith((".jpg", ".jpeg", ".png"))
     ]
+    if not image_files:
+        raise FileNotFoundError("No image files found in the image folder.")
+
     output_video = "output_video.mp4"
     generate_video(audio_file, image_files, output_video)
