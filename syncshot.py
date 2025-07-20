@@ -1,4 +1,5 @@
 import os
+import random
 import subprocess
 import numpy as np
 from tqdm import tqdm
@@ -152,11 +153,14 @@ if __name__ == "__main__":
     image_folder = "images"
     image_files = [
         os.path.join(image_folder, fname)
-        for fname in sorted(os.listdir(image_folder))
+        for fname in os.listdir(image_folder)
         if fname.lower().endswith((".jpg", ".jpeg", ".png"))
     ]
+
     if not image_files:
         raise FileNotFoundError("No image files found in the image folder.")
+
+    random.shuffle(image_files)  # Randomize order
 
     output_video = "output_video.mp4"
     generate_video(audio_file, image_files, output_video)

@@ -1,1664 +1,1532 @@
 1
-00:00:00,000 --> 00:00:01,199
-Welcome to The Deep Dive.
+00:00:00,000 --> 00:00:02,980
+You wake up, you scroll, you see the fires,
 
 2
-00:00:01,199 --> 00:00:04,160
-Today, we're setting our sites on Argo CD.
+00:00:02,980 --> 00:00:07,400
+the floods, the fighting, the fakeness,
 
 3
-00:00:04,160 --> 00:00:06,520
-We're going to peel back the layers on its role
+00:00:07,400 --> 00:00:10,880
+posts about war right next to memes, marketing.
 
 4
-00:00:06,520 --> 00:00:09,880
-in modern DevOps and GitOps.
+00:00:10,880 --> 00:00:12,919
+Yeah, that juxtaposition is jarring.
 
 5
-00:00:09,880 --> 00:00:13,480
-Our mission, like always, is to sift through a whole stack
+00:00:12,919 --> 00:00:13,759
+It really is.
 
 6
-00:00:13,480 --> 00:00:16,480
-of sources, articles, research notes, expert takes,
+00:00:13,759 --> 00:00:17,039
+And somewhere in your gut, you know, deep down you feel it.
 
 7
-00:00:16,480 --> 00:00:19,480
-and basically pull out the absolute must-know stuff.
+00:00:17,039 --> 00:00:18,359
+Something's off.
 
 8
-00:00:19,480 --> 00:00:21,559
-Give you a shortcut to being genuinely
+00:00:18,359 --> 00:00:20,080
+The world feels chaotic.
 
 9
-00:00:21,559 --> 00:00:24,519
-clued in on this really powerful tool.
+00:00:20,080 --> 00:00:21,679
+To very common feeling right now.
 
 10
-00:00:24,519 --> 00:00:26,440
-We'll cover what Argo CD actually is.
+00:00:21,679 --> 00:00:22,879
+But here's the big question,
 
 11
-00:00:26,440 --> 00:00:29,039
-It's core features, why it's such a big deal for developers,
+00:00:22,879 --> 00:00:25,000
+the one we really want to dig into today.
 
 12
-00:00:29,039 --> 00:00:31,919
-how it scales up for those really complex setups,
+00:00:25,000 --> 00:00:29,240
+Is the world actually more chaotic than ever?
 
 13
-00:00:31,919 --> 00:00:33,600
-and even touch on some real-world uses.
+00:00:29,240 --> 00:00:32,200
+Or are we just, you know, experiencing it differently,
 
 14
-00:00:33,600 --> 00:00:34,200
-Exactly.
+00:00:32,200 --> 00:00:34,920
+maybe more intensely because we're so plugged in all the time?
 
 15
-00:00:34,200 --> 00:00:37,759
-And we're aiming to go beyond just the surface level here.
+00:00:34,920 --> 00:00:37,840
+That's the core of it isn't perception versus reality.
 
 16
-00:00:37,759 --> 00:00:39,200
-We'll take you from the basics right
+00:00:37,840 --> 00:00:40,200
+Okay, so let's unpack this feeling,
 
 17
-00:00:39,200 --> 00:00:41,519
-through to the more advanced capabilities.
+00:00:40,200 --> 00:00:42,400
+because I think well, so many of us are grappling with it.
 
 18
-00:00:41,519 --> 00:00:44,000
-The goal is making sure you don't just get the what,
-
-19
-00:00:44,000 --> 00:00:45,480
-but really understand the why.
-
-20
-00:00:45,480 --> 00:00:48,200
-Why this tool represents, well, a pretty fundamental shift
-
-21
-00:00:48,200 --> 00:00:49,519
-in managing cloud native apps.
-
-22
-00:00:49,519 --> 00:00:51,399
-It's about grasping why it matters.
-
-23
-00:00:51,399 --> 00:00:54,359
-OK, let's dive in and let's unpack this Argo CD thing.
-
-24
-00:00:54,359 --> 00:00:57,719
-So fundamentally, it's described as a declarative GitOps
-
-25
-00:00:57,719 --> 00:01:00,960
-continuous delivery tool, specifically for Kubernetes.
-
-26
-00:01:00,960 --> 00:01:02,000
-Right, that's the label.
-
-27
-00:01:02,000 --> 00:01:03,439
-Yeah, it's a bit of a mouthful.
-
-28
-00:01:03,439 --> 00:01:05,760
-So declarative.
-
-29
-00:01:05,760 --> 00:01:07,159
-What does that mean in practice?
-
-30
-00:01:07,159 --> 00:01:09,719
-It means you tell it the end state you want.
-
-31
-00:01:09,719 --> 00:01:11,439
-You describe and get, like, this
-
-32
-00:01:11,439 --> 00:01:14,319
-is how my application and infrastructure should look,
-
-33
-00:01:14,319 --> 00:01:17,439
-instead of writing a script with step-by-step instructions
-
-34
-00:01:17,439 --> 00:01:18,280
-on how to get there.
-
-35
-00:01:18,280 --> 00:01:18,799
-Got it.
-
-36
-00:01:18,799 --> 00:01:22,079
-Define the goal, not the journey, and the GitOps part.
-
-37
-00:01:22,079 --> 00:01:22,879
-That's key.
-
-38
-00:01:22,879 --> 00:01:25,879
-It means Git becomes your single source of truth,
-
-39
-00:01:25,879 --> 00:01:28,879
-the absolute definitive place for everything
-
-40
-00:01:28,879 --> 00:01:30,000
-about your deployment.
-
-41
-00:01:30,000 --> 00:01:32,000
-OK, so Git is king.
-
-42
-00:01:32,000 --> 00:01:34,280
-But how does that actually change things day-to-day?
-
-43
-00:01:34,280 --> 00:01:35,759
-What makes that single source of truth
-
-44
-00:01:35,759 --> 00:01:39,280
-concept so transformative?
-
-45
-00:01:39,280 --> 00:01:41,799
-Well, it's transformative because Argo CD doesn't just
-
-46
-00:01:41,799 --> 00:01:43,679
-like glance at your Git repo occasionally.
-
-47
-00:01:43,679 --> 00:01:45,000
-It actively monitors it.
-
-48
-00:01:45,000 --> 00:01:48,640
-Think of it like a dedicated Kubernetes controller,
-
-49
-00:01:48,640 --> 00:01:51,280
-and it's constantly comparing that desired state
-
-50
-00:01:51,280 --> 00:01:52,959
-you define and Git with what's actually
-
-51
-00:01:52,960 --> 00:01:56,480
-running live in your cluster, non-stop reconciliation.
-
-52
-00:01:56,480 --> 00:01:58,120
-So it catches discrepancies.
-
-53
-00:01:58,120 --> 00:01:58,760
-Exactly.
-
-54
-00:01:58,760 --> 00:02:03,160
-It nails things like config drift, where your live system slowly
-
-55
-00:02:03,160 --> 00:02:06,160
-wanders away from what you thought it was configured as.
-
-56
-00:02:06,160 --> 00:02:08,360
-That disappears, and it completely
-
-57
-00:02:08,360 --> 00:02:10,920
-stops those rogue deployment.
-
-58
-00:02:10,920 --> 00:02:12,840
-Right, the ones that bypass the official process.
-
-59
-00:02:12,840 --> 00:02:14,159
-Yeah, no more that.
-
-60
-00:02:14,159 --> 00:02:16,600
-It's like having, I don't know, Quebec's all apply,
-
-61
-00:02:16,600 --> 00:02:19,680
-but on steroids, fully automated, constantly
-
-62
-00:02:19,680 --> 00:02:21,800
-enforcing that clean, consistent state
-
-63
-00:02:21,800 --> 00:02:24,120
-you defined every single time.
-
-64
-00:02:24,120 --> 00:02:27,480
-That sounds really robust, that tight integration.
-
-65
-00:02:27,480 --> 00:02:31,439
-So what are the building blocks, the core components that
-
-66
-00:02:31,439 --> 00:02:34,800
-let Argo CD do all this enforcing and syncing?
-
-67
-00:02:34,800 --> 00:02:36,680
-Yeah, it's got a really well thought out architecture.
-
-68
-00:02:36,680 --> 00:02:38,760
-First up, there's the application CRD.
-
-69
-00:02:38,760 --> 00:02:41,200
-CRD, custom resource definition.
-
-70
-00:02:41,200 --> 00:02:41,879
-Exactly.
-
-71
-00:02:41,879 --> 00:02:43,360
-This isn't just some config file.
-
-72
-00:02:43,360 --> 00:02:46,159
-It actually extends Kubernetes itself.
-
-73
-00:02:46,159 --> 00:02:48,920
-It teaches Kubernetes this new concept and application
-
-74
-00:02:48,960 --> 00:02:50,960
-specifically in the get ups context.
-
-75
-00:02:50,960 --> 00:02:54,200
-It defines what to sync from get and where it goes in your cluster.
-
-76
-00:02:54,200 --> 00:02:56,240
-OK, so it makes Kubernetes get ups aware.
-
-77
-00:02:56,240 --> 00:02:57,080
-Pretty much.
-
-78
-00:02:57,080 --> 00:02:58,560
-Then you've got repositories.
-
-79
-00:02:58,560 --> 00:03:00,680
-Argo CD is super flexible here.
-
-80
-00:03:00,680 --> 00:03:03,640
-It works with standard get repos, obviously,
-
-81
-00:03:03,640 --> 00:03:07,800
-but also understands things like Helm charts, customized
-
-82
-00:03:07,800 --> 00:03:08,320
-templates.
-
-83
-00:03:08,320 --> 00:03:09,680
-You can use your existing tools.
-
-84
-00:03:09,680 --> 00:03:11,840
-Right, you don't have to throw everything out.
-
-85
-00:03:11,840 --> 00:03:13,560
-Then there are sync policies.
-
-86
-00:03:13,560 --> 00:03:14,280
-You get choices.
-
-87
-00:03:14,280 --> 00:03:17,120
-You can sync manually, set it to fully automatic,
-
-88
-00:03:17,120 --> 00:03:19,759
-or even use smart syncs with hooks
-
-89
-00:03:19,759 --> 00:03:21,960
-for custom actions before or after.
-
-90
-00:03:21,960 --> 00:03:24,400
-Books, OK, for complex workflows.
-
-91
-00:03:24,400 --> 00:03:25,000
-Yeah.
-
-92
-00:03:25,000 --> 00:03:27,000
-And really important for bigger places,
-
-93
-00:03:27,000 --> 00:03:30,439
-there's solid RBC, role-based access control.
-
-94
-00:03:30,439 --> 00:03:33,560
-It plays nicely with existing single sign-on systems, too.
-
-95
-00:03:33,560 --> 00:03:34,920
-Good for enterprise adoption.
-
-96
-00:03:34,920 --> 00:03:35,599
-Definitely.
-
-97
-00:03:35,599 --> 00:03:38,759
-And to manage all this, you get both options.
-
-98
-00:03:38,759 --> 00:03:41,040
-A really nice UI, a web dashboard,
-
-99
-00:03:41,040 --> 00:03:44,159
-and a powerful CLI for anyone who loves the panliner
-
-100
-00:03:44,159 --> 00:03:45,319
-needs to automate stuff.
-
-101
-00:03:45,319 --> 00:03:47,359
-It sounds like it really bundles a lot of best practices
-
-102
-00:03:47,359 --> 00:03:47,840
-right in.
-
-103
-00:03:47,840 --> 00:03:49,799
-Now, connecting back to that bigger picture,
-
-104
-00:03:49,799 --> 00:03:51,479
-get as the single source of truth.
-
-105
-00:03:51,479 --> 00:03:54,199
-What's the real impact for developers
-
-106
-00:03:54,199 --> 00:03:56,039
-on their day-to-day work?
-
-107
-00:03:56,039 --> 00:03:58,000
-Oh, it's huge for developer workflow,
-
-108
-00:03:58,000 --> 00:04:00,959
-because you shift from just like pushing code
-
-109
-00:04:00,959 --> 00:04:02,759
-to deploying intent.
-
-110
-00:04:02,759 --> 00:04:03,919
-Deploying intent?
-
-111
-00:04:03,919 --> 00:04:04,599
-Yeah.
-
-112
-00:04:04,599 --> 00:04:06,560
-Your whole application definition,
-
-113
-00:04:06,560 --> 00:04:10,319
-code, config, infrastructure, dependencies, everything
-
-114
-00:04:10,319 --> 00:04:11,840
-lives together and get.
-
-115
-00:04:11,840 --> 00:04:15,039
-And Argo CD enforces this model, which automatically
-
-116
-00:04:15,039 --> 00:04:16,879
-gives you amazing benefits.
-
-117
-00:04:16,879 --> 00:04:17,839
-Like what?
-
-118
-00:04:17,839 --> 00:04:21,039
-Well, every single change becomes an auditable event.
-
-119
-00:04:21,039 --> 00:04:23,360
-You get a built-in log, automatically.
-
-120
-00:04:23,360 --> 00:04:24,680
-Your infrastructure config gets
-
-121
-00:04:24,680 --> 00:04:26,800
-a version right alongside your application code.
-
-122
-00:04:26,800 --> 00:04:29,599
-And if something breaks, rollbacks become
-
-123
-00:04:29,599 --> 00:04:32,759
-like a standard, easy operation, not some five alarm
-
-124
-00:04:32,759 --> 00:04:33,560
-fire drill.
-
-125
-00:04:33,560 --> 00:04:34,920
-Right, just revert to get commit.
-
-126
-00:04:34,920 --> 00:04:35,519
-Exactly.
-
-127
-00:04:35,519 --> 00:04:37,319
-It just simplifies things and cuts down
-
-128
-00:04:37,319 --> 00:04:40,439
-so much on potential human error.
-
-129
-00:04:40,439 --> 00:04:42,039
-Takes a load off the developer's mind.
-
-130
-00:04:42,039 --> 00:04:43,279
-That makes a ton of sense.
-
-131
-00:04:43,280 --> 00:04:46,040
-So thinking about new people joining a team,
-
-132
-00:04:46,040 --> 00:04:48,840
-how does Argo CD change that onboarding experience?
-
-133
-00:04:48,840 --> 00:04:49,920
-Is it easier?
-
-134
-00:04:49,920 --> 00:04:51,440
-Oh, dramatically easier.
-
-135
-00:04:51,440 --> 00:04:54,520
-Forget spending days waiting through complex setup docs
-
-136
-00:04:54,520 --> 00:04:56,760
-or trying to run flaky manual deployment scripts.
-
-137
-00:04:56,760 --> 00:04:57,480
-Been there.
-
-138
-00:04:57,480 --> 00:04:58,480
-Right.
-
-139
-00:04:58,480 --> 00:05:00,080
-With Argo CD, a new developer can basically
-
-140
-00:05:00,080 --> 00:05:03,280
-get a fully working consistent environment spun up
-
-141
-00:05:03,280 --> 00:05:06,320
-with essentially one command, get clone.
-
-142
-00:05:06,320 --> 00:05:06,840
-What?
-
-143
-00:05:06,840 --> 00:05:09,240
-Yeah, because the entire environment definition
-
-144
-00:05:09,240 --> 00:05:11,920
-is right there in get standardized inversion control.
-
-145
-00:05:11,920 --> 00:05:13,240
-It's just clean.
-
-146
-00:05:13,400 --> 00:05:16,240
-Simple and totally repeatable consistency
-
-147
-00:05:16,240 --> 00:05:19,079
-across the whole team, all their dev environments.
-
-148
-00:05:19,079 --> 00:05:22,240
-It's kind of like, I don't know, Ikea for Kubernetes setup.
-
-149
-00:05:22,240 --> 00:05:23,480
-Ikea for Kubernetes.
-
-150
-00:05:23,480 --> 00:05:24,160
-I like that.
-
-151
-00:05:24,160 --> 00:05:25,560
-OK, so we've talked about getting stuff
-
-152
-00:05:25,560 --> 00:05:29,120
-into Kubernetes smoothly, version, all that good stuff.
-
-153
-00:05:29,120 --> 00:05:31,040
-But what about the deployment itself?
-
-154
-00:05:31,040 --> 00:05:32,360
-You know, pushing changes live.
-
-155
-00:05:32,360 --> 00:05:35,720
-Nobody wants to new production on a Friday, right?
-
-156
-00:05:35,720 --> 00:05:38,600
-How does Argo help us deploy more safely?
-
-157
-00:05:38,600 --> 00:05:40,160
-Right, that's absolutely critical.
-
-158
-00:05:40,160 --> 00:05:42,639
-And that's where another piece of the Argo puzzle,
-
-159
-00:05:42,639 --> 00:05:44,439
-Argo rollouts, comes into play.
-
-160
-00:05:44,439 --> 00:05:47,680
-It directly tackles that need for safe progressive delivery.
-
-161
-00:05:47,680 --> 00:05:48,479
-Argo rollouts.
-
-162
-00:05:48,479 --> 00:05:49,839
-OK, so the separate component.
-
-163
-00:05:49,839 --> 00:05:52,479
-Yeah, it's a Kubernetes controller specifically designed
-
-164
-00:05:52,479 --> 00:05:54,319
-for managing the application lifecycle
-
-165
-00:05:54,319 --> 00:05:55,639
-during a deployment.
-
-166
-00:05:55,639 --> 00:05:57,519
-It integrates really deeply with Kubernetes
-
-167
-00:05:57,519 --> 00:06:00,199
-itself to enable sophisticated rollout strategies.
-
-168
-00:06:00,199 --> 00:06:00,719
-A play.
-
-169
-00:06:00,719 --> 00:06:02,680
-Like, canary deployments for starters.
-
-170
-00:06:02,680 --> 00:06:05,159
-You roll out the new version to just a tiny fraction
-
-171
-00:06:05,159 --> 00:06:07,240
-of users first, watch carefully,
-
-172
-00:06:07,240 --> 00:06:08,719
-and then gradually increase exposure
-
-173
-00:06:08,719 --> 00:06:09,959
-if everything looks good.
-
-174
-00:06:09,959 --> 00:06:11,120
-OK, this low bleed approach.
-
-175
-00:06:11,120 --> 00:06:11,680
-Exactly.
-
-176
-00:06:11,680 --> 00:06:13,480
-Or blue green deployments.
-
-177
-00:06:13,480 --> 00:06:16,480
-You spin up a whole new version of your app alongside the old one
-
-178
-00:06:16,480 --> 00:06:18,680
-run tests, and then instantly switch
-
-179
-00:06:18,680 --> 00:06:20,439
-all the traffic over when you're confident.
-
-180
-00:06:20,439 --> 00:06:21,240
-Less risk there.
-
-181
-00:06:21,240 --> 00:06:22,319
-Much less risk.
-
-182
-00:06:22,319 --> 00:06:24,560
-It even supports more experimental rollouts
-
-183
-00:06:24,560 --> 00:06:26,800
-like for AB testing features.
-
-184
-00:06:26,800 --> 00:06:29,280
-And what's really cool is how much more powerful
-
-185
-00:06:29,280 --> 00:06:32,680
-becomes when you pair it with a service mesh, something
-
-186
-00:06:32,680 --> 00:06:35,319
-like Istio for the traffic shifting.
-
-187
-00:06:35,319 --> 00:06:36,079
-Precisely.
-
-188
-00:06:36,079 --> 00:06:38,240
-You get incredibly fine-grained control
-
-189
-00:06:38,240 --> 00:06:42,759
-over traffic splitting, routing, and crucially observability
-
-190
-00:06:42,759 --> 00:06:44,840
-during these critical rollout phases.
-
-191
-00:06:44,840 --> 00:06:46,280
-You can measure everything.
-
-192
-00:06:46,280 --> 00:06:49,920
-That level of control during deployment is huge.
-
-193
-00:06:49,920 --> 00:06:53,319
-Now, you mentioned Argo rollouts as part of a puzzle.
-
-194
-00:06:53,319 --> 00:06:57,040
-Is Argo CD itself part of a bigger family of tools?
-
-195
-00:06:57,040 --> 00:06:58,000
-Oh, very much so.
-
-196
-00:06:58,000 --> 00:07:00,600
-The Argo project isn't just CD and rollouts.
-
-197
-00:07:00,600 --> 00:07:03,800
-It's a whole ecosystem of family of tools, really.
-
-198
-00:07:03,800 --> 00:07:06,519
-All designed around bringing these get-ops principles
-
-199
-00:07:06,519 --> 00:07:08,639
-to different parts of your Kubernetes operations.
-
-200
-00:07:08,639 --> 00:07:10,159
-OK, what else is in the family?
-
-201
-00:07:10,159 --> 00:07:13,120
-Well, beyond Argo CD, you've got Argo events
-
-202
-00:07:13,120 --> 00:07:15,879
-that's all about building event-driven workflows,
-
-203
-00:07:15,879 --> 00:07:19,159
-reacting to things happening inside or outside the cluster.
-
-204
-00:07:19,159 --> 00:07:19,719
-Interesting.
-
-205
-00:07:19,719 --> 00:07:21,839
-Then there's Argo workflows that's
-
-206
-00:07:21,839 --> 00:07:24,259
-for orchestrating complex compute jobs,
-
-207
-00:07:24,259 --> 00:07:25,959
-often stuff that can be represented
-
-208
-00:07:25,959 --> 00:07:29,519
-as a directed a cyclic graph, a DAG,
-
-209
-00:07:29,519 --> 00:07:34,359
-think data processing, ML pipelines, even complex CI steps.
-
-210
-00:07:34,359 --> 00:07:35,799
-OK, for heavier orchestration.
-
-211
-00:07:35,799 --> 00:07:36,399
-Right.
-
-212
-00:07:36,400 --> 00:07:39,040
-And speaking of CI, there's Argo pipelines,
-
-213
-00:07:39,040 --> 00:07:40,880
-which gives you a Kubernetes native way
-
-214
-00:07:40,880 --> 00:07:43,760
-to build your CI CD pipelines directly.
-
-215
-00:07:43,760 --> 00:07:46,920
-And one more that's super useful, Argo Image Updater.
-
-216
-00:07:46,920 --> 00:07:47,640
-What does that do?
-
-217
-00:07:47,640 --> 00:07:49,600
-It automates another tedious step.
-
-218
-00:07:49,600 --> 00:07:51,600
-It watches your container registries.
-
-219
-00:07:51,600 --> 00:07:53,360
-And when a new image version is published,
-
-220
-00:07:53,360 --> 00:07:56,040
-it can automatically update the image tag in your Git
-
-221
-00:07:56,040 --> 00:07:58,120
-manifest and commit the change.
-
-222
-00:07:58,120 --> 00:07:59,800
-So it keeps your Git state aligned
-
-223
-00:07:59,800 --> 00:08:01,320
-with the latest builds automatically.
-
-224
-00:08:01,320 --> 00:08:01,840
-Exactly.
-
-225
-00:08:01,840 --> 00:08:03,160
-It keeps your deployments evergreen
-
-226
-00:08:03,160 --> 00:08:04,640
-without manual intervention.
-
-227
-00:08:04,639 --> 00:08:06,399
-It's all about that automation.
-
-228
-00:08:06,399 --> 00:08:08,919
-This ecosystem sounds powerful.
-
-229
-00:08:08,919 --> 00:08:10,680
-Let's talk about scale.
-
-230
-00:08:10,680 --> 00:08:13,279
-Big organizations, maybe hundreds, even thousands
-
-231
-00:08:13,279 --> 00:08:16,479
-of applications, maybe multiple Kubernetes clusters spread
-
-232
-00:08:16,479 --> 00:08:17,639
-all over.
-
-233
-00:08:17,639 --> 00:08:20,839
-How does Argo CD handle that kind of complexity?
-
-234
-00:08:20,839 --> 00:08:24,839
-How do you do GitOps at, well, hyper scale?
-
-235
-00:08:24,839 --> 00:08:26,879
-Yeah, that's a critical question.
-
-236
-00:08:26,879 --> 00:08:29,719
-And the answer there is another Argo component,
-
-237
-00:08:29,719 --> 00:08:31,120
-application sets.
-
-238
-00:08:31,120 --> 00:08:32,039
-Application sets.
-
-239
-00:08:32,039 --> 00:08:32,539
-OK.
-
-240
-00:08:32,539 --> 00:08:35,899
-Application sets as a templating engine
-
-241
-00:08:35,899 --> 00:08:37,620
-for Argo CD applications.
-
-242
-00:08:37,620 --> 00:08:39,699
-They're specifically designed to tackle that problem
-
-243
-00:08:39,699 --> 00:08:42,539
-of managing deployments across tons of clusters
-
-244
-00:08:42,539 --> 00:08:44,099
-or namespaces or environments.
-
-245
-00:08:44,099 --> 00:08:46,099
-So instead of defining each app individually.
-
-246
-00:08:46,099 --> 00:08:46,599
-Right.
-
-247
-00:08:46,599 --> 00:08:48,500
-Instead of creating potentially hundreds
-
-248
-00:08:48,500 --> 00:08:51,659
-or thousands of separate Argo CD application resources
-
-249
-00:08:51,659 --> 00:08:54,379
-manually, you define one application set template.
-
-250
-00:08:54,379 --> 00:08:55,620
-A template, like a blueprint?
-
-251
-00:08:55,620 --> 00:08:56,219
-Exactly.
-
-252
-00:08:56,219 --> 00:08:56,740
-A blueprint.
-
-253
-00:08:56,740 --> 00:08:58,059
-You define the structure once, maybe,
-
-254
-00:08:58,059 --> 00:08:59,699
-with some parameters or variables.
-
-255
-00:08:59,699 --> 00:09:01,740
-And then application sets act like a generator.
-
-256
-00:09:01,779 --> 00:09:03,779
-It automatically stamps out and manages
-
-257
-00:09:03,779 --> 00:09:05,460
-all the individual application resources
-
-258
-00:09:05,460 --> 00:09:07,100
-across all your target environments.
-
-259
-00:09:07,100 --> 00:09:08,860
-Different clusters, different namespaces,
-
-260
-00:09:08,860 --> 00:09:11,220
-plugging in the right parameters for each one.
-
-261
-00:09:11,220 --> 00:09:11,539
-Wow.
-
-262
-00:09:11,539 --> 00:09:14,460
-So define once, deploy everywhere, basically.
-
-263
-00:09:14,460 --> 00:09:15,060
-Pretty much.
-
-264
-00:09:15,060 --> 00:09:18,180
-It scales deployments like, well, the source material
-
-265
-00:09:18,180 --> 00:09:21,419
-said, like, butter on hot parathas, which is a great image.
-
-266
-00:09:21,419 --> 00:09:24,139
-It standardizes everything across a massive fleet,
-
-267
-00:09:24,139 --> 00:09:26,379
-cuts down drastically on manual work,
-
-268
-00:09:26,379 --> 00:09:28,220
-and ensures consistency.
-
-269
-00:09:28,220 --> 00:09:30,019
-It's GitOps at hyper scale, truly.
-
-270
-00:09:30,019 --> 00:09:31,659
-That sounds incredibly efficient.
-
-271
-00:09:31,939 --> 00:09:34,819
-Let's switch gears slightly to a really practical use case.
-
-272
-00:09:34,819 --> 00:09:37,459
-I know a lot of teams wrestle with getting quick feedback
-
-273
-00:09:37,459 --> 00:09:38,459
-on new features.
-
-274
-00:09:38,459 --> 00:09:42,699
-How does Argo CD help with, say, temporary preview environments?
-
-275
-00:09:42,699 --> 00:09:45,139
-Oh, yes, a femoral environments.
-
-276
-00:09:45,139 --> 00:09:47,459
-Argo CD is actually perfect for this.
-
-277
-00:09:47,459 --> 00:09:50,219
-It makes spinning up these temporary isolated
-
-278
-00:09:50,219 --> 00:09:52,659
-production-like environments really straightforward.
-
-279
-00:09:52,659 --> 00:09:54,299
-And is that work triggered by?
-
-280
-00:09:54,299 --> 00:09:57,259
-Often triggered directly by a pull request in Git.
-
-281
-00:09:57,259 --> 00:09:59,860
-A developer pushes a feature branch, opens a PR,
-
-282
-00:09:59,860 --> 00:10:01,860
-and boom, Argo CD can automatically
-
-283
-00:10:01,860 --> 00:10:04,980
-deploy that specific branch into a dedicated temporary
-
-284
-00:10:04,980 --> 00:10:06,460
-namespace in Kubernetes.
-
-285
-00:10:06,460 --> 00:10:09,060
-So the dev gets a live environment for just their changes?
-
-286
-00:10:09,060 --> 00:10:09,779
-Exactly.
-
-287
-00:10:09,779 --> 00:10:13,379
-They can test their feature in a fully integrated realistic setting
-
-288
-00:10:13,379 --> 00:10:15,259
-before merging the code.
-
-289
-00:10:15,259 --> 00:10:18,300
-This is gold, especially in microservices setups.
-
-290
-00:10:18,300 --> 00:10:19,060
-Oh, yeah, I can see that.
-
-291
-00:10:19,060 --> 00:10:20,820
-Testing interactions between services.
-
-292
-00:10:20,820 --> 00:10:21,419
-Totally.
-
-293
-00:10:21,419 --> 00:10:24,420
-If you've got dozens of services talking to each other,
-
-294
-00:10:24,420 --> 00:10:27,500
-being able to validate your changes in an isolated sandbox
-
-295
-00:10:27,539 --> 00:10:29,259
-before potentially breaking something
-
-296
-00:10:29,259 --> 00:10:32,259
-in the main development branch, that's incredibly valuable.
-
-297
-00:10:32,259 --> 00:10:35,700
-It gives you that immediate, comprehensive feedback loop.
-
-298
-00:10:35,700 --> 00:10:39,980
-Plus, as one source noted, it looks dope in a demo.
-
-299
-00:10:39,980 --> 00:10:42,500
-Huh, always a bonus.
-
-300
-00:10:42,500 --> 00:10:44,139
-OK, that's a powerful feature.
-
-301
-00:10:44,139 --> 00:10:45,580
-Now, let's zoom out again and look
-
-302
-00:10:45,580 --> 00:10:47,580
-at the wider tool landscape.
-
-303
-00:10:47,580 --> 00:10:50,980
-How does Argo CD stack up against other popular CICD
-
-304
-00:10:50,980 --> 00:10:52,379
-or GitOps tools?
-
-305
-00:10:52,379 --> 00:10:56,100
-Things like, say, Seneca or Jenkins X or Tecton,
-
-306
-00:10:56,100 --> 00:10:58,019
-when would you pick Argo CD over those
-
-307
-00:10:58,019 --> 00:10:59,460
-or maybe choose one of them instead?
-
-308
-00:10:59,460 --> 00:11:00,340
-Yeah, good question.
-
-309
-00:11:00,340 --> 00:11:02,740
-They all have their strengths, their sweet spots.
-
-310
-00:11:02,740 --> 00:11:05,300
-The key differentiator for Argo CD, I'd say,
-
-311
-00:11:05,300 --> 00:11:07,220
-is that it's fundamentally GitOps first.
-
-312
-00:11:07,220 --> 00:11:09,420
-It's built entirely around that declarative model
-
-313
-00:11:09,420 --> 00:11:11,379
-with Git as the absolute source of truth
-
-314
-00:11:11,379 --> 00:11:13,379
-and that continuous reconciliation loop.
-
-315
-00:11:13,379 --> 00:11:15,100
-OK, so pure GitOps focus.
-
-316
-00:11:15,100 --> 00:11:17,139
-How does that compare to, say, Jenkins X?
-
-317
-00:11:17,139 --> 00:11:20,500
-Jenkins X also embraces GitOps, but it tends to be a bit more
-
-318
-00:11:20,500 --> 00:11:24,660
-maybe prescriptive about the entire CICD pipeline, bringing
-
-319
-00:11:24,659 --> 00:11:27,620
-in tecton underneath and having opinions about the whole flow.
-
-320
-00:11:27,620 --> 00:11:30,939
-Argo CD is more focused purely on the continuous delivery
-
-321
-00:11:30,939 --> 00:11:33,899
-part, the sinking from Git to Kubernetes.
-
-322
-00:11:33,899 --> 00:11:34,379
-Got it.
-
-323
-00:11:34,379 --> 00:11:35,259
-And Spinnaker.
-
-324
-00:11:35,259 --> 00:11:37,699
-Spinnaker is, well, it's a powerhouse
-
-325
-00:11:37,699 --> 00:11:39,899
-for deployment orchestration, especially
-
-326
-00:11:39,899 --> 00:11:42,939
-across different cloud providers, not just Kubernetes.
-
-327
-00:11:42,939 --> 00:11:45,939
-If you have complex canary deployments spanning VMs
-
-328
-00:11:45,939 --> 00:11:47,899
-and Kubernetes in multiple clouds,
-
-329
-00:11:47,899 --> 00:11:49,620
-Spinnaker might still have an edge there
-
-330
-00:11:49,620 --> 00:11:51,980
-due to its broader integration capabilities.
-
-331
-00:11:51,980 --> 00:11:54,100
-OK, multi-cloud specialist.
-
-332
-00:11:54,980 --> 00:11:57,460
-Tecton is really about building the pipeline itself.
-
-333
-00:11:57,460 --> 00:11:59,740
-It provides the fundamental building blocks,
-
-334
-00:11:59,740 --> 00:12:03,180
-tasks, pipelines, in a very Kubernetes native way.
-
-335
-00:12:03,180 --> 00:12:06,100
-It's fantastic if you want maximum control and customization
-
-336
-00:12:06,100 --> 00:12:08,019
-over your CICD process.
-
-337
-00:12:08,019 --> 00:12:10,820
-You could even use tecton with Argo CD potentially.
-
-338
-00:12:10,820 --> 00:12:12,620
-Right, they're not necessarily mutually exclusive.
-
-339
-00:12:12,620 --> 00:12:14,540
-Not at all, but at the end of the day,
-
-340
-00:12:14,540 --> 00:12:18,180
-Argo CD often wins on its sort of simplicity
-
-341
-00:12:18,180 --> 00:12:20,139
-for the core GitOps CD task.
-
-342
-00:12:20,139 --> 00:12:22,300
-It's deep Kubernetes native feel,
-
-343
-00:12:22,300 --> 00:12:25,100
-and it's unwavering principle that Git is the boss.
-
-344
-00:12:25,100 --> 00:12:25,820
-Makes sense.
-
-345
-00:12:25,820 --> 00:12:28,580
-Stick to the core GitOps principle.
-
-346
-00:12:28,580 --> 00:12:31,620
-Now, it's always great to see how these tools work in the wild.
-
-347
-00:12:31,620 --> 00:12:33,260
-Can you share some specific examples
-
-348
-00:12:33,260 --> 00:12:34,220
-from the sources?
-
-349
-00:12:34,220 --> 00:12:37,540
-Real-world situations where Argo CD is making a difference?
-
-350
-00:12:37,540 --> 00:12:38,060
+00:00:42,400 --> 00:00:43,240
 Absolutely.
 
-351
-00:12:38,060 --> 00:12:39,140
-There are some cool examples.
+19
+00:00:43,240 --> 00:00:44,800
+And what's truly fascinating here,
 
-352
-00:12:39,140 --> 00:12:41,020
-One was Cubeflow GitOps.
+20
+00:00:44,800 --> 00:00:47,520
+I think is how much our perception does shape that reality,
 
-353
-00:12:41,020 --> 00:12:43,500
-Teams doing machine learning are using Argo CD
+21
+00:00:47,520 --> 00:00:50,520
+especially when we're just bombarded with information constantly.
 
-354
-00:12:43,500 --> 00:12:47,620
-to manage their entire Cubeflow setup pipelines, models,
+22
+00:00:50,520 --> 00:00:51,280
+Right, right.
 
-355
-00:12:47,620 --> 00:12:51,220
-notebooks, the whole shebang declaratively from Git.
+23
+00:00:51,280 --> 00:00:54,640
+So our mission in this deep dive is really to look at the sources,
 
-356
-00:12:51,500 --> 00:12:53,220
-Bringing reproducibility to MLO.
+24
+00:00:54,640 --> 00:00:57,640
+pull out the key insights and help you make sense of this,
 
-357
-00:12:53,220 --> 00:12:54,139
-Exactly.
+25
+00:00:57,640 --> 00:01:01,160
+this swirling feeling of global unease,
 
-358
-00:12:54,139 --> 00:12:54,980
+26
+00:01:01,160 --> 00:01:03,160
+without getting totally overwhelmed by it.
+
+27
+00:01:03,160 --> 00:01:05,719
+Yeah, try to understand the different angles on it.
+
+28
+00:01:05,719 --> 00:01:07,400
+Exactly, different perspectives.
+
+29
+00:01:07,400 --> 00:01:10,079
+It's so easy to just get swept up in the feeling,
+
+30
+00:01:10,079 --> 00:01:11,599
+the panic almost.
+
+31
+00:01:11,599 --> 00:01:14,079
+But maybe we need to hit pause on that for a second.
+
+32
+00:01:14,079 --> 00:01:14,920
+Ground ourselves.
+
+33
+00:01:14,920 --> 00:01:17,480
+Yeah, ground ourselves and maybe look at some data,
+
+34
+00:01:17,480 --> 00:01:21,359
+like what do the numbers actually say about this perceived chaos?
+
+35
+00:01:21,359 --> 00:01:22,200
+Okay.
+
+36
+00:01:22,200 --> 00:01:27,200
+Well, I came across this 2023 article from the BBC.
+
+37
+00:01:27,200 --> 00:01:30,320
+And it said, people today are bombarded by something like
+
+38
+00:01:30,320 --> 00:01:34,159
+four to five times more negative news than just a decade ago.
+
+39
+00:01:34,159 --> 00:01:36,120
+Four to five times, that's huge.
+
+40
+00:01:36,120 --> 00:01:37,719
+It's a massive jump, right?
+
+41
+00:01:37,719 --> 00:01:39,439
+And the point was, it's not necessarily
+
+42
+00:01:39,439 --> 00:01:41,719
+because the world has completely imploded in ten years.
+
+43
+00:01:41,719 --> 00:01:43,280
+Right, it's the delivery mechanism.
+
+44
+00:01:43,280 --> 00:01:44,520
+It's how we get the news.
+
+45
+00:01:44,520 --> 00:01:47,159
+Our attention is being, well, monetized.
+
+46
+00:01:47,159 --> 00:01:50,439
+Often through making things sound as dramatic as possible,
+
+47
+00:01:50,439 --> 00:01:51,840
+sensationalism.
+
+48
+00:01:51,840 --> 00:01:52,439
+Absolutely.
+
+49
+00:01:52,439 --> 00:01:53,840
+It's a direct consequence.
+
+50
+00:01:53,840 --> 00:01:57,040
+And this constant exposure, this barrage,
+
+51
+00:01:57,040 --> 00:02:01,160
+it creates what psychologists call mean world syndrome.
+
+52
+00:02:01,160 --> 00:02:02,160
+Mean world syndrome.
+
+53
+00:02:02,160 --> 00:02:05,560
+Yeah, because our brains are constantly fed all this negative stuff.
+
+54
+00:02:05,560 --> 00:02:07,880
+We start to believe the world is way more dangerous
+
+55
+00:02:07,880 --> 00:02:10,400
+than it's statistically or actually is.
+
+56
+00:02:10,400 --> 00:02:12,240
+It skews our whole perspective.
+
+57
+00:02:12,240 --> 00:02:15,319
+So your brain literally thinks danger everywhere.
+
+58
+00:02:15,319 --> 00:02:16,080
+Pretty much.
+
+59
+00:02:16,080 --> 00:02:18,879
+And you combine that with modern habits, like, you know,
+
+60
+00:02:18,879 --> 00:02:22,600
+doom scrolling, just endlessly scrolling through bad news.
+
+61
+00:02:22,600 --> 00:02:23,439
+Oh, I know that one.
+
+62
+00:02:23,439 --> 00:02:24,200
+We all do.
+
+63
+00:02:24,200 --> 00:02:27,360
+And then you add the, like, TikTok field crisis updates,
+
+64
+00:02:27,360 --> 00:02:30,080
+these super short, intense bursts,
+
+65
+00:02:30,080 --> 00:02:33,120
+our brains are just getting fried constantly
+
+66
+00:02:33,120 --> 00:02:35,000
+in this low level alarm state.
+
+67
+00:02:35,000 --> 00:02:37,640
+Okay, so our brains are being rewired, basically,
+
+68
+00:02:37,640 --> 00:02:39,120
+to see more danger.
+
+69
+00:02:39,120 --> 00:02:41,400
+But the feeling, it feels so deep, doesn't it?
+
+70
+00:02:41,400 --> 00:02:42,760
+Like more than just perception.
+
+71
+00:02:42,760 --> 00:02:43,920
+It does feel profound.
+
+72
+00:02:43,920 --> 00:02:46,160
+So are we just perceiving chaos
+
+73
+00:02:46,160 --> 00:02:47,840
+or could there be something else going on?
+
+74
+00:02:47,840 --> 00:02:49,400
+Because let's be honest.
+
+75
+00:02:49,400 --> 00:02:52,640
+Wars, injustice, climate issues.
+
+76
+00:02:52,640 --> 00:02:53,600
+They've always been around.
+
+77
+00:02:53,599 --> 00:02:54,599
+True.
+
+78
+00:02:54,599 --> 00:02:55,599
+History isn't exactly peaceful.
+
+79
+00:02:55,599 --> 00:02:56,599
+Right.
+
+80
+00:02:56,599 --> 00:02:57,599
+So what's really changed?
+
+81
+00:02:57,599 --> 00:02:58,599
+Maybe it's the lens.
+
+82
+00:02:58,599 --> 00:02:59,599
+The way we see it all.
+
+83
+00:02:59,599 --> 00:03:00,599
+It's 2E47 now.
+
+84
+00:03:00,599 --> 00:03:02,159
+It's algorithmically boosted.
+
+85
+00:03:02,159 --> 00:03:05,319
+And honestly, it's just exhausting for so many people.
+
+86
+00:03:05,319 --> 00:03:06,319
+Mm-hmm.
+
+87
+00:03:06,319 --> 00:03:09,359
+Understanding that amplification, that constant exposure,
+
+88
+00:03:09,359 --> 00:03:12,319
+it really helps validate why you might be feeling this way.
+
+89
+00:03:12,319 --> 00:03:13,319
 Yeah.
 
+90
+00:03:13,319 --> 00:03:14,319
+It makes sense of the exhaustion.
+
+91
+00:03:14,319 --> 00:03:15,319
+It does.
+
+92
+00:03:15,319 --> 00:03:17,959
+And that validation, maybe that lets us go a bit deeper.
+
+93
+00:03:17,959 --> 00:03:18,959
+Yeah.
+
+94
+00:03:18,959 --> 00:03:22,359
+To ask if this chaos isn't just, you know, external noise,
+
+95
+00:03:22,359 --> 00:03:23,359
+but something more fundamental.
+
+96
+00:03:23,400 --> 00:03:23,920
+OK.
+
+97
+00:03:23,920 --> 00:03:24,920
+Like what?
+
+98
+00:03:24,920 --> 00:03:26,120
+Well, think about something like J.
+
+99
+00:03:26,120 --> 00:03:27,880
+Krishnamurti, the philosopher.
+
+100
+00:03:27,880 --> 00:03:31,280
+He had this quote that just, it hits hard.
+
+101
+00:03:31,280 --> 00:03:34,160
+He said, it is no measure of health to be well adjusted
+
+102
+00:03:34,160 --> 00:03:36,040
+to a profoundly sick society.
+
+103
+00:03:36,040 --> 00:03:36,720
+Wow.
+
+104
+00:03:36,720 --> 00:03:37,520
+OK.
+
+105
+00:03:37,520 --> 00:03:38,840
+Yeah, that lands.
+
+106
+00:03:38,840 --> 00:03:39,840
+Right.
+
+107
+00:03:39,840 --> 00:03:41,920
+He believed that the conflicts, the division,
+
+108
+00:03:41,920 --> 00:03:45,160
+the violence out there, it all starts inside.
+
+109
+00:03:45,160 --> 00:03:48,480
+In the confused, fragmented human mind.
+
+110
+00:03:48,480 --> 00:03:51,080
+So the external chaos reflects internal chaos.
+
+111
+00:03:51,080 --> 00:03:52,760
+That's the idea he puts forward.
+
+112
+00:03:52,799 --> 00:03:55,280
+What if the mess out there is actually rooted
+
+113
+00:03:55,280 --> 00:03:57,959
+in our own inner sort of disquiet?
+
+114
+00:03:57,959 --> 00:03:59,959
+How does that change how we approach things?
+
+115
+00:03:59,959 --> 00:04:01,799
+Maybe it's not just about reacting to headlines.
+
+116
+00:04:01,799 --> 00:04:04,679
+Who is it out there or in here, or both?
+
+117
+00:04:04,679 --> 00:04:06,679
+It's interesting because, you know, spiritual traditions,
+
+118
+00:04:06,679 --> 00:04:09,639
+philosophies, they've been wrestling with this for ages
+
+119
+00:04:09,639 --> 00:04:10,879
+long before Twitter existed.
+
+120
+00:04:10,879 --> 00:04:12,000
+From millennia, yeah.
+
+121
+00:04:12,000 --> 00:04:13,680
+And what's fascinating is how consistent
+
+122
+00:04:13,680 --> 00:04:16,959
+some of the core insights are across really different traditions.
+
+123
+00:04:16,959 --> 00:04:17,560
+Like what?
+
+124
+00:04:17,560 --> 00:04:18,639
+Give me an example.
+
+125
+00:04:18,639 --> 00:04:19,879
+OK, take Buddhism.
+
+126
+00:04:19,879 --> 00:04:21,159
+Talks about Dukha.
+
+127
+00:04:21,160 --> 00:04:26,240
+Often translated as suffering, or maybe unsatisfactoryness.
+
+128
+00:04:26,240 --> 00:04:27,640
+Unsatisfactoryness, OK.
+
+129
+00:04:27,640 --> 00:04:29,200
+It's not just about big pain.
+
+130
+00:04:29,200 --> 00:04:32,000
+It's that fundamental background hum of unease
+
+131
+00:04:32,000 --> 00:04:35,120
+we feel when we cling to things that are always changing.
+
+132
+00:04:35,120 --> 00:04:35,440
+Yeah.
+
+133
+00:04:35,440 --> 00:04:36,800
+Which is very relevant when you're scrolling
+
+134
+00:04:36,800 --> 00:04:37,600
+through a newsfeed, right?
+
+135
+00:04:37,600 --> 00:04:38,120
+Absolutely.
+
+136
+00:04:38,120 --> 00:04:40,480
+Nothing stays the same for five minutes online.
+
+137
+00:04:40,480 --> 00:04:41,360
+Exactly.
+
+138
+00:04:41,360 --> 00:04:44,879
+So Buddhism suggests a certain level of this disease is just
+
+139
+00:04:44,879 --> 00:04:45,960
+part of existence.
+
+140
+00:04:45,960 --> 00:04:50,160
+Then you've got, say, Taoism, which sees chaos in order
+
+141
+00:04:50,160 --> 00:04:52,560
+not as enemies, but as Yin and Yang.
+
+142
+00:04:52,560 --> 00:04:54,400
+They're always dancing together in balance.
+
+143
+00:04:54,400 --> 00:04:56,200
+It's like disorder isn't just bad.
+
+144
+00:04:56,200 --> 00:04:58,680
+It's often needed for new things to emerge.
+
+145
+00:04:58,680 --> 00:05:00,439
+A necessary part of the cycle.
+
+146
+00:05:00,439 --> 00:05:01,560
+Kind of, yeah.
+
+147
+00:05:01,560 --> 00:05:04,520
+And then there's Vedanta from ancient Hindu philosophy.
+
+148
+00:05:04,520 --> 00:05:06,200
+It talks about the world as Maya.
+
+149
+00:05:06,200 --> 00:05:07,800
+Maya, illusion, right?
+
+150
+00:05:07,800 --> 00:05:12,879
+Well, not exactly unreal, like a dream, maybe more like a compelling
+
+151
+00:05:12,879 --> 00:05:15,320
+appearance that can be deceptive if you take it
+
+152
+00:05:15,320 --> 00:05:17,160
+as the only reality.
+
+153
+00:05:17,160 --> 00:05:18,760
+It suggests that finding inner clarity,
+
+154
+00:05:18,759 --> 00:05:22,039
+that's your real compass in this big swirling show.
+
+155
+00:05:22,039 --> 00:05:23,039
+Okay.
+
+156
+00:05:23,039 --> 00:05:25,759
+So putting these together, Buddhism, Taoism, Vedanta.
+
+157
+00:05:25,759 --> 00:05:29,240
+If you connect the dots, maybe chaos isn't a mistake.
+
+158
+00:05:29,240 --> 00:05:30,839
+Maybe it's not a bug in the system.
+
+159
+00:05:30,839 --> 00:05:34,480
+Maybe it is the system or a core part of it anyway.
+
+160
+00:05:34,480 --> 00:05:38,800
+And if that's true, then our task isn't necessarily
+
+161
+00:05:38,800 --> 00:05:42,719
+to fix the whole world before we find some inner peace.
+
+162
+00:05:42,719 --> 00:05:44,159
+Maybe it's the other way around.
+
+163
+00:05:44,159 --> 00:05:47,599
+So find the stillness within the chaos.
+
+164
+00:05:47,640 --> 00:05:49,640
+That's the question it raises, isn't it?
+
+165
+00:05:49,640 --> 00:05:50,560
+How do we do that?
+
+166
+00:05:50,560 --> 00:05:52,640
+How do we find that stillness when everything feels
+
+167
+00:05:52,640 --> 00:05:54,600
+like it's constantly shifting and turning?
+
+168
+00:05:54,600 --> 00:05:56,000
+It's a huge question.
+
+169
+00:05:56,000 --> 00:05:57,800
+And, you know, trying to get a feel
+
+170
+00:05:57,800 --> 00:05:59,920
+for how widespread this is right now,
+
+171
+00:05:59,920 --> 00:06:02,080
+I went online, looked at places like Reddit.
+
+172
+00:06:02,080 --> 00:06:02,920
+Oh, yeah.
+
+173
+00:06:02,920 --> 00:06:03,760
+What did you find?
+
+174
+00:06:03,760 --> 00:06:07,840
+Well, forms like Ask Asia, various spirituality subs.
+
+175
+00:06:07,840 --> 00:06:09,640
+You see loads of threads with titles.
+
+176
+00:06:09,640 --> 00:06:11,640
+Like, why does everything feel so unstable
+
+177
+00:06:11,640 --> 00:06:16,200
+or does anyone else feel the energy is just off lately?
+
+178
+00:06:16,240 --> 00:06:17,719
+People are definitely feeling something
+
+179
+00:06:17,719 --> 00:06:18,639
+and trying to name it.
+
+180
+00:06:18,639 --> 00:06:20,439
+Looking for connection, for validation.
+
+181
+00:06:20,439 --> 00:06:21,279
+Totally.
+
+182
+00:06:21,279 --> 00:06:23,479
+They want to know they're not alone in feeling this way.
+
+183
+00:06:23,479 --> 00:06:26,240
+And what are people actually saying in those threads?
+
+184
+00:06:26,240 --> 00:06:29,159
+What's this sort of emotional flavor?
+
+185
+00:06:29,159 --> 00:06:30,560
+Oh, it's intense.
+
+186
+00:06:30,560 --> 00:06:32,240
+I saw one comment somebody wrote,
+
+187
+00:06:32,240 --> 00:06:34,399
+it's like the planet has anxiety.
+
+188
+00:06:34,399 --> 00:06:36,639
+Wow, that captures it.
+
+189
+00:06:36,639 --> 00:06:37,480
+Doesn't it?
+
+190
+00:06:37,480 --> 00:06:40,000
+Another one said, we're all grieving something,
+
+191
+00:06:40,000 --> 00:06:41,879
+even if we don't know what it is.
+
+192
+00:06:41,879 --> 00:06:43,879
+Ooh, yeah.
+
+193
+00:06:43,879 --> 00:06:48,879
+That points to this idea of a kind of global emotional
+
+194
+00:06:49,920 --> 00:06:53,439
+contagion, stress going viral, burnout,
+
+195
+00:06:53,439 --> 00:06:55,639
+becoming the baseline state for so many.
+
+196
+00:06:55,639 --> 00:06:57,000
+Viral stress.
+
+197
+00:06:57,000 --> 00:06:57,839
+Yeah.
+
+198
+00:06:57,839 --> 00:07:00,839
+And think about how that leaks out in our daily interactions.
+
+199
+00:07:00,839 --> 00:07:03,120
+Maybe we're shorter with people, less patient.
+
+200
+00:07:03,120 --> 00:07:04,279
+It creates friction everywhere.
+
+201
+00:07:04,279 --> 00:07:07,240
+This isn't just a private feeling inside your head.
+
+202
+00:07:07,240 --> 00:07:08,480
+It's a shared climate.
+
+203
+00:07:08,480 --> 00:07:10,480
+A collective temperature check, for sure.
+
+204
+00:07:10,480 --> 00:07:12,600
+And it confirms for anyone listening,
+
+205
+00:07:12,600 --> 00:07:13,439
+it's not just you.
+
+206
+00:07:13,439 --> 00:07:15,519
+Not just now, it really feels like all of us
+
+207
+00:07:15,519 --> 00:07:17,759
+are swimming in this chronic uncertainty.
+
+208
+00:07:17,759 --> 00:07:19,879
+This feeling like we've lost the old rituals,
+
+209
+00:07:19,879 --> 00:07:21,519
+maybe lost a sense of meaning,
+
+210
+00:07:21,519 --> 00:07:24,160
+or even just the illusion that we were ever in control.
+
+211
+00:07:24,160 --> 00:07:26,360
+That loss of the illusion of control is huge, I think.
+
+212
+00:07:26,360 --> 00:07:28,360
+Yeah, it validates that shared feeling
+
+213
+00:07:28,360 --> 00:07:29,720
+that you're definitely not alone
+
+214
+00:07:29,720 --> 00:07:31,360
+if things feel wobbly.
+
+215
+00:07:31,360 --> 00:07:34,480
+And looking beyond our feelings,
+
+216
+00:07:34,480 --> 00:07:38,040
+our individual, or even collective emotional state,
+
+217
+00:07:39,639 --> 00:07:41,600
+we also have to look at the bigger picture, right?
+
+218
+00:07:41,600 --> 00:07:42,839
+The systems themselves.
+
+219
+00:07:42,840 --> 00:07:45,800
+Right, because our feelings don't just appear out of nowhere,
+
+220
+00:07:45,800 --> 00:07:47,640
+they're connected to what's happening around us.
+
+221
+00:07:47,640 --> 00:07:49,680
+Exactly, they exist within a context.
+
+222
+00:07:49,680 --> 00:07:52,280
+And when you zoom out to that systemic level,
+
+223
+00:07:52,280 --> 00:07:55,560
+well, the picture doesn't exactly get calmer, does it?
+
+224
+00:07:55,560 --> 00:07:56,520
+Not really, no.
+
+225
+00:07:56,520 --> 00:07:58,440
+I mean, we look around, and foundational systems
+
+226
+00:07:58,440 --> 00:08:00,440
+seem to be under immense strain.
+
+227
+00:08:00,440 --> 00:08:03,800
+Political trust seems to be collapsing in many places,
+
+228
+00:08:03,800 --> 00:08:07,680
+the climate crisis, clearly escalating, AI disruption,
+
+229
+00:08:07,680 --> 00:08:09,200
+accelerating like crazy.
+
+230
+00:08:09,200 --> 00:08:10,760
+Yeah, the pace of change is relentless.
+
+231
+00:08:10,759 --> 00:08:13,599
+And our basic structures, education, governance,
+
+232
+00:08:13,599 --> 00:08:16,199
+healthcare, they all feel like they're,
+
+233
+00:08:16,199 --> 00:08:18,079
+I don't know, gasping for air sometimes.
+
+234
+00:08:18,079 --> 00:08:21,319
+It really feels like the bigger systems are either breaking down
+
+235
+00:08:21,319 --> 00:08:24,039
+or transforming in some really profound,
+
+236
+00:08:24,039 --> 00:08:25,599
+maybe uncomfortable ways.
+
+237
+00:08:25,599 --> 00:08:27,839
+There's a futurist, Bruno Marion,
+
+238
+00:08:27,839 --> 00:08:29,639
+who calls this the chaotic age.
+
+239
+00:08:29,639 --> 00:08:30,759
+But the chaotic age, okay.
+
+240
+00:08:30,759 --> 00:08:33,720
+His point is that everything is not just interconnected now,
+
+241
+00:08:33,720 --> 00:08:35,799
+but it's all moving faster and it's more fragile
+
+242
+00:08:35,799 --> 00:08:36,799
+than ever before.
+
+243
+00:08:36,799 --> 00:08:39,360
+Fragile, yeah, that feels right.
+
+244
+00:08:39,360 --> 00:08:41,879
+He uses the analogy, which I think is pretty vivid.
+
+245
+00:08:41,879 --> 00:08:45,000
+He says, it's like trying to balance a jenga tower
+
+246
+00:08:45,000 --> 00:08:48,159
+during an earthquake, while writing a unicycle.
+
+247
+00:08:48,159 --> 00:08:49,320
+Okay, yeah, that paints a picture.
+
+248
+00:08:49,320 --> 00:08:52,840
+Jenga, earthquake, unicycle, got it, chaos.
+
+249
+00:08:52,840 --> 00:08:53,840
+Exactly.
+
+250
+00:08:53,840 --> 00:08:56,440
+And what's really interesting, and maybe a bit challenging,
+
+251
+00:08:56,440 --> 00:08:59,560
+is that even how we react to this chaos,
+
+252
+00:08:59,560 --> 00:09:02,639
+things like the rise of conspiracy theories
+
+253
+00:09:02,639 --> 00:09:04,560
+or extreme political polarization,
+
+254
+00:09:04,560 --> 00:09:05,879
+or just pure escapism.
+
+255
+00:09:05,879 --> 00:09:07,480
+Right, tuning out completely.
+
+256
+00:09:07,480 --> 00:09:09,680
+Marion might argue, and others too,
+
+257
+00:09:09,680 --> 00:09:11,960
+that these are actually products of the system
+
+258
+00:09:11,960 --> 00:09:13,600
+trying to find some kind of stability,
+
+259
+00:09:13,600 --> 00:09:15,159
+however dysfunctional.
+
+260
+00:09:15,159 --> 00:09:16,360
+Think about it.
+
+261
+00:09:16,360 --> 00:09:18,920
+A conspiracy theory, in a weird way,
+
+262
+00:09:18,920 --> 00:09:21,519
+offers a simple story, a clear enemy,
+
+263
+00:09:21,519 --> 00:09:23,399
+a sense of knowing something.
+
+264
+00:09:23,399 --> 00:09:25,240
+It gives a temporary feeling of control
+
+265
+00:09:25,240 --> 00:09:27,639
+in a world that feels terrifyingly out of control.
+
+266
+00:09:27,639 --> 00:09:29,720
+Oh, I never thought of it that way,
+
+267
+00:09:29,720 --> 00:09:32,039
+as a symptom of the system trying to cope.
+
+268
+00:09:32,039 --> 00:09:34,120
+But the question is, does it actually help?
+
+269
+00:09:34,120 --> 00:09:37,200
+Does it address the root causes, the real anxieties,
+
+270
+00:09:37,200 --> 00:09:39,800
+or is it just like trying to heal a wound
+
+271
+00:09:39,800 --> 00:09:41,200
+by pretending it's not infected?
+
+272
+00:09:41,200 --> 00:09:42,600
+It might make you feel better for a minute,
+
+273
+00:09:42,600 --> 00:09:44,040
+but the infection's still there.
+
+274
+00:09:44,040 --> 00:09:47,120
+Right, okay, so we've talked about the feeling,
+
+275
+00:09:47,120 --> 00:09:49,600
+the data, the philosophical angles,
+
+276
+00:09:49,600 --> 00:09:51,320
+the systemic breakdown.
+
+277
+00:09:51,320 --> 00:09:53,160
+It can start to feel a bit heavy.
+
+278
+00:09:53,160 --> 00:09:56,160
+It can, yeah, the doom and gloom factor is real.
+
+279
+00:09:56,160 --> 00:09:58,400
+So let's shift gears, let's bring it home.
+
+280
+00:09:58,400 --> 00:09:59,520
+What can we actually do?
+
+281
+00:09:59,520 --> 00:10:01,480
+What are the practical strategies here?
+
+282
+00:10:01,480 --> 00:10:03,080
+Okay, the what now part?
+
+283
+00:10:03,080 --> 00:10:04,360
+Exactly.
+
+284
+00:10:04,360 --> 00:10:06,480
+I saw some advice from therapists at Mass General,
+
+285
+00:10:06,519 --> 00:10:07,840
+which seemed pretty grounded.
+
+286
+00:10:07,840 --> 00:10:11,159
+First, basically, turn down the noise.
+
+287
+00:10:11,159 --> 00:10:12,840
+Do you rate your feed, be intentional?
+
+288
+00:10:12,840 --> 00:10:13,960
+The intentional, exactly.
+
+289
+00:10:13,960 --> 00:10:16,399
+Don't just let the algorithm feed you outrage.
+
+290
+00:10:16,399 --> 00:10:19,519
+And second, they literally said touch grass.
+
+291
+00:10:19,519 --> 00:10:23,240
+Not, yes, get offline, connect with the physical world.
+
+292
+00:10:23,240 --> 00:10:24,480
+And it's with the physical world,
+
+293
+00:10:24,480 --> 00:10:26,879
+simple but probably effective.
+
+294
+00:10:26,879 --> 00:10:29,920
+They also suggested building micro-rituals into your day.
+
+295
+00:10:29,920 --> 00:10:31,240
+Micro-rituals, like what?
+
+296
+00:10:31,240 --> 00:10:33,879
+Small things, like journaling for a few minutes,
+
+297
+00:10:33,879 --> 00:10:35,559
+mindfully making a cup of tea,
+
+298
+00:10:35,559 --> 00:10:37,639
+doing a five-minute meditation,
+
+299
+00:10:37,639 --> 00:10:40,039
+just creating tiny little pockets of calm
+
+300
+00:10:40,039 --> 00:10:41,639
+and intention in the middle of the day.
+
+301
+00:10:41,639 --> 00:10:43,799
+I like that, small, achievable anchors.
+
+302
+00:10:43,799 --> 00:10:46,559
+Yeah, it's not about suddenly becoming a Zen Master,
+
+303
+00:10:46,559 --> 00:10:49,279
+just finding small ways to regulate your nervous system.
+
+304
+00:10:49,279 --> 00:10:52,320
+And maybe moving beyond just coping.
+
+305
+00:10:52,320 --> 00:10:53,840
+There's this other perspective,
+
+306
+00:10:53,840 --> 00:10:56,840
+which is about actually embracing the chaos,
+
+307
+00:10:56,840 --> 00:10:58,039
+finding value in it.
+
+308
+00:10:58,039 --> 00:10:59,480
+Okay, embracing chaos.
+
+309
+00:10:59,480 --> 00:11:00,279
+How does that work?
+
+310
+00:11:00,279 --> 00:11:02,120
+Sounds counterintuitive.
+
+311
+00:11:02,120 --> 00:11:05,639
+It does, but grateful.org had this list.
+
+312
+00:11:05,639 --> 00:11:07,600
+12 reasons to embrace chaos.
+
+313
+00:11:07,600 --> 00:11:08,560
+I won't go through all 12,
+
+314
+00:11:08,560 --> 00:11:10,399
+but maybe the top three are really powerful.
+
+315
+00:11:10,399 --> 00:11:11,320
+Okay, give me the top three.
+
+316
+00:11:11,320 --> 00:11:14,759
+Number one, chaos is a signal.
+
+317
+00:11:14,759 --> 00:11:16,519
+Something wants to change.
+
+318
+00:11:16,519 --> 00:11:17,639
+It's like an alarm bell telling you
+
+319
+00:11:17,639 --> 00:11:18,960
+the old way isn't working.
+
+320
+00:11:18,960 --> 00:11:21,039
+It's information, not just noise.
+
+321
+00:11:21,039 --> 00:11:22,759
+Chaos as a signal makes sense.
+
+322
+00:11:22,759 --> 00:11:25,639
+Number two, it humbles us, it breaks the ego.
+
+323
+00:11:26,680 --> 00:11:28,639
+When things fall apart, that illusion of control
+
+324
+00:11:28,639 --> 00:11:30,399
+we talked about, it shatters.
+
+325
+00:11:30,399 --> 00:11:31,879
+And that can actually open us up,
+
+326
+00:11:31,879 --> 00:11:33,039
+make us more receptive.
+
+327
+00:11:33,039 --> 00:11:34,279
+Right, less rigid.
+
+328
+00:11:34,279 --> 00:11:35,120
+Exactly.
+
+329
+00:11:35,120 --> 00:11:37,039
+And number three, it births new paradigms.
+
+330
+00:11:37,039 --> 00:11:39,720
+Think of a forest fire, devastating yes.
+
+331
+00:11:39,720 --> 00:11:41,240
+But it clears out the old undergrowth
+
+332
+00:11:41,240 --> 00:11:43,240
+and makes space for new things to grow.
+
+333
+00:11:43,240 --> 00:11:44,240
+Chaos can be generative.
+
+334
+00:11:44,240 --> 00:11:46,080
+Forest fire, clearing space.
+
+335
+00:11:46,080 --> 00:11:48,720
+Okay, so chaos is signal, chaos is humbling,
+
+336
+00:11:48,720 --> 00:11:50,039
+chaos is generative.
+
+337
+00:11:50,039 --> 00:11:51,639
+Yeah, so if you put that together
+
+338
+00:11:51,639 --> 00:11:53,799
+with the spiritual ideas we touched on,
+
+339
+00:11:53,799 --> 00:11:56,720
+maybe the goal isn't to escape the chaos
+
+340
+00:11:56,720 --> 00:11:58,399
+or even just to cope with it.
+
+341
+00:11:58,399 --> 00:12:00,440
+Maybe it's to become still within it,
+
+342
+00:12:00,440 --> 00:12:03,040
+to find that quiet center,
+
+343
+00:12:03,040 --> 00:12:05,120
+even when the storm is raging all around you.
+
+344
+00:12:05,120 --> 00:12:07,000
+Finding the eye of the storm inside yourself.
+
+345
+00:12:07,000 --> 00:12:08,320
+Something like that, yeah.
+
+346
+00:12:08,320 --> 00:12:10,480
+Okay, so wrapping this up,
+
+347
+00:12:11,840 --> 00:12:15,440
+the world might feel like it's completely unraveling right now.
+
+348
+00:12:15,440 --> 00:12:16,280
+That's the feeling.
+
+349
+00:12:16,280 --> 00:12:18,360
+But maybe, just maybe, it's not unraveling,
+
+350
+00:12:18,360 --> 00:12:19,360
+maybe it's unfolding.
+
+351
+00:12:19,360 --> 00:12:20,440
+Unfolding, I like that.
+
+352
+00:12:20,440 --> 00:12:21,880
+Unfolding us.
+
+353
+00:12:21,880 --> 00:12:24,080
+Unfolding truths that we're hidden.
+
+354
+00:12:24,080 --> 00:12:27,040
+Unfolding what just doesn't work anymore, you know?
+
+355
+00:12:27,040 --> 00:12:27,960
+Making space.
+
+356
+00:12:27,960 --> 00:12:30,440
+Yeah, an emergence rather than just to collapse.
+
+357
+00:12:30,440 --> 00:12:33,400
+So the invitation to you listening might be,
+
+358
+00:12:33,400 --> 00:12:37,000
+don't just numb out, don't log off permanently, maybe.
+
 359
-00:12:54,980 --> 00:12:57,899
-Huge for auditing and consistency and ML work clothes.
+00:12:37,000 --> 00:12:40,400
+But breathe, reflect, reach out to people,
 
 360
-00:12:57,899 --> 00:13:00,379
-Another one mentioned was managing large couch-based
+00:12:40,400 --> 00:12:42,440
+get, I don't know, weirdly curious about this feeling
 
 361
-00:13:00,379 --> 00:13:03,460
-Kubernetes clusters using GitOps via Argo CD,
+00:12:42,440 --> 00:12:43,680
+about yourself, but what's happening?
 
 362
-00:13:03,460 --> 00:13:06,740
-ensuring that complex, stateful database setup stays perfectly
+00:12:43,680 --> 00:12:45,320
+Lean into the uncertainty a little.
 
 363
-00:13:06,740 --> 00:13:08,259
-aligned with its Git definition.
+00:12:45,320 --> 00:12:47,879
+Yeah, because maybe clarity doesn't come
 
 364
-00:13:08,259 --> 00:13:10,340
-OK, managing stateful applications.
+00:12:47,879 --> 00:12:51,040
+when the world magically calms down around us.
 
 365
-00:13:10,340 --> 00:13:12,740
-Right, and maybe one of the most powerful combinations
+00:12:51,040 --> 00:12:54,160
+Maybe it comes when you find that calm inside.
 
 366
-00:13:12,740 --> 00:13:15,460
-discussed was crossplane plus Argo CD.
+00:12:54,160 --> 00:12:55,480
+That's really where it gets interesting
 
 367
-00:13:15,460 --> 00:13:17,660
-Crossplane, that's for infrastructure provisioning.
+00:12:55,480 --> 00:12:56,840
+for you to consider, isn't it?
 
 368
-00:13:17,660 --> 00:13:19,139
-Yeah, crossplane lets you define
+00:12:56,840 --> 00:12:58,440
+How do you find that stillness?
 
 369
-00:13:19,139 --> 00:13:22,259
-and manage external cloud resources like RDS databases,
+00:12:58,440 --> 00:13:00,399
+And that big respect to Krishna Boardy, doesn't it?
 
 370
-00:13:22,259 --> 00:13:25,539
-SQSQs, cloud provider stuff using Kubernetes APIs.
+00:13:00,399 --> 00:13:01,519
+That quote you mentioned earlier,
 
 371
-00:13:25,539 --> 00:13:27,340
-So you pair that with Argo Kedi.
+00:13:01,519 --> 00:13:03,560
+feels like a good place to land.
 
 372
-00:13:27,340 --> 00:13:29,500
-And you manage your cloud infrastructure from Git.
+00:13:03,560 --> 00:13:04,879
+To understand the immeasurable,
 
 373
-00:13:29,500 --> 00:13:30,340
-Bingo.
+00:13:04,879 --> 00:13:07,960
+the mind must be extraordinarily quiet still.
 
 374
-00:13:30,340 --> 00:13:33,699
-You get infrastructure as code plus GitOps.
+00:13:07,960 --> 00:13:10,200
+Extraordinarily quiet still.
 
 375
-00:13:33,699 --> 00:13:36,699
-Your entire system from the underlying cloud resources
+00:13:10,200 --> 00:13:12,240
+If we connect that to everything we've discussed,
 
 376
-00:13:36,699 --> 00:13:39,740
-provisioned by crossplane right up to the applications
+00:13:12,240 --> 00:13:14,160
+the overwhelm, the systemic shifts,
 
 377
-00:13:39,740 --> 00:13:43,860
-deployed by Argo CD is all defined declaratively in Git
+00:13:14,160 --> 00:13:15,519
+the need for inter grounding,
 
 378
-00:13:43,860 --> 00:13:45,899
-and continuously reconciled.
+00:13:15,519 --> 00:13:18,759
+it really does raise that vital question for all of us.
 
 379
-00:13:45,899 --> 00:13:48,899
-The whole lifecycle manage from one place.
+00:13:18,759 --> 00:13:21,240
+In this age of noise and chaos,
 
 380
-00:13:48,939 --> 00:13:52,139
-Wow, that's pretty comprehensive.
+00:13:21,240 --> 00:13:24,519
+how do we actively cultivate that quiet stillness?
 
 381
-00:13:52,139 --> 00:13:53,579
-Managing everything from Git.
+00:13:24,519 --> 00:13:25,960
+And maybe more importantly,
 
 382
-00:13:53,579 --> 00:13:55,259
-It's a really compelling vision.
+00:13:25,960 --> 00:13:28,440
+what new possibilities, what deep understanding
 
 383
-00:13:55,259 --> 00:13:57,259
-Well, this has been a fantastic deep dive.
-
-384
-00:13:57,259 --> 00:13:59,500
-We've covered a lot of ground from the basics
-
-385
-00:13:59,500 --> 00:14:01,539
-of what Argo CD is through its core features,
-
-386
-00:14:01,539 --> 00:14:04,659
-rollouts, the ecosystem, scaling with application sets,
-
-387
-00:14:04,659 --> 00:14:06,939
-practical uses like preview environments
-
-388
-00:14:06,939 --> 00:14:08,819
-and how it fits into the broader landscape.
-
-389
-00:14:08,819 --> 00:14:09,819
-It really seems like whether you're
-
-390
-00:14:09,819 --> 00:14:12,539
-trying to standardize deployments across a huge company,
-
-391
-00:14:12,539 --> 00:14:15,460
-scale up your GitOps practice, or maybe just automate those
-
-392
-00:14:15,460 --> 00:14:17,300
-home chart updates you're still doing manually.
-
-393
-00:14:17,300 --> 00:14:21,500
-Argo CD offers a really solid and elegant approach.
-
-394
-00:14:21,500 --> 00:14:22,660
-It really does.
-
-395
-00:14:22,660 --> 00:14:24,460
-And maybe the final thought to leave people with
-
-396
-00:14:24,460 --> 00:14:27,700
-is how profoundly tools like Argo CD
-
-397
-00:14:27,700 --> 00:14:30,940
-shift our whole mindset about infrastructure.
-
-398
-00:14:30,940 --> 00:14:34,259
-Git stops being just the place where your code lives.
-
-399
-00:14:34,259 --> 00:14:37,540
-It becomes the living, breathing, definitive blueprint
-
-400
-00:14:37,540 --> 00:14:39,180
-for your entire system.
-
-401
-00:14:39,180 --> 00:14:41,500
-Your applications, yes, but also your configurations,
-
-402
-00:14:41,500 --> 00:14:43,780
-your deployment strategies, even your underlying cloud
-
-403
-00:14:43,780 --> 00:14:45,340
-infrastructure potentially.
-
-404
-00:14:45,340 --> 00:14:47,139
-Every Git commit becomes effectively
-
-405
-00:14:47,139 --> 00:14:48,580
-an infrastructure change request.
-
-406
-00:14:48,580 --> 00:14:50,700
-It makes your whole system inherently
-
-407
-00:14:50,700 --> 00:14:54,300
-auditable, versioned, reproducible, and way more resilient.
-
-408
-00:14:54,300 --> 00:14:56,540
-It's a fundamental paradigm shift, really.
-
-409
-00:14:56,540 --> 00:14:58,460
-It empowers teams to handle complexity
-
-410
-00:14:58,460 --> 00:14:59,860
-with the level of clarity and control
-
-411
-00:14:59,860 --> 00:15:03,379
-that was, frankly, hard to imagine before.
-
-412
-00:15:03,379 --> 00:15:06,580
-So maybe the takeaway is, give your Git repo a hug.
-
-413
-00:15:06,580 --> 00:15:07,460
-Ah, yeah, maybe.
-
-414
-00:15:07,460 --> 00:15:09,860
-It deserves it for holding all that critical knowledge now.
-
-415
-00:15:09,860 --> 00:15:11,780
-Definitely something to think about how this changes
-
-416
-00:15:11,780 --> 00:15:14,259
-the very nature of managing systems.
+00:13:28,440 --> 00:13:30,519
+might emerge for us when we actually do.
 
