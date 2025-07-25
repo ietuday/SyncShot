@@ -5,7 +5,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 from moviepy import (
-    ImageClip, concatenate_videoclips,
+    ImageClip, VideoFileClip, concatenate_videoclips,
     AudioFileClip, CompositeVideoClip
 )
 from faster_whisper import WhisperModel
@@ -139,6 +139,30 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             for clip in clips:
                 clip.close()
 
+
+def create_shorts(video_path, shorts_dir="shorts"):
+    """Create short clips from the main subtitled video."""
+    try:
+        if not os.path.exists(shorts_dir):
+            os.makedirs(shorts_dir)
+
+        print("✂️ Creating Shorts...")
+        clip = VideoFileClip(video_path)  # change filename if needed
+
+        # Cut short clips (time in seconds)
+        short1 = clip.subclipped(10, 25)  # 15-second short from 10s to 25s
+        short2 = clip.subclipped(30, 45)  # another 15s short
+
+        # Write the shorts
+        short1.write_videofile("shorts/short1.mp4", codec="libx264", audio_codec="aac")
+        short2.write_videofile("shorts/short2.mp4", codec="libx264", audio_codec="aac")
+
+        print("✅ All shorts created successfully.")
+
+    except Exception as e:
+        print(f"💥 Failed to create shorts: {e}")
+
+
 if __name__ == "__main__":
     audio_folder = "audio"
     audio_files = [
@@ -164,3 +188,7 @@ if __name__ == "__main__":
 
     output_video = "output_video.mp4"
     generate_video(audio_file, image_files, output_video)
+    print("🎥 Video generation complete. Now burning subtitles...")
+    # 👉 Shorts magic happens here
+    subtitled_video = "output_video_subtitled.mp4"
+    create_shorts(subtitled_video)
