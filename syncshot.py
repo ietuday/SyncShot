@@ -41,32 +41,51 @@ def format_time(seconds):
     millis = int((seconds - int(seconds)) * 1000)
     return f"{hrs:02}:{mins:02}:{secs:02},{millis:03}"
 
-def transcribe_audio_to_srt(audio_path, srt_output_path="subtitles.srt", model_size="base"):
-    """Transcribe audio to .srt subtitles using Faster-Whisper."""
+def transcribe_audio_to_ass(audio_path, ass_output_path="subtitles.ass", model_size="base"):
+    """Transcribe audio to .ass subtitles using Faster-Whisper."""
     print("🚀 Loading Faster-Whisper model...")
     model = WhisperModel(model_size, compute_type="auto")  # Use GPU if available
 
     print(f"🎙️ Transcribing: {audio_path}")
-    segments, info = model.transcribe(audio_path, beam_size=5)
+    segments, _ = model.transcribe(audio_path, beam_size=5)
 
-    with open(srt_output_path, "w", encoding="utf-8") as f:
-        for i, segment in enumerate(tqdm(segments, desc="📝 Generating Subtitles"), start=1):
-            start = segment.start
-            end = segment.end
-            text = segment.text.strip()
-            f.write(f"{i}\n")
-            f.write(f"{format_time(start)} --> {format_time(end)}\n")
-            f.write(f"{text}\n\n")
+    ass_header = """[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
 
-    print(f"✅ SRT generated: {srt_output_path}")
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, BackColour, OutlineColour, Bold, Italic, Underline, Alignment, MarginL, MarginR, MarginV, BorderStyle, Outline, Shadow, Encoding
+Style: Default,Impact,110,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,5,50,50,60,1,5,0,1
 
-def burn_subtitles(video_path, srt_path, output_path_with_subs):
-    """Burn .srt subtitles into video using ffmpeg."""
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+
+    def format_ass_time(seconds):
+        h = int(seconds // 3600)
+        m = int((seconds % 3600) // 60)
+        s = int(seconds % 60)
+        cs = int((seconds - int(seconds)) * 100)
+        return f"{h:01}:{m:02}:{s:02}.{cs:02}"
+
+    with open(ass_output_path, "w", encoding="utf-8") as f:
+        f.write(ass_header)
+        for segment in segments:
+            start = format_ass_time(segment.start)
+            end = format_ass_time(segment.end)
+            text = segment.text.replace('\n', ' ').replace(',', ',\\N')
+            f.write(f"Dialogue: 0,{start},{end},Default,,0,0,0,,{text}\n")
+
+    print(f"✅ ASS subtitle file generated: {ass_output_path}")
+
+def burn_subtitles(video_path, ass_path, output_path_with_subs):
+    """Burn .ass subtitles into video using ffmpeg with large center-aligned styling."""
     try:
         print("🔥 Burning subtitles into the video...")
         cmd = [
             "ffmpeg", "-y", "-i", video_path,
-            "-vf", f"subtitles={srt_path}",
+            "-vf", f"ass={ass_path}",
             "-c:a", "copy",
             output_path_with_subs
         ]
@@ -79,8 +98,8 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
     """Generate a video from an audio file and a set of images, then burn subtitles into it."""
     try:
         # Transcribe audio to subtitles
-        srt_output = os.path.splitext(output_path)[0] + ".srt"
-        transcribe_audio_to_srt(audio_path, srt_output)
+        ass_output = os.path.splitext(output_path)[0] + ".ass"
+        transcribe_audio_to_ass(audio_path, ass_output)
 
         # Load audio
         audio = AudioFileClip(audio_path)
@@ -125,7 +144,7 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
 
         # Burn subtitles
         output_with_subs = os.path.splitext(output_path)[0] + "_subtitled.mp4"
-        burn_subtitles(output_path, srt_output, output_with_subs)
+        burn_subtitles(output_path, ass_output, output_with_subs)
 
     except Exception as e:
         print(f"💥 Error: {str(e)}")
@@ -139,7 +158,6 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
             for clip in clips:
                 clip.close()
 
-
 def create_shorts(video_path, shorts_dir="shorts"):
     """Create short clips from the main subtitled video."""
     try:
@@ -147,11 +165,11 @@ def create_shorts(video_path, shorts_dir="shorts"):
             os.makedirs(shorts_dir)
 
         print("✂️ Creating Shorts...")
-        clip = VideoFileClip(video_path)  # change filename if needed
+        clip = VideoFileClip(video_path)
 
         # Cut short clips (time in seconds)
-        short1 = clip.subclipped(10, 25)  # 15-second short from 10s to 25s
-        short2 = clip.subclipped(30, 45)  # another 15s short
+        short1 = clip.subclipped(10, 25)
+        short2 = clip.subclipped(30, 45)
 
         # Write the shorts
         short1.write_videofile("shorts/short1.mp4", codec="libx264", audio_codec="aac")
@@ -162,7 +180,6 @@ def create_shorts(video_path, shorts_dir="shorts"):
     except Exception as e:
         print(f"💥 Failed to create shorts: {e}")
 
-
 if __name__ == "__main__":
     audio_folder = "audio"
     audio_files = [
@@ -172,7 +189,7 @@ if __name__ == "__main__":
     ]
     if not audio_files:
         raise FileNotFoundError("No .m4a files found in the audio folder.")
-    audio_file = audio_files[0]  # Use the first .wav file found
+    audio_file = audio_files[0]
 
     image_folder = "images"
     image_files = [
@@ -184,11 +201,10 @@ if __name__ == "__main__":
     if not image_files:
         raise FileNotFoundError("No image files found in the image folder.")
 
-    random.shuffle(image_files)  # Randomize order
+    random.shuffle(image_files)
 
     output_video = "output_video.mp4"
     generate_video(audio_file, image_files, output_video)
     print("🎥 Video generation complete. Now burning subtitles...")
-    # 👉 Shorts magic happens here
     subtitled_video = "output_video_subtitled.mp4"
     create_shorts(subtitled_video)
