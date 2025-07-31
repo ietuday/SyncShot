@@ -168,10 +168,10 @@ if __name__ == "__main__":
     audio_files = [
         os.path.join(audio_folder, fname)
         for fname in sorted(os.listdir(audio_folder))
-        if fname.lower().endswith(".wav")
+        if fname.lower().endswith(".m4a")
     ]
     if not audio_files:
-        raise FileNotFoundError("No .wav files found in the audio folder.")
+        raise FileNotFoundError("No .m4a files found in the audio folder.")
     audio_file = audio_files[0]  # Use the first .wav file found
 
     image_folder = "images"
