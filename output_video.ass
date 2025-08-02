@@ -9,299 +9,443 @@ Style: Default,Impact,110,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,5,50,50,60,1,5
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.00,0:00:04.63,Default,,0,0,0,, Welcome to The Deep Dive. Today,\N we're tackling a really fundamental topic,\N
-Dialogue: 0,0:00:04.63,0:00:06.96,Default,,0,0,0,, environment management,\N and software deployment.
-Dialogue: 0,0:00:06.96,0:00:09.83,Default,,0,0,0,, Yeah,\N it's something everyone deals with,\N whether they realize it or not.
-Dialogue: 0,0:00:09.83,0:00:17.67,Default,,0,0,0,, Exactly. So,\N our mission today is to really unpack how software gets from an idea on a
-Dialogue: 0,0:00:17.67,0:00:23.83,Default,,0,0,0,, developer's machine all the way to running smoothly for users. And the key to that is understanding
-Dialogue: 0,0:00:23.83,0:00:28.48,Default,,0,0,0,, environments. And I think,\N you know,\N it's more than just saying dev test prod.
-Dialogue: 0,0:00:28.48,0:00:34.00,Default,,0,0,0,, Yeah. It digs into strategy,\N security,\N and really the speed you can deliver value.
-Dialogue: 0,0:00:34.00,0:00:38.48,Default,,0,0,0,, Absolutely,\N it's foundational. So,\N maybe let's start simple. What is an environment? At
-Dialogue: 0,0:00:38.48,0:00:42.39,Default,,0,0,0,, its core,\N it's just,\N well,\N it's the place where your code gets deployed and executed.
-Dialogue: 0,0:00:42.39,0:00:46.39,Default,,0,0,0,, Okay,\N just a place for code to run. Right. But the crucial part is why we need different
-Dialogue: 0,0:00:46.39,0:00:50.64,Default,,0,0,0,, environments. Throughout the whole software development lifecycle,\N having distinct stages
-Dialogue: 0,0:00:50.64,0:00:57.52,Default,,0,0,0,, lets us build,\N test,\N and refine things safely,\N iteratively,\N long before any real user sees it.
-Dialogue: 0,0:00:57.52,0:01:01.60,Default,,0,0,0,, Avoiding chaos. So,\N can you walk us through the typical environments you'd see,\N especially in
-Dialogue: 0,0:01:01.60,0:01:06.40,Default,,0,0,0,, like a modern CICD setup,\N continuous integration,\N continuous deployment?
-Dialogue: 0,0:01:06.40,0:01:12.79,Default,,0,0,0,, Sure. It usually starts right on the engineer's own machine. That's the local development environment,\N
-Dialogue: 0,0:01:12.79,0:01:18.87,Default,,0,0,0,, their laptop,\N basically. It's their personal space for coding,\N initial testing,\N debugging,\N
-Dialogue: 0,0:01:18.87,0:01:23.19,Default,,0,0,0,, kind of the first sanity check. Makes sense. The starting point. Exactly. Then,\N
-Dialogue: 0,0:01:23.19,0:01:27.35,Default,,0,0,0,, the code moves into what we generally call pre-production environments. Okay,\N pre-production.
-Dialogue: 0,0:01:27.35,0:01:32.15,Default,,0,0,0,, The first big one there is usually QA,\N quality assurance. This is where the code meets something
-Dialogue: 0,0:01:32.15,0:01:40.00,Default,,0,0,0,, that looks a lot like production. Similar hardware,\N data,\N dependencies,\N the goal is serious testing.
-Dialogue: 0,0:01:40.00,0:01:44.00,Default,,0,0,0,, Does it actually work correctly? Got it. Finding the bugs before they escape.
-Dialogue: 0,0:01:44.07,0:01:51.12,Default,,0,0,0,, Precisely. After QA,\N you might have an E2E environment end-to-end. Think of this as a stable place
-Dialogue: 0,0:01:51.12,0:01:56.48,Default,,0,0,0,, where different services,\N all in their pre-release state,\N can test how they integrate together.
-Dialogue: 0,0:01:56.48,0:01:58.96,Default,,0,0,0,, So,\N testing the interactions between different parts?
-Dialogue: 0,0:01:58.96,0:02:02.56,Default,,0,0,0,, Yeah,\N exactly. If everything looks good there,\N then we move towards production environments.
-Dialogue: 0,0:02:02.56,0:02:04.15,Default,,0,0,0,, Okay,\N the real deal is coming.
-Dialogue: 0,0:02:04.15,0:02:10.00,Default,,0,0,0,, Almost. First stop is often stage or staging. Now,\N stage is interesting because it actually
-Dialogue: 0,0:02:10.00,0:02:15.43,Default,,0,0,0,, accesses real production dependencies like maybe a production database replica or message queue.
-Dialogue: 0,0:02:15.43,0:02:19.91,Default,,0,0,0,, Whoa,\N okay. That sounds risky. It can be,\N which is why you're super careful.
-Dialogue: 0,0:02:19.91,0:02:25.52,Default,,0,0,0,, It's main job is to verify things like say a new database schema update works with the actual
-Dialogue: 0,0:02:25.52,0:02:32.24,Default,,0,0,0,, production database structure. But,\N and this is key,\N the traffic is only test traffic,\N no real users.
-Dialogue: 0,0:02:32.24,0:02:37.84,Default,,0,0,0,, Still,\N because you are touching production data systems,\N any tests run here need very careful
-Dialogue: 0,0:02:38.24,0:02:40.64,Default,,0,0,0,, review. Right,\N you don't want test data messing up production records.
-Dialogue: 0,0:02:40.64,0:02:46.15,Default,,0,0,0,, Definitely not. So,\N only after stage gives the thumbs up,\N does the code finally land in prod or
-Dialogue: 0,0:02:46.15,0:02:49.43,Default,,0,0,0,, production? That's the live environment serving actual users.
-Dialogue: 0,0:02:49.43,0:02:51.19,Default,,0,0,0,, Okay,\N that clarifies the flow.
-Dialogue: 0,0:02:51.19,0:02:57.92,Default,,0,0,0,, And the really key distinction to remember is QA and E2E are pre-production,\N no live traffic,\N no live data.
-Dialogue: 0,0:02:58.48,0:03:02.40,Default,,0,0,0,, Stage and prod,\N though,\N are considered production environments because they touch that live
-Dialogue: 0,0:03:02.40,0:03:06.87,Default,,0,0,0,, production data infrastructure. Stages like the final dress rehearsal on the real stage,\N
-Dialogue: 0,0:03:06.87,0:03:11.75,Default,,0,0,0,, just before the audience arrives. That's a great analogy. So,\N we know why we need them
-Dialogue: 0,0:03:11.75,0:03:17.91,Default,,0,0,0,, in the typical stages,\N but what actually makes up an environment is not just a server name,\N right?
-Dialogue: 0,0:03:17.91,0:03:21.03,Default,,0,0,0,, What are the components? No,\N you're absolutely right. It's more defined than that.
-Dialogue: 0,0:03:21.68,0:03:27.91,Default,,0,0,0,, There are really three core building blocks. First,\N obviously the code,\N your application's instructions.
-Dialogue: 0,0:03:27.91,0:03:32.80,Default,,0,0,0,, Okay. Second,\N the runtime prerequisites. All the stuff your code needs to run. So,\N if you have a
-Dialogue: 0,0:03:32.80,0:03:37.76,Default,,0,0,0,, Node.js app,\N that's the NodeBinary itself,\N all the NPM packages,\N you know,\N that sort of thing.
-Dialogue: 0,0:03:37.76,0:03:43.04,Default,,0,0,0,, The dependencies. Exactly. And third,\N and this is super important,\N the configuration.
-Dialogue: 0,0:03:43.04,0:03:48.24,Default,,0,0,0,, These are the settings specific to that environment. They tell the application how to behave,\N
-Dialogue: 0,0:03:48.24,0:03:52.72,Default,,0,0,0,, which database to connect to the QA1 or the prod one,\N stuff like that.
-Dialogue: 0,0:03:52.72,0:03:56.64,Default,,0,0,0,, Configuration is key for making the same code work differently in different places.
-Dialogue: 0,0:03:56.64,0:04:00.96,Default,,0,0,0,, It is. And this is where something like Docker images become,\N well,\N a real game changer.
-Dialogue: 0,0:04:01.43,0:04:07.60,Default,,0,0,0,, Docker heard of it. Right. So a Docker image bundles your code and all those runtime prerequisites,\N
-Dialogue: 0,0:04:07.60,0:04:13.36,Default,,0,0,0,, those dependencies into one single package,\N a deployable unit. Okay,\N self-contained.
-Dialogue: 0,0:04:13.36,0:04:19.19,Default,,0,0,0,, Totally. And the beauty is that same image can then run pretty much anywhere on the developers laptop
-Dialogue: 0,0:04:19.19,0:04:25.28,Default,,0,0,0,, in QA and production clusters. It gets rid of so many of those. Well,\N it worked on my machine
-Dialogue: 0,0:04:25.28,0:04:30.63,Default,,0,0,0,, problems because the environment inside the container is consistent. That makes deployments way
-Dialogue: 0,0:04:30.63,0:04:34.71,Default,,0,0,0,, more reliable,\N I bet. Huge difference. And when we talk configuration,\N
-Dialogue: 0,0:04:34.71,0:04:40.39,Default,,0,0,0,, it's not just like database connection strings. It also covers things like pointers to storage,\N
-Dialogue: 0,0:04:40.39,0:04:46.24,Default,,0,0,0,, caches,\N message cues,\N and crucially networking policy. Networking,\N how so? Well,\N
-Dialogue: 0,0:04:46.24,0:04:52.00,Default,,0,0,0,, configuration can define rules for ingress that's incoming traffic and egress outgoing traffic.
-Dialogue: 0,0:04:52.00,0:04:56.95,Default,,0,0,0,, This lets you isolate environments like you can set up rules to completely block any network traffic
-Dialogue: 0,0:04:57.03,0:05:01.68,Default,,0,0,0,, between your preprod environments and your prod environment,\N big security win. Okay,\N like a firewall
-Dialogue: 0,0:05:01.68,0:05:07.27,Default,,0,0,0,, between environments. Kind of. Yeah,\N or you could say only these specific engineers are allowed network
-Dialogue: 0,0:05:07.27,0:05:11.68,Default,,0,0,0,, access into the production environment while maybe the whole team can access preprod. It's about
-Dialogue: 0,0:05:11.68,0:05:16.31,Default,,0,0,0,, controlling access and data flow based on the environment. This is making a lot more sense. Now,\N
-Dialogue: 0,0:05:16.31,0:05:22.15,Default,,0,0,0,, for a lot of folks listening,\N Kubernetes is probably top of mind. How does Kubernetes fit into this
-Dialogue: 0,0:05:22.16,0:05:28.08,Default,,0,0,0,, picture? How does it help us actually create these environments? Kubernetes is really well suited
-Dialogue: 0,0:05:28.08,0:05:34.00,Default,,0,0,0,, for this. It has a built-in concept called namespaces. Namespaces? Think of a Kubernetes cluster as a big
-Dialogue: 0,0:05:34.00,0:05:38.87,Default,,0,0,0,, apartment building. A namespace is like one of the apartments inside. It gives you a way to divide
-Dialogue: 0,0:05:38.87,0:05:44.32,Default,,0,0,0,, up the cluster's resources among different teams or projects,\N or in our case,\N different environments.
-Dialogue: 0,0:05:44.32,0:05:49.92,Default,,0,0,0,, So each environment gets its own apartment. Pretty much. And each namespace provides a scope for
-Dialogue: 0,0:05:49.92,0:05:55.92,Default,,0,0,0,, unique names for resources. You can set resource corridors like CPU or memory limits. You apply
-Dialogue: 0,0:05:55.92,0:06:01.84,Default,,0,0,0,, role-based access control,\N RBC for permissions. You can even influence hardware isolation to some
-Dialogue: 0,0:06:01.84,0:06:07.75,Default,,0,0,0,, extent and crucially define network configuration specific to that namespace. So it's fair to say
-Dialogue: 0,0:06:07.75,0:06:13.75,Default,,0,0,0,, a Kubernetes namespace is essentially an environment in this context. Yeah,\N functionally,\N Kubernetes namespace
-Dialogue: 0,0:06:13.75,0:06:19.43,Default,,0,0,0,, is very close to being equivalent to an environment. Inside that namespace,\N you run your application
-Dialogue: 0,0:06:19.43,0:06:24.24,Default,,0,0,0,, instances. Kubernetes calls them pods. Pods,\N right. Those are the containers. Usually one or more
-Dialogue: 0,0:06:24.24,0:06:29.36,Default,,0,0,0,, Docker containers,\N yeah. And those environment-specific configurations we talked about,\N they get
-Dialogue: 0,0:06:29.36,0:06:34.39,Default,,0,0,0,, injected into the pods running within their specific namespace. You might also have other supporting
-Dialogue: 0,0:06:34.39,0:06:40.15,Default,,0,0,0,, pods in there too,\N maybe like a dedicated cache pod,\N or even a database pod just for that environment.
-Dialogue: 0,0:06:40.15,0:06:44.95,Default,,0,0,0,, Okay,\N let's make this super concrete. The source material had an example with a guest book app.
-Dialogue: 0,0:06:45.52,0:06:51.20,Default,,0,0,0,, How would that work with namespaces? Right. Good example. So you'd start by creating say two namespaces,\N
-Dialogue: 0,0:06:51.20,0:06:57.68,Default,,0,0,0,, guestbook killer and guestbook E2E. Okay,\N one for QA1 for E2E. Exactly. Then you deploy the guestbook
-Dialogue: 0,0:06:57.68,0:07:03.52,Default,,0,0,0,, application components,\N the front end,\N the reddest database master,\N the reddest slave. You deploy
-Dialogue: 0,0:07:03.52,0:07:09.28,Default,,0,0,0,, them into each of those namespaces. You'd use a command like Quebec to apply and specify the namespace
-Dialogue: 0,0:07:09.36,0:07:15.68,Default,,0,0,0,, with Nash and guestbook EE. So you're deploying the same set of components twice. Yes,\N identical
-Dialogue: 0,0:07:15.68,0:07:21.92,Default,,0,0,0,, application code and structure,\N but into separate namespaces. The big takeaway here is you now have
-Dialogue: 0,0:07:21.92,0:07:27.52,Default,,0,0,0,, the exact same application running in two distinct environments defined by those namespaces.
-Dialogue: 0,0:07:28.08,0:07:33.28,Default,,0,0,0,, And crucially,\N they are isolated. If you add a message to the guest book in the QA namespace.
-Dialogue: 0,0:07:33.28,0:07:38.56,Default,,0,0,0,, This is a show up in the E2E1. Correct. Each one has its own independent reddest database
-Dialogue: 0,0:07:38.56,0:07:44.63,Default,,0,0,0,, instance within its own namespace. Complete data isolation. That's clear. What about that network
-Dialogue: 0,0:07:44.63,0:07:49.51,Default,,0,0,0,, isolation example? You mentioned namespaces could talk to each other by default. Yeah,\N that's the
-Dialogue: 0,0:07:49.51,0:07:55.75,Default,,0,0,0,, default Kubernetes behavior. Any pod in any namespace can usually reach a service in any other namespace,\N
-Dialogue: 0,0:07:55.75,0:08:01.12,Default,,0,0,0,, which can be a security issue. You probably don't want your QA environment accidentally making calls
-Dialogue: 0,0:08:01.12,0:08:05.75,Default,,0,0,0,, to your production services. Definitely not. So Kubernetes gives you network policy resources. These let
-Dialogue: 0,0:08:05.75,0:08:10.31,Default,,0,0,0,, you define rules to restrict that traffic. Okay,\N how does that work? So imagine you create a
-Dialogue: 0,0:08:10.31,0:08:15.36,Default,,0,0,0,, QA namespace and a prod namespace. You put a little curl pod in both just something to make network
-Dialogue: 0,0:08:15.36,0:08:21.43,Default,,0,0,0,, requests. And in prod,\N you deploy an angin's web server. Simple web server in production. Right.
-Dialogue: 0,0:08:21.43,0:08:26.71,Default,,0,0,0,, By default,\N if you run curl from the pod in the cond namespace targeting the cond nameserver in
-Dialogue: 0,0:08:26.71,0:08:32.79,Default,,0,0,0,, the prod namespace,\N it'll connect just fine. Okay,\N default is open. Yep. But then you apply a
-Dialogue: 0,0:08:32.79,0:08:39.91,Default,,0,0,0,, network policy to the prod namespace. This policy says only allow ingress incoming traffic from pods
-Dialogue: 0,0:08:39.91,0:08:46.55,Default,,0,0,0,, that are also in the prod namespace. Locking it down. Exactly. Now if you try that curl command
-Dialogue: 0,0:08:46.55,0:08:53.19,Default,,0,0,0,, from the call pod again,\N block,\N connection timed out probably. But if you run curl from the pod
-Dialogue: 0,0:08:53.19,0:08:58.87,Default,,0,0,0,, inside the prod namespace to the congenx server also in prod,\N it works. It still works. So that network
-Dialogue: 0,0:08:58.87,0:09:04.00,Default,,0,0,0,, policy effectively creates a boundary,\N enforcing the environment separation at the network level.
-Dialogue: 0,0:09:04.00,0:09:09.03,Default,,0,0,0,, And just to recap,\N ingress is incoming traffic,\N egress is outgoing. That's powerful stuff. Yep.
-Dialogue: 0,0:09:09.03,0:09:13.20,Default,,0,0,0,, What really stands out to you about using namespaces like this,\N it seems like a very elegant way to
-Dialogue: 0,0:09:13.20,0:09:19.03,Default,,0,0,0,, organize things within one cluster. I think it's the the multi-layered isolation. It provides so
-Dialogue: 0,0:09:19.03,0:09:24.79,Default,,0,0,0,, naturally. It's not just naming separation. It's resource limits. It's access control via RBAC. It's
-Dialogue: 0,0:09:24.80,0:09:30.56,Default,,0,0,0,, the network policies all scope to that namespace boundary. It really helps manage complexity and
-Dialogue: 0,0:09:30.56,0:09:35.84,Default,,0,0,0,, security without needing totally separate infrastructure for every little environment at least initially.
-Dialogue: 0,0:09:35.84,0:09:41.68,Default,,0,0,0,, Right. But you said initially,\N we've established namespaces are great for carving up one cluster.
-Dialogue: 0,0:09:41.68,0:09:47.92,Default,,0,0,0,, But why do some organizations take that extra pretty big step of using entirely separate clusters
-Dialogue: 0,0:09:47.92,0:09:52.64,Default,,0,0,0,, for different environment types,\N like pre-proud versus prod? That sounds like a lot more overhead,\N
-Dialogue: 0,0:09:52.63,0:09:56.72,Default,,0,0,0,, doesn't it? More cost,\N more management. It definitely is more overhead,\N you're right. And it's a
-Dialogue: 0,0:09:56.72,0:10:02.79,Default,,0,0,0,, significant strategic decision. But the recommendation,\N especially as you scale,\N or if you handle sensitive
-Dialogue: 0,0:10:02.79,0:10:07.67,Default,,0,0,0,, data,\N is often to have at least two separate clusters. Right. One cluster dedicated solely to your
-Dialogue: 0,0:10:07.67,0:10:13.19,Default,,0,0,0,, pre-production environments,\N QA,\N E2E,\N Dev integration,\N whatever,\N and a completely separate cluster for
-Dialogue: 0,0:10:13.19,0:10:18.24,Default,,0,0,0,, your production environment,\N stage and prod. Okay. Why the complete separation. If namespaces offer
-Dialogue: 0,0:10:18.24,0:10:23.36,Default,,0,0,0,, good isolation. The absolute number one reason is blast radius reduction. It's about protecting
-Dialogue: 0,0:10:23.36,0:10:29.12,Default,,0,0,0,, your production environment. If someone makes a mistake in pre-proud,\N maybe applies a faulty configuration,\N
-Dialogue: 0,0:10:29.12,0:10:35.27,Default,,0,0,0,, or runs a resource-hungry test that goes wild,\N you want zero chance of that impacting your live
-Dialogue: 0,0:10:35.27,0:10:40.79,Default,,0,0,0,, customer-facing production environment. Ah. So even if namespaces should isolate,\N separate
-Dialogue: 0,0:10:40.79,0:10:46.24,Default,,0,0,0,, clusters provide a much harder physical or logical boundary. Exactly. It's a stronger guarantee.
-Dialogue: 0,0:10:46.24,0:10:51.84,Default,,0,0,0,, Think about a company like Intuit,\N handling financial data. They explicitly separate pre-proud
-Dialogue: 0,0:10:51.84,0:10:57.60,Default,,0,0,0,, and prod clusters,\N often in different AWS regions,\N or even different AWS accounts with separate virtual
-Dialogue: 0,0:10:57.60,0:11:03.60,Default,,0,0,0,, private clouds,\N PPCs. The isolation is paramount. Okay. That makes sense for high stakes environments.
-Dialogue: 0,0:11:03.60,0:11:07.20,Default,,0,0,0,, The cost is worth the safety. Right. And you absolutely need that pre-proud
-Dialogue: 0,0:11:07.20,0:11:11.84,Default,,0,0,0,, cluster to properly test things before they hit prod. But,\N and this is important,\N both clusters
-Dialogue: 0,0:11:11.84,0:11:17.28,Default,,0,0,0,, pre-proud and prod should really follow the same security best practices,\N same operational rigor.
-Dialogue: 0,0:11:17.28,0:11:22.24,Default,,0,0,0,, You want to find problems early in pre-proud,\N not have surprises because prod is configured differently.
-Dialogue: 0,0:11:22.24,0:11:27.84,Default,,0,0,0,, It also keeps developer productivity high if the environment's behave consistently. Got it. Consistent
-Dialogue: 0,0:11:27.84,0:11:33.44,Default,,0,0,0,, rigor across the board,\N even with separation. Okay. Let's shift gears slightly. We can't talk
-Dialogue: 0,0:11:33.44,0:11:38.16,Default,,0,0,0,, deployment without talking about Git,\N right? It's a foundation for most development workflows.
-Dialogue: 0,0:11:38.15,0:11:43.36,Default,,0,0,0,, How does our Git strategy,\N our code repositories,\N fit into managing these environments?
-Dialogue: 0,0:11:43.36,0:11:50.15,Default,,0,0,0,, Oh,\N yes. Git strategy is crucial here. And the first really strong recommendation is to use a separate
-Dialogue: 0,0:11:50.15,0:11:55.75,Default,,0,0,0,, Git repository for your Kubernetes manifests your configuration distinct from your application source code
-Dialogue: 0,0:11:55.75,0:12:00.07,Default,,0,0,0,, repo. Separate repos. Why not keep the config with the code it applies to?
-Dialogue: 0,0:12:00.07,0:12:05.91,Default,,0,0,0,, Several key reasons. First,\N clean separation of concerns. You might want to change,\N say,\N the number of
-Dialogue: 0,0:12:05.91,0:12:11.67,Default,,0,0,0,, replicas for your app,\N a config change,\N without triggering a full application build and test cycle,\N
-Dialogue: 0,0:12:11.67,0:12:16.63,Default,,0,0,0,, a code change. Okay,\N decouples changes. Right. Second,\N the audit log for configuration changes is
-Dialogue: 0,0:12:16.63,0:12:21.51,Default,,0,0,0,, much cleaner and easier to track in its own repo. Third,\N it supports applications made of multiple
-Dialogue: 0,0:12:21.51,0:12:26.87,Default,,0,0,0,, microservices,\N where maybe several code repos contribute to one overall deployment defined in the config
-Dialogue: 0,0:12:26.87,0:12:32.79,Default,,0,0,0,, repo. Interesting. Fourth,\N access control. The team allowed to change application code might be
-Dialogue: 0,0:12:32.80,0:12:37.76,Default,,0,0,0,, different from the team allowed to change production infrastructure config. Separate repos make
-Dialogue: 0,0:12:37.76,0:12:43.28,Default,,0,0,0,, managing those permissions easier. That's a big one in larger orgs. Definitely. Fifth,\N it avoids
-Dialogue: 0,0:12:43.28,0:12:48.96,Default,,0,0,0,, potential CI pipeline loops,\N where a build triggers a config commit,\N which triggers another build.
-Dialogue: 0,0:12:48.96,0:12:54.64,Default,,0,0,0,, Get the idea. And lastly,\N it aligns with the best practice of not storing secrets directly and
-Dialogue: 0,0:12:54.64,0:12:59.44,Default,,0,0,0,, Git secrets management is a separate topic,\N but keeping config separate helps enforce that.
-Dialogue: 0,0:12:59.44,0:13:03.76,Default,,0,0,0,, Okay,\N sold on separate repos for config. Now,\N within that config repo itself,\N
-Dialogue: 0,0:13:03.76,0:13:09.92,Default,,0,0,0,, how do we manage the differences between environments like QA,\N stage,\N prod? Good question.
-Dialogue: 0,0:13:09.92,0:13:15.04,Default,,0,0,0,, There are basically two main patterns for the config repo structure. One is using a single branch,\N
-Dialogue: 0,0:13:15.04,0:13:19.92,Default,,0,0,0,, often main,\N with multiple directories. Okay,\N explain that. So your main branch holds the core
-Dialogue: 0,0:13:19.92,0:13:26.88,Default,,0,0,0,, common configuration. Then you have specific directories like ca,\N e2e,\N stage,\N prod. Inside each of these
-Dialogue: 0,0:13:26.87,0:13:31.51,Default,,0,0,0,, directories,\N you define only the environment specific overrides or patches. Tools like customize
-Dialogue: 0,0:13:31.51,0:13:36.39,Default,,0,0,0,, work really well with this structure,\N like layering on the differences. Exactly. The alternative is
-Dialogue: 0,0:13:36.39,0:13:42.00,Default,,0,0,0,, using multiple branches. So you might have a ca branch,\N an e2e branch,\N a prod brand,\N and so on.
-Dialogue: 0,0:13:42.00,0:13:50.15,Default,,0,0,0,, Each branch contains the complete final manifest for that specific environment. Okay,\N pros and cons.
-Dialogue: 0,0:13:50.15,0:13:55.36,Default,,0,0,0,, The pro of multiple branches is it's very explicit. The branch is the environment's exact state.
-Dialogue: 0,0:13:55.36,0:14:00.63,Default,,0,0,0,, You get a separate commit history per environment,\N which is nice for auditing and makes rollbacks very
-Dialogue: 0,0:14:00.63,0:14:07.36,Default,,0,0,0,, clear. The con is that sharing common configuration becomes harder. Tools like customize that do the
-Dialogue: 0,0:14:07.36,0:14:13.12,Default,,0,0,0,, layering don't really work across get branches. You often end up having to manually merge or more
-Dialogue: 0,0:14:13.12,0:14:18.24,Default,,0,0,0,, likely cherry pick common changes between the branches,\N which can be error prone. Right,\N managing
-Dialogue: 0,0:14:18.24,0:14:23.03,Default,,0,0,0,, drift between branches sounds tricky. It can be. And related to this is the whole multi rep versus
-Dialogue: 0,0:14:23.03,0:14:28.00,Default,,0,0,0,, monorepo debate,\N but specifically for these config repositories. Oh boy,\N that debate again. Yeah.
-Dialogue: 0,0:14:28.00,0:14:33.12,Default,,0,0,0,, But for config,\N if you're a small startup,\N single team,\N maybe a monorepo for all your service
-Dialogue: 0,0:14:33.12,0:14:37.91,Default,,0,0,0,, configurations is simpler to manage initially. One place for everything. Right. But in a larger
-Dialogue: 0,0:14:37.91,0:14:43.75,Default,,0,0,0,, enterprise,\N with many teams working on different services at different speeds,\N a multi repo approach
-Dialogue: 0,0:14:43.75,0:14:50.00,Default,,0,0,0,, perhaps one config repo per service or team is often better. Why is that? It lets teams be more
-Dialogue: 0,0:14:50.00,0:14:55.12,Default,,0,0,0,, decoupled. They can manage their own release cadence without blocking others. If one team needs to
-Dialogue: 0,0:14:55.12,0:15:00.32,Default,,0,0,0,, roll back their services config,\N it doesn't affect unrelated services in the same repo. It also makes
-Dialogue: 0,0:15:00.32,0:15:05.67,Default,,0,0,0,, organizational changes easier if a service moves teams. Moving its dedicated config repo is simpler.
-Dialogue: 0,0:15:05.67,0:15:11.12,Default,,0,0,0,, It supports autonomy and reduces the blast radius of changes decoupling for agility and safety at
-Dialogue: 0,0:15:11.12,0:15:16.08,Default,,0,0,0,, scale makes sense. Okay,\N so we've got environments defined maybe in namespaces or separate clusters.
-Dialogue: 0,0:15:16.08,0:15:20.56,Default,,0,0,0,, We've got separate Git repos for code and config,\N but how do we actually manage the configuration
-Dialogue: 0,0:15:20.56,0:15:25.92,Default,,0,0,0,, itself without going crazy? You mentioned customize,\N but just writing raw YAML for every variation sounds
-Dialogue: 0,0:15:25.92,0:15:33.28,Default,,0,0,0,, awful. It really does. Trying to manually maintain slightly different YAML files for QA,\N E2E,\N stage,\N
-Dialogue: 0,0:15:33.28,0:15:39.04,Default,,0,0,0,, prod. Yeah. It gets incredibly unwieldy and error prone super fast. You absolutely need tools to
-Dialogue: 0,0:15:39.04,0:15:43.75,Default,,0,0,0,, help manage this complexity. What makes a good configuration tool in the Kubernetes world? Well,\N
-Dialogue: 0,0:15:43.75,0:15:49.51,Default,,0,0,0,, we look for a few key properties. Ideally,\N it should be declarative,\N you define the desired state,\N
-Dialogue: 0,0:15:49.51,0:15:56.55,Default,,0,0,0,, not the steps to get there. It should be readable,\N easy for humans to understand,\N flexible letting
-Dialogue: 0,0:15:56.55,0:16:01.75,Default,,0,0,0,, you do what you need without fighting the tool,\N and maintainable,\N making it easy to reuse common
-Dialogue: 0,0:16:01.75,0:16:07.43,Default,,0,0,0,, patterns and compose configurations. Declarative,\N readable,\N flexible,\N maintainable. Got it.
-Dialogue: 0,0:16:07.43,0:16:12.87,Default,,0,0,0,, The challenge though is that different people have very different needs. A cluster operator deploying
-Dialogue: 0,0:16:12.87,0:16:17.91,Default,,0,0,0,, standard third-party software has different requirements than a sauce developer deploying their own
-Dialogue: 0,0:16:17.91,0:16:23.27,Default,,0,0,0,, custom app multiple times a day with subtle environment variations. Finding one tool that's perfect
-Dialogue: 0,0:16:23.27,0:16:29.36,Default,,0,0,0,, for everyone is,\N well,\N tricky. Yeah,\N the classic trade-offs. So let's talk about some of the big
-Dialogue: 0,0:16:29.36,0:16:33.36,Default,,0,0,0,, players you mentioned customized. What about Helm? That seems really popular. Helm is definitely
-Dialogue: 0,0:16:33.36,0:16:38.55,Default,,0,0,0,, popular. It calls itself a package manager for Kubernetes and many use it for configuration. The common
-Dialogue: 0,0:16:38.56,0:16:44.40,Default,,0,0,0,, pattern is having a base chart and then separate values.yaml files for each environment that override
-Dialogue: 0,0:16:44.40,0:16:49.92,Default,,0,0,0,, defaults. Okay,\N so values files for environment specifics. What's good about Helm? Undoubtedly,\N Helm's
-Dialogue: 0,0:16:49.92,0:16:55.36,Default,,0,0,0,, biggest strength is its huge ecosystem of pre-built charts in its repository. Need a highly available
-Dialogue: 0,0:16:55.36,0:17:00.24,Default,,0,0,0,, redis cluster. Chances are there's a well-maintained Helm chart for it. You can just grab it,\N maybe tweak
-Dialogue: 0,0:17:00.24,0:17:06.32,Default,,0,0,0,, a few values and deploy. It saves a ton of time compared to building complex setups from scratch.
-Dialogue: 0,0:17:06.31,0:17:12.31,Default,,0,0,0,, So great for reusing community solutions. What's the downside? Well,\N the templating language Helm
-Dialogue: 0,0:17:12.31,0:17:17.51,Default,,0,0,0,, uses go template and can get messy. People joke,\N look at that beautiful Helm template. It said no
-Dialogue: 0,0:17:17.51,0:17:24.00,Default,,0,0,0,, whenever. Lots of curly braces,\N i-files logic,\N helper functions. It can become really hard to read
-Dialogue: 0,0:17:24.00,0:17:30.00,Default,,0,0,0,, and figure out the final yaml output. Right,\N template complexity. Anything else? For complex automated
-Dialogue: 0,0:17:30.00,0:17:35.67,Default,,0,0,0,, deployment pipeline,\N CD,\N it can feel a bit clunky. The proper Helm way often involves packaging
-Dialogue: 0,0:17:35.68,0:17:40.24,Default,,0,0,0,, a new version of your chart,\N bumping the version number,\N publishing it to a chart repository,\N
-Dialogue: 0,0:17:40.24,0:17:44.48,Default,,0,0,0,, just a change,\N like an image tag. It feels like overkill sometimes. So people find work around?
-Dialogue: 0,0:17:44.48,0:17:51.44,Default,,0,0,0,, Yeah,\N a very common pattern is to just use Helm template to render the final yaml locally or NCI
-Dialogue: 0,0:17:51.44,0:17:56.64,Default,,0,0,0,, and then pipe that output directly to Quebec to apply. Kind of bypassing the package management aspect
-Dialogue: 0,0:17:56.64,0:18:02.72,Default,,0,0,0,, for application deployments. Also,\N if you rely heavily on command line overrides,\N set key value,\N
-Dialogue: 0,0:18:02.72,0:18:06.79,Default,,0,0,0,, your deployment isn't purely declarative anymore,\N making it harder to reproduce later.
-Dialogue: 0,0:18:06.79,0:18:13.27,Default,,0,0,0,, Okay,\N so Helm,\N great ecosystem but templating complexity and potential CD awkwardness.
-Dialogue: 0,0:18:13.27,0:18:17.03,Default,,0,0,0,, What about customized again? You said it was simpler? Yeah,\N customized has really taken off,\N
-Dialogue: 0,0:18:17.03,0:18:22.96,Default,,0,0,0,, partly because it's now built into Quebec doll. Its big selling point is no parameters and templates.
-Dialogue: 0,0:18:22.96,0:18:27.92,Default,,0,0,0,, How does that work then? It uses an overlay approach. You have a base set of yaml manifests,\N
-Dialogue: 0,0:18:27.92,0:18:32.48,Default,,0,0,0,, and then for each environment,\N like in those directories we discussed,\N you create small
-Dialogue: 0,0:18:32.48,0:18:37.44,Default,,0,0,0,, customization files that specify changes to the base,\N like change the image tag or add the
-Dialogue: 0,0:18:37.44,0:18:43.20,Default,,0,0,0,, sanitation or increase replicas. These overlays are mostly just standard Kubernetes yaml snippets.
-Dialogue: 0,0:18:43.20,0:18:46.96,Default,,0,0,0,, So they're very easy to read and understand no complex templating logic.
-Dialogue: 0,0:18:46.96,0:18:52.48,Default,,0,0,0,, So much more readable potentially. What's the catch? The catch is,\N well no parameters and templates.
-Dialogue: 0,0:18:52.48,0:18:57.92,Default,,0,0,0,, Sometimes you do want a bit more dynamic power. For instance,\N setting an image tag based on a
-Dialogue: 0,0:18:57.92,0:19:03.51,Default,,0,0,0,, variable for some non-standard Kubernetes resource,\N a custom resource,\N can be difficult because
-Dialogue: 0,0:19:03.51,0:19:08.32,Default,,0,0,0,, customized is quite strict about what fields you can easily modify or parameterize.
-Dialogue: 0,0:19:08.32,0:19:12.16,Default,,0,0,0,, Its built-in vars feature only works on a specific white list of common fields.
-Dialogue: 0,0:19:12.80,0:19:17.03,Default,,0,0,0,, So simplicity comes at the cost of some flexibility for complex cases.
-Dialogue: 0,0:19:17.03,0:19:20.32,Default,,0,0,0,, Pretty much sums it up. Then there's another option. Jsonnet.
-Dialogue: 0,0:19:20.32,0:19:22.32,Default,,0,0,0,, Jsonnet. Haven't heard as much about that one.
-Dialogue: 0,0:19:22.32,0:19:27.20,Default,,0,0,0,, It's a bit different. Jsonnet isn't really a tool itself. It's more of a data templating language.
-Dialogue: 0,0:19:27.20,0:19:32.64,Default,,0,0,0,, Think of it like Json,\N but super-powered. It's designed to be declarative and hermetic,\N
-Dialogue: 0,0:19:32.64,0:19:35.75,Default,,0,0,0,, meaning the output depends only on the input. No side effects.
-Dialogue: 0,0:19:35.75,0:19:38.88,Default,,0,0,0,, Okay,\N a language for generating config. What makes it super-powered?
-Dialogue: 0,0:19:38.88,0:19:44.00,Default,,0,0,0,, It adds things Json lacks,\N like comments,\N multi-line strings,\N variables,\N parameters,\N
-Dialogue: 0,0:19:44.00,0:19:49.92,Default,,0,0,0,, conditionals,\N importing other files. But then it goes further with functions,\N object-oriented concepts,\N
-Dialogue: 0,0:19:49.92,0:19:54.16,Default,,0,0,0,, mixins. It lets you build really reusable and composable configurations.
-Dialogue: 0,0:19:54.16,0:19:55.60,Default,,0,0,0,, Sounds powerful. The good.
-Dialogue: 0,0:19:55.60,0:20:01.12,Default,,0,0,0,, Extremely powerful and flexible. It's rare to find a configuration problem you can't model
-Dialogue: 0,0:20:01.12,0:20:04.00,Default,,0,0,0,, cleanly in Jsonnet. It maximizes reuse.
-Dialogue: 0,0:20:04.00,0:20:04.72,Default,,0,0,0,, The bad.
-Dialogue: 0,0:20:04.72,0:20:08.00,Default,,0,0,0,, Well,\N the main thing is,\N it's not YAML. There's a learning curve.
-Dialogue: 0,0:20:08.00,0:20:12.08,Default,,0,0,0,, You have to think in terms of generating Json YAML,\N not writing it directly.
-Dialogue: 0,0:20:12.08,0:20:17.92,Default,,0,0,0,, You also need an extra step in your workflow to render the Jsonnet code into actual YAML,\N
-Dialogue: 0,0:20:17.92,0:20:22.32,Default,,0,0,0,, using a command like Jsonnet YAML stream,\N before you can apply it with QBactyl.
-Dialogue: 0,0:20:22.31,0:20:26.24,Default,,0,0,0,, But the upside is,\N it guarantees the output will be valid,\N Jsonnet YAML.
-Dialogue: 0,0:20:26.24,0:20:31.67,Default,,0,0,0,, Oh,\N and quick note. Don't confuse the Jsonnet language with an older,\N now-defunct tool called
-Dialogue: 0,0:20:31.67,0:20:32.87,Default,,0,0,0,, Kisonnet,\N which used it.
-Dialogue: 0,0:20:32.87,0:20:37.11,Default,,0,0,0,, Right. So Jsonnet is powerful,\N but has a learning curve in an extra rendering step.
-Dialogue: 0,0:20:37.11,0:20:42.31,Default,,0,0,0,, Exactly. So you see Helm customized Jsonnet. They all have different strength and weaknesses
-Dialogue: 0,0:20:42.31,0:20:46.24,Default,,0,0,0,, across those criteria. Declarative,\N readable,\N flexible,\N maintainable.
-Dialogue: 0,0:20:46.24,0:20:49.35,Default,,0,0,0,, There's no single silver bullet. It depends on your team and your needs.
-Dialogue: 0,0:20:49.36,0:20:51.12,Default,,0,0,0,, That's a really helpful comparison.
-Dialogue: 0,0:20:51.12,0:20:55.92,Default,,0,0,0,, Okay. One last major area. Let's talk about the lifespan of these environments. Do they stick
-Dialogue: 0,0:20:55.92,0:21:00.96,Default,,0,0,0,, around forever,\N or are some temporary? That's another key concept. The difference between
-Dialogue: 0,0:21:00.96,0:21:03.68,Default,,0,0,0,, durable environments and a femoral environment.
-Dialogue: 0,0:21:03.68,0:21:04.88,Default,,0,0,0,, Verbal and a femoral.
-Dialogue: 0,0:21:04.88,0:21:08.32,Default,,0,0,0,, Durable environments are the ones you expect to be,\N well,\N durable.
-Dialogue: 0,0:21:08.32,0:21:10.80,Default,,0,0,0,, Always available. Production is the obvious one.
-Dialogue: 0,0:21:10.80,0:21:16.08,Default,,0,0,0,, Often your main E2E integration environment might also be durable because other teams rely on it
-Dialogue: 0,0:21:16.07,0:21:19.83,Default,,0,0,0,, being there. The resources for these are permanently committed.
-Dialogue: 0,0:21:19.83,0:21:20.63,Default,,0,0,0,, Always on.
-Dialogue: 0,0:21:20.63,0:21:24.96,Default,,0,0,0,, Right. Then you have a femoral environments. These are temporary.
-Dialogue: 0,0:21:24.96,0:21:29.75,Default,,0,0,0,, They aren't relied on by others long term,\N and their resources aren't permanently allocated.
-Dialogue: 0,0:21:29.75,0:21:30.48,Default,,0,0,0,, Like what?
-Dialogue: 0,0:21:30.48,0:21:32.63,Default,,0,0,0,, Your stage environment might be a femoral.
-Dialogue: 0,0:21:32.63,0:21:36.00,Default,,0,0,0,, Maybe you spin it up just for pre-release checks and tear it down afterwards.
-Dialogue: 0,0:21:36.79,0:21:42.55,Default,,0,0,0,, A really common use case now is creating an femoral environment automatically for every single pull
-Dialogue: 0,0:21:43.51,0:21:48.55,Default,,0,0,0,, request just to run tests against that specific change and then deleting it once the PR is merged
-Dialogue: 0,0:21:48.55,0:21:49.11,Default,,0,0,0,, or closed.
-Dialogue: 0,0:21:49.11,0:21:51.35,Default,,0,0,0,, A preview environment. Very cool.
-Dialogue: 0,0:21:51.35,0:21:55.20,Default,,0,0,0,, Exactly. They're great for quick feedback loops and efficient resource use.
-Dialogue: 0,0:21:55.20,0:21:57.67,Default,,0,0,0,, Now,\N thinking about life cycles brings up rollback.
-Dialogue: 0,0:21:57.67,0:21:59.75,Default,,0,0,0,, Right. If something goes wrong after deployment.
-Dialogue: 0,0:21:59.75,0:22:04.07,Default,,0,0,0,, With Kubernetes and a GitOps approach where Git is your source of truth for
-Dialogue: 0,0:22:04.07,0:22:09.44,Default,,0,0,0,, config rollback is often beautifully simple. You just revert the change and get,\N reapply the previous
-Dialogue: 0,0:22:09.44,0:22:14.40,Default,,0,0,0,, configuration and Kubernetes figures out how to reconcile the state back to what it was.
-Dialogue: 0,0:22:14.40,0:22:16.79,Default,,0,0,0,, Okay. Sounds easy enough for the application itself.
-Dialogue: 0,0:22:16.79,0:22:23.27,Default,,0,0,0,, It usually is for the app config and code,\N but there's a big,\N but what about things like databases?
-Dialogue: 0,0:22:23.27,0:22:27.84,Default,,0,0,0,, I know. Can't just rollback a database snapshot,\N can you? You'd lose data.
-Dialogue: 0,0:22:27.84,0:22:34.00,Default,,0,0,0,, Precisely. You can't just revert the database schema or data to a previous point in time without
-Dialogue: 0,0:22:34.00,0:22:38.88,Default,,0,0,0,, causing data loss for anything that happens since then. This means your database schema changes
-Dialogue: 0,0:22:38.88,0:22:44.08,Default,,0,0,0,, have to be designed to be backward compatible,\N backward compatible,\N meaning the new schema must
-Dialogue: 0,0:22:44.08,0:22:48.48,Default,,0,0,0,, still work with the previous version of your application code,\N at least temporarily during the
-Dialogue: 0,0:22:48.48,0:22:53.20,Default,,0,0,0,, rollback window. In practice,\N this often means you can safely add new columns,\N the old code will
-Dialogue: 0,0:22:53.20,0:22:58.72,Default,,0,0,0,, just ignore them,\N but you generally cannot remove columns or change the definition of existing columns
-Dialogue: 0,0:22:58.72,0:23:03.68,Default,,0,0,0,, in a way that breaks the old code. Wow. That requires careful planning for database changes.
-Dialogue: 0,0:23:03.68,0:23:10.40,Default,,0,0,0,, It absolutely does. It's why using database migration tools like flyway or liquid base is highly
-Dialogue: 0,0:23:10.40,0:23:16.72,Default,,0,0,0,, recommended. These tools help you manage schema changes in a version controlled incremental way,\N
-Dialogue: 0,0:23:16.72,0:23:21.92,Default,,0,0,0,, often applying changes alongside your code deployments,\N following that same get ups process.
-Dialogue: 0,0:23:21.92,0:23:25.68,Default,,0,0,0,, It's a critical piece for safe rollbacks that involve database changes.
-Dialogue: 0,0:23:25.68,0:23:30.56,Default,,0,0,0,, That's a really crucial point about databases. Okay. Wow. We've covered a huge amount of ground here
-Dialogue: 0,0:23:30.55,0:23:35.83,Default,,0,0,0,, on environment management. We really have. It touches so many aspects of the development life cycle.
-Dialogue: 0,0:23:35.83,0:23:41.20,Default,,0,0,0,, Definitely. So just a quickly recap for everyone listening. Environments are absolutely essential,\N
-Dialogue: 0,0:23:41.20,0:23:46.96,Default,,0,0,0,, providing dedicated stages from dev to production. Kubernetes name spaces give us a fantastic way to
-Dialogue: 0,0:23:46.96,0:23:52.96,Default,,0,0,0,, implement these within a cluster,\N offering that vital isolation. We saw that strategic kit practices
-Dialogue: 0,0:23:52.96,0:23:58.72,Default,,0,0,0,, like separate config repos and choosing the right config tools,\N Helm customized JSON it with all their
-Dialogue: 0,0:23:58.72,0:24:04.16,Default,,0,0,0,, trade-offs are critical for managing complexity. And finally,\N understanding the difference between
-Dialogue: 0,0:24:04.16,0:24:09.68,Default,,0,0,0,, durable,\N always on environments and temporary,\N ephemeral ones plus the nuances of rollback,\N
-Dialogue: 0,0:24:09.68,0:24:14.88,Default,,0,0,0,, especially with databases is key for resilience. Yeah. That covers the main points,\N I think.
-Dialogue: 0,0:24:14.88,0:24:18.88,Default,,0,0,0,, So as we wrap up,\N maybe a final thought for our listeners to chew on something to consider as
-Dialogue: 0,0:24:18.88,0:24:25.03,Default,,0,0,0,, they navigate this complex space. Okay. Well,\N given how quickly tools and best practices evolve in
-Dialogue: 0,0:24:25.03,0:24:31.27,Default,,0,0,0,, this area,\N maybe the provocative question is,\N what's the real north star? When you're faced with
-Dialogue: 0,0:24:31.27,0:24:36.24,Default,,0,0,0,, all these choices,\N namespaces versus clusters,\N customized versus Helm monorepo versus multi-repo,\N
-Dialogue: 0,0:24:36.24,0:24:40.72,Default,,0,0,0,, what fundamental principle should guide your decisions to balance that constant tension between
-Dialogue: 0,0:24:40.72,0:24:44.87,Default,,0,0,0,, moving fast and staying stable? Where should you really focus your energy?
+Dialogue: 0,0:00:00.00,0:00:04.75,Default,,0,0,0,, Welcome to The Deep Dive. Today,\N we're getting into a really pivotal time in
+Dialogue: 0,0:00:04.75,0:00:08.32,Default,,0,0,0,, West Roshi history. Often talked about,\N maybe often misunderstood too.
+Dialogue: 0,0:00:08.35,0:00:11.24,Default,,0,0,0,, Definitely. We're talking about King Jher is the first and Queen
+Dialogue: 0,0:00:11.24,0:00:15.08,Default,,0,0,0,, Alice and Targaryen. Their long reign. Right. And our mission for you
+Dialogue: 0,0:00:15.08,0:00:20.08,Default,,0,0,0,, listening is to take these sources,\N you know,\N the chronicles,\N letters,\N bits of
+Dialogue: 0,0:00:20.08,0:00:22.96,Default,,0,0,0,, history you've given us,\N and really pull out the key insights.
+Dialogue: 0,0:00:23.00,0:00:27.00,Default,,0,0,0,, Yeah. The surprising stuff,\N maybe even some unsettling details that make this
+Dialogue: 0,0:00:27.00,0:00:32.60,Default,,0,0,0,, period so,\N so unique. We're focusing mainly on the years 55 A.C. to 58 A.C.
+Dialogue: 0,0:00:32.64,0:00:36.67,Default,,0,0,0,, Roughly,\N though we'll glance a bit beyond that too. It's a mix,\N isn't it? Amazing
+Dialogue: 0,0:00:36.67,0:00:41.88,Default,,0,0,0,, achievements,\N but also some deep personal tragedies,\N kings,\N queens,\N dragons,\N
+Dialogue: 0,0:00:42.32,0:00:46.84,Default,,0,0,0,, darkness,\N all shaping the kingdom. Absolutely. Most people know Jher is the
+Dialogue: 0,0:00:46.84,0:00:50.87,Default,,0,0,0,, conciliator,\N right? His reign gets called a golden age. And you can see why on the
+Dialogue: 0,0:00:50.87,0:00:54.35,Default,,0,0,0,, surface. For sure,\N long stretches of peace,\N prosperity,\N
+Dialogue: 0,0:00:54.35,0:00:58.07,Default,,0,0,0,, westeros,\N the population apparently doubled and King's landing quadrupled.
+Dialogue: 0,0:00:58.07,0:01:01.64,Default,,0,0,0,, That's huge. Yeah. And things like grain,\N fish prices drop.
+Dialogue: 0,0:01:01.64,0:01:06.23,Default,,0,0,0,, Trade was booming. Crafts were flourishing,\N you know,\N farriers,\N goldsmiths,\N
+Dialogue: 0,0:01:06.23,0:01:10.23,Default,,0,0,0,, brewers. It paints a picture of,\N well,\N things being pretty good for a lot of
+Dialogue: 0,0:01:10.23,0:01:14.92,Default,,0,0,0,, people. Almost I did it,\N really. It does sound that way. But,\N you know,\N like
+Dialogue: 0,0:01:14.92,0:01:19.07,Default,,0,0,0,, Sept and Barth said,\N it's easy to mistake it for one long,\N green,\N and gentle
+Dialogue: 0,0:01:19.07,0:01:23.76,Default,,0,0,0,, summer. But that prosperity didn't just happen easily. And 55 A.C.,\N where we're
+Dialogue: 0,0:01:23.76,0:01:28.52,Default,,0,0,0,, kicking off this deep dive,\N actually started under this grim shadow.
+Dialogue: 0,0:01:28.52,0:01:32.92,Default,,0,0,0,, The year of the stranger. Exactly. And Princess area and Beleri and the Black
+Dialogue: 0,0:01:32.92,0:01:39.52,Default,,0,0,0,, Dread were still just gone,\N vanished,\N which is a really odd start for a supposed
+Dialogue: 0,0:01:39.52,0:01:43.32,Default,,0,0,0,, golden age,\N isn't it? It really is. You've got this incredible success story
+Dialogue: 0,0:01:43.32,0:01:48.00,Default,,0,0,0,, building,\N but it's haunted right from the start by this huge,\N unresolved
+Dialogue: 0,0:01:48.00,0:01:51.20,Default,,0,0,0,, personal tragedy. How does that work? Yeah. How do you reconcile those?
+Dialogue: 0,0:01:51.28,0:01:55.40,Default,,0,0,0,, And immediately,\N you see the impact on Queen Rina Targaryen,\N area's mother.
+Dialogue: 0,0:01:55.60,0:01:59.28,Default,,0,0,0,, She was,\N well,\N just break completely understandable. She'd left court taking
+Dialogue: 0,0:01:59.28,0:02:02.79,Default,,0,0,0,, dream fire and was just criss-crossing westeros. Yeah.
+Dialogue: 0,0:02:02.79,0:02:06.56,Default,,0,0,0,, Searching. Old town,\N high garden,\N cray call,\N casterly rock.
+Dialogue: 0,0:02:06.60,0:02:09.31,Default,,0,0,0,, Just tireless and fruitless,\N sadly.
+Dialogue: 0,0:02:09.48,0:02:12.92,Default,,0,0,0,, And then there's that account of her confrontation with Lord Franklin
+Dialogue: 0,0:02:12.92,0:02:18.68,Default,,0,0,0,, Farman on Fair Isle. She basically landed dream fire there and didn't hold back.
+Dialogue: 0,0:02:18.87,0:02:21.87,Default,,0,0,0,, Warned him about Beleriand. And that really highlights a difference,\N
+Dialogue: 0,0:02:21.87,0:02:25.00,Default,,0,0,0,, doesn't it? Between Rina's approach and Jehary's,\N
+Dialogue: 0,0:02:25.04,0:02:28.43,Default,,0,0,0,, Sempton Barth had that insight about the dragons. Yeah.
+Dialogue: 0,0:02:28.84,0:02:32.12,Default,,0,0,0,, That Targaryen power was immense,\N but the threat of it,\N
+Dialogue: 0,0:02:32.92,0:02:37.92,Default,,0,0,0,, that was most potent when it was unspoken. Jehary's got that subtlety. Right.
+Dialogue: 0,0:02:38.43,0:02:42.20,Default,,0,0,0,, Rina though,\N she was direct,\N even reportedly boasted about,\N you know,\N
+Dialogue: 0,0:02:42.20,0:02:45.52,Default,,0,0,0,, feeding her last husband,\N her dragon was probably didn't win her many friends
+Dialogue: 0,0:02:45.52,0:02:48.52,Default,,0,0,0,, among the lords,\N even if Jehary's didn't exactly condemn her for it.
+Dialogue: 0,0:02:48.52,0:02:52.20,Default,,0,0,0,, No. And after that,\N she kind of retreated,\N flew over lonely places,\N
+Dialogue: 0,0:02:52.40,0:02:56.12,Default,,0,0,0,, still searching,\N maybe just grieving,\N hard to say for sure.
+Dialogue: 0,0:02:56.36,0:02:58.32,Default,,0,0,0,, So while Rina is searching the skies,\N
+Dialogue: 0,0:02:58.56,0:03:01.56,Default,,0,0,0,, you've got this other audacious thing happening across the narrow sea,\N
+Dialogue: 0,0:03:01.96,0:03:05.80,Default,,0,0,0,, Alyssa Farman. Ah,\N yes,\N calling herself Alice Westhold by then.
+Dialogue: 0,0:03:05.80,0:03:08.96,Default,,0,0,0,, And using those dragon eggs,\N she stole the ones Rina interested to her.
+Dialogue: 0,0:03:08.96,0:03:13.71,Default,,0,0,0,, Exactly. Using them to fund building this ship,\N the sun chaser in bravos.
+Dialogue: 0,0:03:14.00,0:03:18.24,Default,,0,0,0,, And this wasn't just any ship. No,\N a four-masted carrot built for long
+Dialogue: 0,0:03:18.24,0:03:21.64,Default,,0,0,0,, voyages,\N deep waters. She was planning something big.
+Dialogue: 0,0:03:21.76,0:03:24.96,Default,,0,0,0,, People asked if she was sailing to ET and she apparently just laughed
+Dialogue: 0,0:03:25.56,0:03:28.15,Default,,0,0,0,, so she was going much further. Yeah. Beyond the sunset.
+Dialogue: 0,0:03:28.48,0:03:30.56,Default,,0,0,0,, It's a fascinating clash of visions there.
+Dialogue: 0,0:03:30.56,0:03:34.15,Default,,0,0,0,, You have the maesters still kind of debating the edges of the known world.
+Dialogue: 0,0:03:34.68,0:03:39.92,Default,,0,0,0,, And Alyssa Farman is just convinced the world is far larger and far stranger than the
+Dialogue: 0,0:03:39.92,0:03:42.96,Default,,0,0,0,, maesters imagine. She wasn't just looking for trade routes.
+Dialogue: 0,0:03:43.00,0:03:45.32,Default,,0,0,0,, No,\N she was looking for a whole new condense,\N wasn't she?
+Dialogue: 0,0:03:45.47,0:03:48.47,Default,,0,0,0,, Another SOS,\N another Sothorios,\N another Westeros.
+Dialogue: 0,0:03:48.75,0:03:53.15,Default,,0,0,0,, It's incredibly bold,\N especially when you think about past failures like brand
+Dialogue: 0,0:03:53.15,0:03:55.91,Default,,0,0,0,, and the ship right,\N sailing north and vanishing. True.
+Dialogue: 0,0:03:56.31,0:04:01.12,Default,,0,0,0,, But Alyssa heading south,\N paying triple wages,\N getting those high tower grandson's
+Dialogue: 0,0:04:01.12,0:04:06.07,Default,,0,0,0,, on board. She had serious conviction and a plan.
+Dialogue: 0,0:04:06.15,0:04:09.24,Default,,0,0,0,, So back in King's Landing,\N well,\N all this is going on the searching.
+Dialogue: 0,0:04:09.47,0:04:12.71,Default,,0,0,0,, The shipbuilding King Jihari is dealing with his own anxieties.
+Dialogue: 0,0:04:13.03,0:04:16.51,Default,,0,0,0,, How by working tirelessly,\N he threw himself into it.
+Dialogue: 0,0:04:16.51,0:04:19.19,Default,,0,0,0,, And this is where one of his biggest legacies really starts,\N isn't it?
+Dialogue: 0,0:04:19.83,0:04:23.07,Default,,0,0,0,, In 55 AC,\N the laws.
+Dialogue: 0,0:04:23.24,0:04:25.68,Default,,0,0,0,, Oh,\N absolutely. With his smaller council,\N
+Dialogue: 0,0:04:25.68,0:04:30.56,Default,,0,0,0,, Sept and Barth,\N Grandmaster Benefer,\N Lord Albin Massey,\N and Queen Alessane was involved
+Dialogue: 0,0:04:30.56,0:04:35.31,Default,,0,0,0,, too. Right. They started trying to untangle this mess of contradictory laws
+Dialogue: 0,0:04:35.39,0:04:36.68,Default,,0,0,0,, across the seven kingdoms.
+Dialogue: 0,0:04:36.72,0:04:40.72,Default,,0,0,0,, Monumental is the word. Before Aegon's conquest,\N you had all these separate
+Dialogue: 0,0:04:40.72,0:04:45.24,Default,,0,0,0,, kingdoms,\N each with its own rules,\N its own customs,\N the sources say things
+Dialogue: 0,0:04:45.24,0:04:49.48,Default,,0,0,0,, like 97 kingdoms at one time,\N 132 at another.
+Dialogue: 0,0:04:49.88,0:04:52.40,Default,,0,0,0,, And even after the conquest,\N it was still a patchwork.
+Dialogue: 0,0:04:52.64,0:04:56.44,Default,,0,0,0,, Lord's pretty much ruled by whim based on conflicting precedence.
+Dialogue: 0,0:04:56.56,0:04:59.92,Default,,0,0,0,, So Jihari's wanted to change that,\N bring a single law to the realm.
+Dialogue: 0,0:04:59.92,0:05:01.56,Default,,0,0,0,, Exactly. It wasn't just tidying up.
+Dialogue: 0,0:05:01.56,0:05:06.36,Default,,0,0,0,, It was about centralizing power,\N making justice more consistent,\N less arbitrary,\N
+Dialogue: 0,0:05:06.72,0:05:11.36,Default,,0,0,0,, taking power away from individual Lord's whims and creating a,\N well,\N
+Dialogue: 0,0:05:11.80,0:05:15.28,Default,,0,0,0,, unified legal framework that laid the groundwork for centuries.
+Dialogue: 0,0:05:15.28,0:05:17.40,Default,,0,0,0,, Really,\N it absolutely did a fundamental shift.
+Dialogue: 0,0:05:17.52,0:05:20.16,Default,,0,0,0,, But it wasn't all just dry legal work in 55 AC.
+Dialogue: 0,0:05:20.56,0:05:21.84,Default,,0,0,0,, There were personal moments too.
+Dialogue: 0,0:05:22.16,0:05:26.19,Default,,0,0,0,, Queen Alessane was pregnant again,\N which was big news,\N though little princess
+Dialogue: 0,0:05:26.19,0:05:29.80,Default,,0,0,0,, Daenerys,\N who was four,\N apparently insisted she wanted a sister.
+Dialogue: 0,0:05:30.04,0:05:31.60,Default,,0,0,0,, Oh,\N kids.
+Dialogue: 0,0:05:31.96,0:05:34.28,Default,,0,0,0,, And Alessane was busy playing matchmaker too,\N wasn't she?
+Dialogue: 0,0:05:34.52,0:05:35.88,Default,,0,0,0,, For her wise women.
+Dialogue: 0,0:05:35.88,0:05:40.00,Default,,0,0,0,, Yes,\N arranging really good marriages for them,\N integrating her household staff
+Dialogue: 0,0:05:40.00,0:05:42.52,Default,,0,0,0,, into the broader nobility,\N very savvy.
+Dialogue: 0,0:05:42.72,0:05:45.28,Default,,0,0,0,, Then there was the big turnie for the dragon pit completion.
+Dialogue: 0,0:05:45.60,0:05:46.88,Default,,0,0,0,, Sounds like quite the event.
+Dialogue: 0,0:05:46.88,0:05:50.28,Default,,0,0,0,, 77 nights,\N a couple of deaths,\N unfortunately,\N but Sarah Luke
+Dialogue: 0,0:05:50.28,0:05:54.92,Default,,0,0,0,, more strong won the melee and Sir Simon Dondarian,\N crowned Princess
+Dialogue: 0,0:05:54.92,0:05:56.92,Default,,0,0,0,, Daenerys,\N queen of love and beauty.
+Dialogue: 0,0:05:57.60,0:05:59.12,Default,,0,0,0,, Sweet. Very.
+Dialogue: 0,0:05:59.32,0:06:01.92,Default,,0,0,0,, But then Alessane decided to go to Dragonstone for the birth.
+Dialogue: 0,0:06:02.36,0:06:05.68,Default,,0,0,0,, Yeah,\N the memory of losing Prince Aegon previously was still raw,\N right?
+Dialogue: 0,0:06:05.96,0:06:06.87,Default,,0,0,0,, She wanted quiet.
+Dialogue: 0,0:06:06.87,0:06:07.56,Default,,0,0,0,, Understandably.
+Dialogue: 0,0:06:07.56,0:06:11.72,Default,,0,0,0,, So Jhery's went on a royal progress alone through the Western lands and pointedly
+Dialogue: 0,0:06:11.72,0:06:12.75,Default,,0,0,0,, skipped fair Isle.
+Dialogue: 0,0:06:13.72,0:06:15.40,Default,,0,0,0,, I can expect a Barthus Point,\N doesn't it?
+Dialogue: 0,0:06:15.40,0:06:16.48,Default,,0,0,0,, The unspoken threat.
+Dialogue: 0,0:06:16.64,0:06:21.28,Default,,0,0,0,, Jhery's didn't need to shout like Riena,\N just snubbing Lord Farman sent a clear
+Dialogue: 0,0:06:21.28,0:06:23.40,Default,,0,0,0,, message,\N subtle,\N but effective.
+Dialogue: 0,0:06:23.43,0:06:23.87,Default,,0,0,0,, Very.
+Dialogue: 0,0:06:24.48,0:06:25.40,Default,,0,0,0,, And the retreat worked.
+Dialogue: 0,0:06:26.12,0:06:28.48,Default,,0,0,0,, Alessane had a healthy baby boy on Dragonstone.
+Dialogue: 0,0:06:28.48,0:06:33.04,Default,,0,0,0,, Prince Aiman,\N Lilac Eyes,\N white gold hair,\N sounds very Targaryen.
+Dialogue: 0,0:06:33.40,0:06:33.96,Default,,0,0,0,, Definitely.
+Dialogue: 0,0:06:34.12,0:06:38.16,Default,,0,0,0,, And Jhery's put a dragon egg in his cradle,\N apparently at Alessane suggestion.
+Dialogue: 0,0:06:38.20,0:06:39.43,Default,,0,0,0,, A tradition continued.
+Dialogue: 0,0:06:39.48,0:06:44.00,Default,,0,0,0,, And when they came back to King's landing,\N huge celebrations,\N the small
+Dialogue: 0,0:06:44.00,0:06:47.68,Default,,0,0,0,, folk apparently roared so loud you could hear to cross the Nero sea,\N bit of an
+Dialogue: 0,0:06:47.68,0:06:50.68,Default,,0,0,0,, exaggeration perhaps,\N but still shows the relief and joy,\N though.
+Dialogue: 0,0:06:50.96,0:06:54.75,Default,,0,0,0,, Meanwhile,\N Queen Riena came back from Greenstone,\N found some comfort with her
+Dialogue: 0,0:06:54.75,0:06:57.72,Default,,0,0,0,, cousin,\N Larissa Valerian,\N unaware that Alice West Hill,\N
+Dialogue: 0,0:06:58.00,0:07:02.00,Default,,0,0,0,, Alyssa Farman,\N her betrayer,\N was sailing the sun chaser right past the
+Dialogue: 0,0:07:02.00,0:07:02.96,Default,,0,0,0,, stepstones nearby.
+Dialogue: 0,0:07:03.00,0:07:05.16,Default,,0,0,0,, So close,\N the irony.
+Dialogue: 0,0:07:05.24,0:07:08.32,Default,,0,0,0,, So moving into 56 AC winter arrives.
+Dialogue: 0,0:07:08.80,0:07:12.08,Default,,0,0,0,, And the news from Essos about the search for area and Bolarian.
+Dialogue: 0,0:07:12.52,0:07:13.28,Default,,0,0,0,, It's not good.
+Dialogue: 0,0:07:13.32,0:07:14.60,Default,,0,0,0,, No,\N the search has failed.
+Dialogue: 0,0:07:14.76,0:07:19.60,Default,,0,0,0,, Sir Willem the Was got ambushed by bandits in Andalos,\N not eaten by a monster
+Dialogue: 0,0:07:19.60,0:07:23.96,Default,,0,0,0,, and other sightings like that Wyvern and asked to pour just miss
+Dialogue: 0,0:07:23.96,0:07:25.16,Default,,0,0,0,, identifications of rumors.
+Dialogue: 0,0:07:25.52,0:07:26.92,Default,,0,0,0,, Hope was really fading.
+Dialogue: 0,0:07:26.92,0:07:30.08,Default,,0,0,0,, It seemed like they might never know what happened and then everything
+Dialogue: 0,0:07:30.08,0:07:31.16,Default,,0,0,0,, changes dramatically.
+Dialogue: 0,0:07:31.16,0:07:36.36,Default,,0,0,0,, 13th day,\N fourth moon of 56 AC,\N this massive horn blast over King's landing.
+Dialogue: 0,0:07:36.64,0:07:38.48,Default,,0,0,0,, Valerian was back dread,\N right?
+Dialogue: 0,0:07:38.52,0:07:38.72,Default,,0,0,0,, Yeah.
+Dialogue: 0,0:07:38.72,0:07:41.80,Default,,0,0,0,, People probably thought mega,\N the cruel and somehow returned exactly,\N but
+Dialogue: 0,0:07:41.80,0:07:44.43,Default,,0,0,0,, clinging to his neck wasn't mega or it was princess area.
+Dialogue: 0,0:07:44.52,0:07:45.24,Default,,0,0,0,, Oh,\N God.
+Dialogue: 0,0:07:45.48,0:07:50.20,Default,,0,0,0,, And the stage she was in terrible near naked,\N just rags left,\N emaciated.
+Dialogue: 0,0:07:50.20,0:07:51.84,Default,,0,0,0,, She slides off apparently cries out.
+Dialogue: 0,0:07:52.08,0:07:54.48,Default,,0,0,0,, Please,\N I never let lapses and collapses.
+Dialogue: 0,0:07:54.60,0:07:57.72,Default,,0,0,0,, And it's Sarah Luka more strong,\N the turni champ who carries her to grand
+Dialogue: 0,0:07:57.72,0:07:58.40,Default,,0,0,0,, master benefit.
+Dialogue: 0,0:07:58.68,0:07:59.08,Default,,0,0,0,, Right.
+Dialogue: 0,0:07:59.12,0:08:03.80,Default,,0,0,0,, And he later claimed she was burning up skin scorching hot even through his armor.
+Dialogue: 0,0:08:04.48,0:08:07.84,Default,,0,0,0,, This is disturbing something inside her,\N something moving.
+Dialogue: 0,0:08:09.04,0:08:10.60,Default,,0,0,0,, And the King's immediate reaction.
+Dialogue: 0,0:08:11.36,0:08:14.92,Default,,0,0,0,, Silence,\N Luka more instantly commanded him never to speak of it again.
+Dialogue: 0,0:08:15.00,0:08:19.52,Default,,0,0,0,, That's fast and telling why the secrecy,\N what was so bad?
+Dialogue: 0,0:08:20.04,0:08:23.48,Default,,0,0,0,, Well,\N the official account from grandmaster benefit is very quiet.
+Dialogue: 0,0:08:24.04,0:08:28.68,Default,,0,0,0,, But septin barth's private journal,\N that tells a different story,\N a truly horrifying one.
+Dialogue: 0,0:08:28.68,0:08:29.52,Default,,0,0,0,, What did Barth write?
+Dialogue: 0,0:08:29.68,0:08:34.08,Default,,0,0,0,, He wrote that area was literally cooking from within her skin cracked like
+Dialogue: 0,0:08:34.08,0:08:38.87,Default,,0,0,0,, pork rind smoke came from her mouth and knows her eyes,\N cooked and burst.
+Dialogue: 0,0:08:38.87,0:08:39.56,Default,,0,0,0,, Oh my God.
+Dialogue: 0,0:08:39.84,0:08:46.27,Default,,0,0,0,, And then when they put her in ice to try and cool her down,\N these things burst out
+Dialogue: 0,0:08:46.27,0:08:46.51,Default,,0,0,0,, of her.
+Dialogue: 0,0:08:46.51,0:08:52.03,Default,,0,0,0,, He called them worms with faces,\N snakes with hands,\N twisting,\N slimy,\N unspeakable
+Dialogue: 0,0:08:52.07,0:08:52.59,Default,,0,0,0,, things.
+Dialogue: 0,0:08:52.71,0:08:55.63,Default,,0,0,0,, No,\N they rived and died in the cold.
+Dialogue: 0,0:08:56.00,0:08:59.71,Default,,0,0,0,, Barth's conclusion,\N Blarion must have taken her to Valeria.
+Dialogue: 0,0:08:59.71,0:09:02.27,Default,,0,0,0,, Valeria itself,\N the doom still echoing.
+Dialogue: 0,0:09:02.48,0:09:06.91,Default,,0,0,0,, Apparently the ancient,\N cursed source of dark magic,\N twisted creatures.
+Dialogue: 0,0:09:07.03,0:09:07.27,Default,,0,0,0,, Yeah.
+Dialogue: 0,0:09:07.27,0:09:10.71,Default,,0,0,0,, And those things inside her products of that place,\N this sheer horror of that.
+Dialogue: 0,0:09:10.79,0:09:11.83,Default,,0,0,0,, I can't even imagine.
+Dialogue: 0,0:09:12.00,0:09:14.79,Default,,0,0,0,, Valeria,\N what it became,\N it makes your blood run cold.
+Dialogue: 0,0:09:14.79,0:09:18.63,Default,,0,0,0,, And even Blarion,\N the black tread came back wounded,\N a massive nine foot
+Dialogue: 0,0:09:18.63,0:09:20.59,Default,,0,0,0,, gash down his side bleeding smoking.
+Dialogue: 0,0:09:20.60,0:09:23.80,Default,,0,0,0,, So whatever area encountered,\N Valeria faced something awful too.
+Dialogue: 0,0:09:23.80,0:09:28.60,Default,,0,0,0,, It seems so,\N which makes Barth's comment certain doors are best left unopened,\N feel
+Dialogue: 0,0:09:28.60,0:09:30.63,Default,,0,0,0,, incredibly profound,\N doesn't it?
+Dialogue: 0,0:09:30.63,0:09:31.12,Default,,0,0,0,, Utterly.
+Dialogue: 0,0:09:31.51,0:09:33.68,Default,,0,0,0,, And Jerry's clearly agreed immediately.
+Dialogue: 0,0:09:33.75,0:09:34.75,Default,,0,0,0,, The impact was swift.
+Dialogue: 0,0:09:34.75,0:09:39.87,Default,,0,0,0,, He issued that royal edict,\N no ship travels to Valeria or the smoking sea period on
+Dialogue: 0,0:09:39.87,0:09:43.96,Default,,0,0,0,, pain of death,\N creating this permanent forbidden zone around the Targaryen
+Dialogue: 0,0:09:43.96,0:09:46.44,Default,,0,0,0,, homeland driven by this secret horror.
+Dialogue: 0,0:09:46.63,0:09:47.56,Default,,0,0,0,, Exactly.
+Dialogue: 0,0:09:47.56,0:09:51.64,Default,,0,0,0,, And Valeria,\N he became the first dragon house permanently in the dragon pit,\N
+Dialogue: 0,0:09:51.88,0:09:55.64,Default,,0,0,0,, guarded day and night by the new dragon teepers to prevent anything like that ever
+Dialogue: 0,0:09:55.64,0:09:59.04,Default,,0,0,0,, happening again,\N a drastic measure born from terror.
+Dialogue: 0,0:09:59.08,0:10:01.24,Default,,0,0,0,, Absolutely,\N a new era of vigilance.
+Dialogue: 0,0:10:01.24,0:10:05.40,Default,,0,0,0,, Can't pour queen reina,\N which she finally got the word of green stone.
+Dialogue: 0,0:10:05.76,0:10:07.56,Default,,0,0,0,, Gary was already gone,\N burned.
+Dialogue: 0,0:10:07.76,0:10:11.36,Default,,0,0,0,, She flew to the red keep,\N but all she received were ashes and bones.
+Dialogue: 0,0:10:11.60,0:10:15.00,Default,,0,0,0,, Her line,\N it would seem that I am doomed to always come too late.
+Dialogue: 0,0:10:15.28,0:10:16.20,Default,,0,0,0,, Just heartbreaking.
+Dialogue: 0,0:10:16.20,0:10:18.48,Default,,0,0,0,, Yeah,\N and she wouldn't bury the ashes on dragon stone.
+Dialogue: 0,0:10:18.48,0:10:22.08,Default,,0,0,0,, What she know,\N she told the king she hated dragon stone.
+Dialogue: 0,0:10:22.08,0:10:23.24,Default,,0,0,0,, She wanted to fly.
+Dialogue: 0,0:10:23.36,0:10:27.00,Default,,0,0,0,, So reina took the ashes up on dream fire and scattered them to the winds.
+Dialogue: 0,0:10:27.12,0:10:32.32,Default,,0,0,0,, A final flight for area in a way,\N reina,\N then just retreated,\N refused
+Dialogue: 0,0:10:32.32,0:10:35.80,Default,,0,0,0,, dragon stone,\N green stone,\N even a seat on the small council.
+Dialogue: 0,0:10:35.80,0:10:39.64,Default,,0,0,0,, Jehary's offered her and when Alice and gently suggested maybe remarrying,\N
+Dialogue: 0,0:10:39.64,0:10:44.64,Default,,0,0,0,, having more children that famous line,\N I fed my last husband to my dragon.
+Dialogue: 0,0:10:45.12,0:10:47.79,Default,,0,0,0,, If you make me take another,\N I may eat him myself.
+Dialogue: 0,0:10:48.12,0:10:51.27,Default,,0,0,0,, Oh,\N fear sort of finds just turned inward,\N isn't it?
+Dialogue: 0,0:10:51.48,0:10:52.19,Default,,0,0,0,, It seems like it.
+Dialogue: 0,0:10:52.24,0:10:57.72,Default,,0,0,0,, And she ended up where of all places,\N the cursed castle,\N specifically the widow's
+Dialogue: 0,0:10:57.72,0:11:01.60,Default,,0,0,0,, tower,\N but strangely,\N she apparently formed a close friendship there with the
+Dialogue: 0,0:11:01.60,0:11:05.36,Default,,0,0,0,, sickly meager towers,\N whose father was killed by meager,\N the cruel weird
+Dialogue: 0,0:11:05.36,0:11:07.15,Default,,0,0,0,, connections history makes,\N isn't it?
+Dialogue: 0,0:11:07.43,0:11:12.24,Default,,0,0,0,, And she kept right in dream fire until she died in 73 AC aged 50,\N never went
+Dialogue: 0,0:11:12.24,0:11:17.44,Default,,0,0,0,, back to king's landing or dragon stone,\N just stayed away,\N a life marked by that
+Dialogue: 0,0:11:17.44,0:11:17.91,Default,,0,0,0,, grief.
+Dialogue: 0,0:11:18.32,0:11:22.91,Default,,0,0,0,, Okay,\N let's shift to something brighter,\N 57 AC,\N another royal birth.
+Dialogue: 0,0:11:23.03,0:11:26.84,Default,,0,0,0,, Yes,\N Prince Balon,\N they called him the spring prince because the white
+Dialogue: 0,0:11:26.84,0:11:29.44,Default,,0,0,0,, ravens announcing spring arrived just before his birth.
+Dialogue: 0,0:11:29.68,0:11:30.39,Default,,0,0,0,, Nice timing.
+Dialogue: 0,0:11:30.56,0:11:34.56,Default,,0,0,0,, And he sounded like quite the character loud and lusty,\N a real contrast to his
+Dialogue: 0,0:11:34.56,0:11:38.36,Default,,0,0,0,, serious older brother,\N Aemon and their rather commanding sister Daenerys.
+Dialogue: 0,0:11:38.39,0:11:41.39,Default,,0,0,0,, It didn't he get nicknamed Balon the Brave as a toddler?
+Dialogue: 0,0:11:41.91,0:11:44.91,Default,,0,0,0,, For supposedly smacking Balarian on the snout.
+Dialogue: 0,0:11:45.00,0:11:45.36,Default,,0,0,0,, Huh.
+Dialogue: 0,0:11:45.95,0:11:50.72,Default,,0,0,0,, Yes,\N that's the story,\N whether it's two or not,\N it's stuck,\N shows his spirit,\N I suppose.
+Dialogue: 0,0:11:50.87,0:11:53.84,Default,,0,0,0,, But even here,\N there's a hint of tension right between J. Harry's and
+Dialogue: 0,0:11:53.84,0:11:55.07,Default,,0,0,0,, Alessand about the succession.
+Dialogue: 0,0:11:55.31,0:11:56.60,Default,,0,0,0,, There is subtly.
+Dialogue: 0,0:11:56.91,0:12:01.60,Default,,0,0,0,, J. Harry started talking about Aemon as his heir pretty much from birth,\N but
+Dialogue: 0,0:12:01.60,0:12:03.84,Default,,0,0,0,, Alessand kept pointing out that Daenerys was older.
+Dialogue: 0,0:12:04.00,0:12:05.51,Default,,0,0,0,, She wanted Daenerys first in line.
+Dialogue: 0,0:12:05.55,0:12:06.36,Default,,0,0,0,, Seems so.
+Dialogue: 0,0:12:06.63,0:12:09.31,Default,,0,0,0,, J. Harry's would say,\N oh,\N they'll rule together like us.
+Dialogue: 0,0:12:10.20,0:12:13.52,Default,,0,0,0,, But Grandmaster Bennett for a noted,\N Alessand was never quite happy with that.
+Dialogue: 0,0:12:13.60,0:12:15.60,Default,,0,0,0,, A rare point of disagreement for them.
+Dialogue: 0,0:12:15.68,0:12:16.24,Default,,0,0,0,, Interesting.
+Dialogue: 0,0:12:16.44,0:12:20.16,Default,,0,0,0,, Also in 57 AC,\N a big change on the small council.
+Dialogue: 0,0:12:20.24,0:12:20.64,Default,,0,0,0,, Right.
+Dialogue: 0,0:12:20.92,0:12:23.20,Default,,0,0,0,, Lord Miles Smallwood was out his hand.
+Dialogue: 0,0:12:23.40,0:12:26.76,Default,,0,0,0,, J. Harry's felt he was made to sit a horse,\N not a cushion.
+Dialogue: 0,0:12:26.80,0:12:27.40,Default,,0,0,0,, Fair enough.
+Dialogue: 0,0:12:27.56,0:12:28.87,Default,,0,0,0,, And he was determined to a point.
+Dialogue: 0,0:12:29.00,0:12:32.28,Default,,0,0,0,, Sept and Barth,\N despite the objections about his low birth.
+Dialogue: 0,0:12:32.28,0:12:34.32,Default,,0,0,0,, And J. Harry's just shut down the complaints.
+Dialogue: 0,0:12:34.32,0:12:34.60,Default,,0,0,0,, Yep.
+Dialogue: 0,0:12:34.72,0:12:38.60,Default,,0,0,0,, Famously said,\N a knight needs his sword,\N a horse needs shoes.
+Dialogue: 0,0:12:38.75,0:12:40.51,Default,,0,0,0,, And I need Barth,\N end of discussion.
+Dialogue: 0,0:12:40.51,0:12:45.56,Default,,0,0,0,, And Barth got straight to work,\N sent off to Brava as almost immediately within days,\N critical
+Dialogue: 0,0:12:45.56,0:12:50.72,Default,,0,0,0,, mission,\N deal with the sea lord about Alissa Farman and those stolen dragon eggs.
+Dialogue: 0,0:12:50.75,0:12:52.48,Default,,0,0,0,, That sounds like a tense negotiation.
+Dialogue: 0,0:12:52.63,0:12:53.72,Default,,0,0,0,, Oh,\N you bet.
+Dialogue: 0,0:12:53.72,0:12:56.04,Default,,0,0,0,, Vailed threats,\N flying back and forth.
+Dialogue: 0,0:12:56.04,0:13:00.87,Default,,0,0,0,, Barth hinting at dragonfire,\N the sea lord mentioning,\N you know,\N skilled assassins who
+Dialogue: 0,0:13:00.87,0:13:02.60,Default,,0,0,0,, could target people in King's Landing.
+Dialogue: 0,0:13:02.96,0:13:03.75,Default,,0,0,0,, High stakes.
+Dialogue: 0,0:13:03.75,0:13:04.80,Default,,0,0,0,, So what was the outcome?
+Dialogue: 0,0:13:04.80,0:13:06.51,Default,,0,0,0,, Did Barth get the eggs back?
+Dialogue: 0,0:13:06.56,0:13:07.75,Default,,0,0,0,, No,\N he didn't.
+Dialogue: 0,0:13:07.75,0:13:10.12,Default,,0,0,0,, Which raises that question,\N was he outplayed?
+Dialogue: 0,0:13:10.67,0:13:12.03,Default,,0,0,0,, Where did he achieve something bigger?
+Dialogue: 0,0:13:12.03,0:13:12.51,Default,,0,0,0,, What did he get?
+Dialogue: 0,0:13:12.84,0:13:18.20,Default,,0,0,0,, He got the crown's massive debt to the iron bank,\N forgiven,\N essentially cut in half for the
+Dialogue: 0,0:13:18.20,0:13:20.00,Default,,0,0,0,, cost of three stones as the sanguine.
+Dialogue: 0,0:13:20.20,0:13:20.72,Default,,0,0,0,, Wow.
+Dialogue: 0,0:13:20.72,0:13:23.48,Default,,0,0,0,, So no eggs,\N but massive debt relief.
+Dialogue: 0,0:13:23.48,0:13:24.15,Default,,0,0,0,, Exactly.
+Dialogue: 0,0:13:24.48,0:13:27.55,Default,,0,0,0,, The sea lord denied having the eggs,\N but offered gold instead.
+Dialogue: 0,0:13:27.55,0:13:31.55,Default,,0,0,0,, Basically acknowledging J. Harry's leverage,\N but finding a different solution.
+Dialogue: 0,0:13:32.15,0:13:36.72,Default,,0,0,0,, Barth realized financial freedom was maybe more valuable,\N long term than getting the eggs back.
+Dialogue: 0,0:13:36.80,0:13:39.84,Default,,0,0,0,, That's really smart diplomacy,\N practical over symbolic.
+Dialogue: 0,0:13:39.96,0:13:45.16,Default,,0,0,0,, Classic Barth and classic J. Harry's really pragmatic,\N focused on stability.
+Dialogue: 0,0:13:45.16,0:13:48.24,Default,,0,0,0,, And that financial freedom had immediate effects back in King's Landing right?
+Dialogue: 0,0:13:48.24,0:13:49.16,Default,,0,0,0,, Huge effects.
+Dialogue: 0,0:13:49.16,0:13:52.96,Default,,0,0,0,, Money that was going to the iron bank could now be used for improvements to sharies and
+Dialogue: 0,0:13:52.96,0:13:55.48,Default,,0,0,0,, Rago draws his master of coin wanted.
+Dialogue: 0,0:13:55.68,0:14:03.68,Default,,0,0,0,, They'd already done some street widening,\N cobblestones,\N but now drains sewers and most
+Dialogue: 0,0:14:03.68,0:14:05.84,Default,,0,0,0,, famously the Queen's fountains.
+Dialogue: 0,0:14:06.00,0:14:07.87,Default,,0,0,0,, Ah,\N Alessand's project.
+Dialogue: 0,0:14:07.87,0:14:08.68,Default,,0,0,0,, How does that come about?
+Dialogue: 0,0:14:08.68,0:14:13.16,Default,,0,0,0,, Well,\N Barth pointed out how awful the drinking water was in King's Landing,\N basically
+Dialogue: 0,0:14:13.16,0:14:14.56,Default,,0,0,0,, undrinkable for people.
+Dialogue: 0,0:14:14.63,0:14:15.16,Default,,0,0,0,, Right.
+Dialogue: 0,0:14:15.16,0:14:19.87,Default,,0,0,0,, He proposed the zambitious scheme with wells and pipes,\N but J. Harry's and Rago
+Dialogue: 0,0:14:19.87,0:14:21.92,Default,,0,0,0,, draws were hesitant about the cost.
+Dialogue: 0,0:14:22.12,0:14:22.80,Default,,0,0,0,, Understandable.
+Dialogue: 0,0:14:22.92,0:14:24.36,Default,,0,0,0,, So how did Alessand convince them?
+Dialogue: 0,0:14:24.72,0:14:25.80,Default,,0,0,0,, Simple,\N but brilliant.
+Dialogue: 0,0:14:25.96,0:14:30.08,Default,,0,0,0,, At the next council meeting,\N she served them both a big tankard of the muddy river
+Dialogue: 0,0:14:30.08,0:14:32.44,Default,,0,0,0,, water they were discussing and just dared them to drink it.
+Dialogue: 0,0:14:33.00,0:14:33.60,Default,,0,0,0,, Did they?
+Dialogue: 0,0:14:33.60,0:14:34.68,Default,,0,0,0,, Nope,\N project approved.
+Dialogue: 0,0:14:34.68,0:14:35.44,Default,,0,0,0,, Brilliant.
+Dialogue: 0,0:14:35.80,0:14:39.24,Default,,0,0,0,, And those fountains provided clean water for generations.
+Dialogue: 0,0:14:39.52,0:14:40.64,Default,,0,0,0,, Attangible improvement.
+Dialogue: 0,0:14:40.64,0:14:41.28,Default,,0,0,0,, Absolutely.
+Dialogue: 0,0:14:41.44,0:14:44.20,Default,,0,0,0,, Built on financial cleverness and a Queen's determination.
+Dialogue: 0,0:14:44.64,0:14:46.68,Default,,0,0,0,, Okay,\N let's move into 58 AC.
+Dialogue: 0,0:14:46.84,0:14:49.12,Default,,0,0,0,, Big plans for a royal progress to the North.
+Dialogue: 0,0:14:49.16,0:14:51.44,Default,,0,0,0,, Yeah,\N a really significant diplomatic move.
+Dialogue: 0,0:14:51.88,0:14:55.76,Default,,0,0,0,, No Targaryen King had actually visited Winterfell since the conquest,\N but J.
+Dialogue: 0,0:14:55.76,0:14:57.12,Default,,0,0,0,, Harry's got pulled away,\N didn't he?
+Dialogue: 0,0:14:57.24,0:14:57.88,Default,,0,0,0,, He did.
+Dialogue: 0,0:14:58.08,0:15:02.84,Default,,0,0,0,, There was a war between Pentos and Tyrosh messing up trade and he needed to go mediate
+Dialogue: 0,0:15:02.84,0:15:03.60,Default,,0,0,0,, a peace treaty.
+Dialogue: 0,0:15:03.80,0:15:08.04,Default,,0,0,0,, So the solution,\N Alessand goes north alone first.
+Dialogue: 0,0:15:08.15,0:15:08.84,Default,,0,0,0,, Exactly.
+Dialogue: 0,0:15:08.84,0:15:09.08,Default,,0,0,0,, J.
+Dialogue: 0,0:15:09.08,0:15:10.24,Default,,0,0,0,, Harry's would join her later.
+Dialogue: 0,0:15:10.32,0:15:12.72,Default,,0,0,0,, So Alessand heads off first up White Harbor.
+Dialogue: 0,0:15:12.92,0:15:14.04,Default,,0,0,0,, How was her reception there?
+Dialogue: 0,0:15:14.15,0:15:15.72,Default,,0,0,0,, Pretty amazing,\N actually.
+Dialogue: 0,0:15:15.75,0:15:20.87,Default,,0,0,0,, The small folk were awestruck,\N maybe a bit terrified seeing Silverwing land,\N first
+Dialogue: 0,0:15:20.87,0:15:22.20,Default,,0,0,0,, dragon for most of them.
+Dialogue: 0,0:15:22.20,0:15:22.68,Default,,0,0,0,, I bet.
+Dialogue: 0,0:15:23.04,0:15:27.60,Default,,0,0,0,, And Lord the more mandrily laid on the hospitality lavish feasts.
+Dialogue: 0,0:15:28.04,0:15:31.60,Default,,0,0,0,, Alessand immediately started doing her political matchmaking,\N arranging marriages
+Dialogue: 0,0:15:31.60,0:15:33.56,Default,,0,0,0,, for her ladies always work in the angles.
+Dialogue: 0,0:15:33.60,0:15:38.12,Default,,0,0,0,, And there was even a duel at the tourney they held between her sworn shield,\N
+Dialogue: 0,0:15:38.12,0:15:41.75,Default,,0,0,0,, junk will dark and a wildling girl sounds memorable.
+Dialogue: 0,0:15:41.80,0:15:46.04,Default,,0,0,0,, Definitely,\N but the most important thing she did there was convene her women's court.
+Dialogue: 0,0:15:46.32,0:15:50.56,Default,,0,0,0,, Unheard of in the North,\N hundreds of women and girls came to Lord mandrily's
+Dialogue: 0,0:15:50.56,0:15:54.68,Default,,0,0,0,, hall to speak directly to the queen,\N share their concerns,\N their grievances.
+Dialogue: 0,0:15:54.68,0:15:56.27,Default,,0,0,0,, That's incredible setting a precedent.
+Dialogue: 0,0:15:56.27,0:15:56.96,Default,,0,0,0,, Yeah,\N absolutely.
+Dialogue: 0,0:15:56.96,0:16:01.56,Default,,0,0,0,, And it really foreshadows what comes later shows her commitment to listening to everyone.
+Dialogue: 0,0:16:01.68,0:16:05.88,Default,,0,0,0,, But the warm welcome didn't quite follow her to Winterfell did it.
+Dialogue: 0,0:16:06.20,0:16:09.56,Default,,0,0,0,, No,\N Lord Elyric Stark was described as flinty.
+Dialogue: 0,0:16:10.28,0:16:14.44,Default,,0,0,0,, He and his sons met her,\N but he wasn't exactly rolling out the red carpet.
+Dialogue: 0,0:16:14.44,0:16:15.44,Default,,0,0,0,, What were his issues?
+Dialogue: 0,0:16:15.72,0:16:16.80,Default,,0,0,0,, Seem like a few things.
+Dialogue: 0,0:16:16.80,0:16:21.24,Default,,0,0,0,, He apparently looked down on her southern clothes,\N didn't want Silverwing inside the castle walls,\N
+Dialogue: 0,0:16:21.48,0:16:25.08,Default,,0,0,0,, grumbled that the king wasn't there,\N standard northern pride,\N maybe.
+Dialogue: 0,0:16:25.12,0:16:26.36,Default,,0,0,0,, Probably some of that.
+Dialogue: 0,0:16:26.72,0:16:29.96,Default,,0,0,0,, He even apparently boasted about his own wife,\N Lady Mormart,\N
+Dialogue: 0,0:16:30.03,0:16:33.48,Default,,0,0,0,, being unladylike,\N hunting wolves and sowing their skins into cloaks.
+Dialogue: 0,0:16:33.56,0:16:34.27,Default,,0,0,0,, Okay,\N then.
+Dialogue: 0,0:16:34.48,0:16:36.48,Default,,0,0,0,, So a chilly reception.
+Dialogue: 0,0:16:36.96,0:16:41.03,Default,,0,0,0,, How did Alice and handle it with what the sources call her stubborn charm?
+Dialogue: 0,0:16:41.96,0:16:43.48,Default,,0,0,0,, Gradually,\N she won him over.
+Dialogue: 0,0:16:44.32,0:16:48.75,Default,,0,0,0,, She apparently managed to disprove the rumors that he had no humor or was stingy.
+Dialogue: 0,0:16:48.96,0:16:51.63,Default,,0,0,0,, He showed her giant bones,\N let her look through his library.
+Dialogue: 0,0:16:51.84,0:16:53.51,Default,,0,0,0,, She bonded with his daughter,\N Alara.
+Dialogue: 0,0:16:53.63,0:16:57.91,Default,,0,0,0,, So she bridged that North South gap impressive,\N took skill,\N but she did it.
+Dialogue: 0,0:16:57.96,0:17:02.48,Default,,0,0,0,, And from Winterfell,\N she went even further north to the wall castle black.
+Dialogue: 0,0:17:02.48,0:17:06.31,Default,,0,0,0,, Yeah,\N the night's watch were blown away,\N feasted her on mammoth meat.
+Dialogue: 0,0:17:06.35,0:17:12.16,Default,,0,0,0,, Silverwing caused a stir again,\N but silverwing reacted strangely to the wall itself.
+Dialogue: 0,0:17:12.35,0:17:18.44,Default,,0,0,0,, Very strangely,\N Alessanne wrote jihari's about it,\N said,\N Silverwing does not like this wall.
+Dialogue: 0,0:17:18.72,0:17:22.59,Default,,0,0,0,, She tried three times to fly the dragon north beyond the wall.
+Dialogue: 0,0:17:22.67,0:17:26.51,Default,,0,0,0,, Yeah,\N Silverwing refused every time,\N veered back South.
+Dialogue: 0,0:17:26.87,0:17:29.75,Default,,0,0,0,, Alessanne said the dragon had never refused her like that before.
+Dialogue: 0,0:17:31.03,0:17:33.59,Default,,0,0,0,, That's interesting,\N unsettling almost.
+Dialogue: 0,0:17:33.59,0:17:38.19,Default,,0,0,0,, It is,\N makes you wonder what the dragon sensed,\N but Alessanne's time there wasn't
+Dialogue: 0,0:17:38.19,0:17:40.24,Default,,0,0,0,, just about weird dragon behavior.
+Dialogue: 0,0:17:40.35,0:17:44.15,Default,,0,0,0,, She saw the struggles of the night's watch,\N the wildlings,\N the harsh conditions.
+Dialogue: 0,0:17:44.15,0:17:44.91,Default,,0,0,0,, Exactly.
+Dialogue: 0,0:17:45.15,0:17:48.75,Default,,0,0,0,, And that led directly to her first big queen's law,\N the new gift.
+Dialogue: 0,0:17:48.87,0:17:53.35,Default,,0,0,0,, Right. She realized the land they had,\N Brandon's gift,\N wasn't enough to support them anymore.
+Dialogue: 0,0:17:53.35,0:17:57.96,Default,,0,0,0,, Correct. So she proposed giving them a whole new strip of land,\N South of the existing gift.
+Dialogue: 0,0:17:58.11,0:18:02.96,Default,,0,0,0,, She convinced Lord Alaric Stark to agree to it,\N essentially doubling the watch's territory.
+Dialogue: 0,0:18:02.96,0:18:05.35,Default,,0,0,0,, And she paid for a new castle,\N de-played herself.
+Dialogue: 0,0:18:05.35,0:18:10.55,Default,,0,0,0,, She did. A really practical,\N lasting contribution based directly on what she saw and heard,\N
+Dialogue: 0,0:18:10.68,0:18:12.07,Default,,0,0,0,, helping the watch sustain itself.
+Dialogue: 0,0:18:12.35,0:18:15.48,Default,,0,0,0,, But her most transformative moment up north came next,\N didn't it?
+Dialogue: 0,0:18:15.92,0:18:17.40,Default,,0,0,0,, When she visited Molstown.
+Dialogue: 0,0:18:17.64,0:18:20.32,Default,,0,0,0,, Ah,\N yes. The village south of the wall.
+Dialogue: 0,0:18:20.96,0:18:25.12,Default,,0,0,0,, The Lord Commander was reluctant,\N but admitted she'd find,\N well,\N heartlets there.
+Dialogue: 0,0:18:25.84,0:18:27.60,Default,,0,0,0,, And she held another women's court.
+Dialogue: 0,0:18:27.92,0:18:28.75,Default,,0,0,0,, Amongst those women.
+Dialogue: 0,0:18:29.00,0:18:34.40,Default,,0,0,0,, Yes. And the story she heard there,\N they were the ones that would change the Seven Kingdoms forever.
+Dialogue: 0,0:18:34.51,0:18:38.64,Default,,0,0,0,, She told the small council about one particular story back in King's Landing,\N right?
+Dialogue: 0,0:18:39.24,0:18:40.24,Default,,0,0,0,, The Blacksmith's daughter.
+Dialogue: 0,0:18:40.24,0:18:41.96,Default,,0,0,0,, She did a horrific story.
+Dialogue: 0,0:18:42.40,0:18:44.96,Default,,0,0,0,, The girl marries her sweetheart and apprentice.
+Dialogue: 0,0:18:45.31,0:18:50.24,Default,,0,0,0,, Vows barely spoken and the local Lord shows up to claim his right to the first night.
+Dialogue: 0,0:18:50.24,0:18:50.92,Default,,0,0,0,, Exactly.
+Dialogue: 0,0:18:51.07,0:18:54.07,Default,,0,0,0,, Drags her off to flowers her brings her back the next morning.
+Dialogue: 0,0:18:54.27,0:18:57.07,Default,,0,0,0,, The husband powerless against the Lord beats her.
+Dialogue: 0,0:18:57.51,0:19:03.40,Default,,0,0,0,, She ends up pregnant with the Lord's child,\N flees to Molstown,\N lives as a prostitute,\N utterly broken.
+Dialogue: 0,0:19:03.40,0:19:05.16,Default,,0,0,0,, So awful. How did the council react?
+Dialogue: 0,0:19:05.16,0:19:06.84,Default,,0,0,0,, It ignited a huge debate.
+Dialogue: 0,0:19:06.96,0:19:09.07,Default,,0,0,0,, Alasam was furious,\N fierce.
+Dialogue: 0,0:19:09.24,0:19:11.43,Default,,0,0,0,, We are the sleeping dragons,\N she said.
+Dialogue: 0,0:19:11.63,0:19:13.96,Default,,0,0,0,, These lords who love their first nights are dogs.
+Dialogue: 0,0:19:13.96,0:19:14.83,Default,,0,0,0,, Powerful words.
+Dialogue: 0,0:19:15.39,0:19:16.63,Default,,0,0,0,, But J. Heres hesitated.
+Dialogue: 0,0:19:16.79,0:19:20.11,Default,,0,0,0,, Initially,\N yeah,\N he pointed out how ancient the custom was.
+Dialogue: 0,0:19:20.35,0:19:22.35,Default,,0,0,0,, Lord Massie even tried to justify it.
+Dialogue: 0,0:19:22.83,0:19:27.31,Default,,0,0,0,, Claimed it was originally a blessing from first men heroes to sire strong kids.
+Dialogue: 0,0:19:27.55,0:19:31.19,Default,,0,0,0,, Seriously,\N wow,\N how could a custom like that last so long?
+Dialogue: 0,0:19:31.24,0:19:33.24,Default,,0,0,0,, Why was this the moment it got challenged?
+Dialogue: 0,0:19:33.27,0:19:34.72,Default,,0,0,0,, That's the key question,\N isn't it?
+Dialogue: 0,0:19:34.72,0:19:38.19,Default,,0,0,0,, It speaks volumes about ingrained traditions,\N however,\N barbaric.
+Dialogue: 0,0:19:38.51,0:19:40.00,Default,,0,0,0,, But then septan bar stepped in.
+Dialogue: 0,0:19:40.24,0:19:41.16,Default,,0,0,0,, What did birth argue?
+Dialogue: 0,0:19:41.20,0:19:45.48,Default,,0,0,0,, He hit it from all angles,\N said it was an offense against chivalry against the marriage
+Dialogue: 0,0:19:45.48,0:19:49.20,Default,,0,0,0,, vows sworn to the gods and crucially against the king's peace.
+Dialogue: 0,0:19:49.60,0:19:53.79,Default,,0,0,0,, He basically called the first men who started it,\N savages who practiced blood
+Dialogue: 0,0:19:53.79,0:19:54.60,Default,,0,0,0,, sacrifice.
+Dialogue: 0,0:19:55.12,0:19:57.03,Default,,0,0,0,, We are not those men,\N he said.
+Dialogue: 0,0:19:57.08,0:20:00.36,Default,,0,0,0,, He connected morality,\N religion and law precisely.
+Dialogue: 0,0:20:00.40,0:20:04.36,Default,,0,0,0,, He completely dismantled any shred of legitimacy the custom had.
+Dialogue: 0,0:20:04.40,0:20:06.20,Default,,0,0,0,, It wasn't just about compassion anymore.
+Dialogue: 0,0:20:06.20,0:20:11.16,Default,,0,0,0,, It was about defining west to rocy society under j harries about the king's law
+Dialogue: 0,0:20:11.16,0:20:15.92,Default,,0,0,0,, and basic decency overriding ancient brutality and that swayed j harries completely.
+Dialogue: 0,0:20:15.92,0:20:19.24,Default,,0,0,0,, The king apparently threw up his hands and said,\N I know when I am beaten very well,\N
+Dialogue: 0,0:20:19.24,0:20:19.96,Default,,0,0,0,, let it be done.
+Dialogue: 0,0:20:20.00,0:20:22.64,Default,,0,0,0,, It just like that abolished just like that.
+Dialogue: 0,0:20:23.24,0:20:27.64,Default,,0,0,0,, The right of the first night was abolished,\N taking a bride's maiden head became
+Dialogue: 0,0:20:27.64,0:20:31.72,Default,,0,0,0,, rape,\N whether you were a lord or a peasant,\N a truly revolutionary change.
+Dialogue: 0,0:20:32.27,0:20:34.31,Default,,0,0,0,, Another queen's law amazing.
+Dialogue: 0,0:20:34.72,0:20:40.79,Default,,0,0,0,, So that brings us to the end of 58 AC,\N the 10th anniversary of j harries coronation,\N
+Dialogue: 0,0:20:40.83,0:20:41.67,Default,,0,0,0,, a milestone.
+Dialogue: 0,0:20:41.87,0:20:44.67,Default,,0,0,0,, And the kingdom was in a very different state than when he took the throne.
+Dialogue: 0,0:20:45.00,0:20:51.51,Default,,0,0,0,, He's 24 now,\N not a boy king anymore,\N described as handsome,\N wise,\N golden beard,\N
+Dialogue: 0,0:20:52.11,0:20:53.87,Default,,0,0,0,, the image of the conciliator.
+Dialogue: 0,0:20:54.07,0:20:56.72,Default,,0,0,0,, And Alessand is good queen,\N Alessand truly beloved.
+Dialogue: 0,0:20:56.72,0:21:00.24,Default,,0,0,0,, They had been through so much grief that horror with area political challenges,\N
+Dialogue: 0,0:21:00.24,0:21:03.72,Default,,0,0,0,, but they seem stronger and the real peaceful,\N prosperous,\N
+Dialogue: 0,0:21:03.72,0:21:05.40,Default,,0,0,0,, more so than anyone could remember.
+Dialogue: 0,0:21:05.40,0:21:07.44,Default,,0,0,0,, The queen's laws had made real differences.
+Dialogue: 0,0:21:07.44,0:21:09.68,Default,,0,0,0,, It's an undeniable record of achievement by this point.
+Dialogue: 0,0:21:09.68,0:21:10.48,Default,,0,0,0,, Absolutely.
+Dialogue: 0,0:21:10.48,0:21:13.96,Default,,0,0,0,, Peace,\N prosperity,\N genuine social reform,\N improving lives.
+Dialogue: 0,0:21:13.96,0:21:16.75,Default,,0,0,0,, They had a big celebration right,\N another turning king's landing.
+Dialogue: 0,0:21:16.75,0:21:17.27,Default,,0,0,0,, Yep.
+Dialogue: 0,0:21:17.27,0:21:22.00,Default,,0,0,0,, So rhyme red wine was the champion this time,\N crowned Alessand queen of love and beauty,\N
+Dialogue: 0,0:21:22.31,0:21:23.88,Default,,0,0,0,, huge cheers from the commons.
+Dialogue: 0,0:21:23.88,0:21:28.00,Default,,0,0,0,, Lords came from all over for the feast,\N a real moment of unity.
+Dialogue: 0,0:21:28.20,0:21:31.03,Default,,0,0,0,, It seemed like it though there was that bittersweet moment.
+Dialogue: 0,0:21:31.48,0:21:35.11,Default,,0,0,0,, Alessand apparently wept when she saw Septa Ralea,\N her daughter,\N
+Dialogue: 0,0:21:35.31,0:21:39.63,Default,,0,0,0,, because Ralea looked so much like area would have grown older,\N
+Dialogue: 0,0:21:40.03,0:21:42.24,Default,,0,0,0,, a reminder of the loss amidst the joy.
+Dialogue: 0,0:21:42.24,0:21:44.92,Default,,0,0,0,, Uh,\N yeah,\N that shadow still lingers.
+Dialogue: 0,0:21:45.24,0:21:48.03,Default,,0,0,0,, But overall,\N the sources painted as a golden time,\N don't they?
+Dialogue: 0,0:21:48.11,0:21:54.39,Default,,0,0,0,, A golden autumn,\N they call it peace,\N plenty,\N reconciliation,\N a high point.
+Dialogue: 0,0:21:54.44,0:21:58.39,Default,,0,0,0,, But there's always a but in these stories,\N isn't there always the final line
+Dialogue: 0,0:21:58.40,0:22:02.44,Default,,0,0,0,, from the sources for this period is ominous,\N but winter was coming,\N chilling.
+Dialogue: 0,0:22:02.88,0:22:06.24,Default,,0,0,0,, So looking back at these few years,\N what a complex picture.
+Dialogue: 0,0:22:06.24,0:22:11.04,Default,,0,0,0,, It really is an intricate tapestry like you said,\N incredible progress,\N stability for the
+Dialogue: 0,0:22:11.04,0:22:14.16,Default,,0,0,0,, realm yet marked so deeply by these personal tragedies,\N
+Dialogue: 0,0:22:14.16,0:22:18.28,Default,,0,0,0,, these unsettling secrets known only to a few that duality seems key.
+Dialogue: 0,0:22:18.72,0:22:22.16,Default,,0,0,0,, The public triumphs built on or at least alongside private horrors.
+Dialogue: 0,0:22:22.20,0:22:26.28,Default,,0,0,0,, It certainly seems that way for this period,\N which leaves us and you listening
+Dialogue: 0,0:22:26.55,0:22:28.48,Default,,0,0,0,, with maybe a final thought to chew on.
+Dialogue: 0,0:22:29.72,0:22:31.39,Default,,0,0,0,, How often is history like that?
+Dialogue: 0,0:22:31.75,0:22:36.03,Default,,0,0,0,, How many foundational moments golden ages even are built not just on the victories we
+Dialogue: 0,0:22:36.03,0:22:40.96,Default,,0,0,0,, celebrate,\N but also on unspoken horrors,\N on secrets kept by a powerful few?
+Dialogue: 0,0:22:41.03,0:22:45.59,Default,,0,0,0,, What hitting truths might still be lurking just beneath the surface,\N even in times
+Dialogue: 0,0:22:45.59,0:22:49.00,Default,,0,0,0,, that look peaceful,\N just waiting for someone to do a deep dive and bring them out.
