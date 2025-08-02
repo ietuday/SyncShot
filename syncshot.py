@@ -159,7 +159,7 @@ def generate_video(audio_path, image_paths, output_path='output_video.mp4'):
                 clip.close()
 
 def create_shorts(video_path, shorts_dir="shorts"):
-    """Create short clips from the main subtitled video."""
+    """Create vertical short clips (YouTube Shorts format) from the main video."""
     try:
         if not os.path.exists(shorts_dir):
             os.makedirs(shorts_dir)
@@ -167,13 +167,21 @@ def create_shorts(video_path, shorts_dir="shorts"):
         print("✂️ Creating Shorts...")
         clip = VideoFileClip(video_path)
 
-        # Cut short clips (time in seconds)
-        short1 = clip.subclipped(10, 25)
-        short2 = clip.subclipped(30, 45)
+        # Resize for vertical format (9:16 aspect ratio, typically 1080x1920)
+        vertical_clip = clip.resized(height=1920, width=1080)
 
-        # Write the shorts
-        short1.write_videofile("shorts/short1.mp4", codec="libx264", audio_codec="aac")
-        short2.write_videofile("shorts/short2.mp4", codec="libx264", audio_codec="aac")
+        # Define short segments in seconds (must be < 60 seconds for YouTube Shorts)
+        shorts = [
+            ("short1.mp4", 10, 25),
+            ("short2.mp4", 30, 45),
+            ("short3.mp4", 50, 65)
+        ]
+
+        for filename, start, end in shorts:
+            short = vertical_clip.subclipped(start, end)
+            short_path = os.path.join(shorts_dir, filename)
+            print(f"🎬 Exporting {filename} ({start}s to {end}s)...")
+            short.write_videofile(short_path, codec="libx264", audio_codec="aac", fps=30)
 
         print("✅ All shorts created successfully.")
 

@@ -9,47 +9,299 @@ Style: Default,Impact,110,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,5,50,50,60,1,5
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.00,0:00:12.00,Default,,0,0,0,, Ted Talks are recorded live at the Ted Conference and produced with WNYC New York Public Radio.
-Dialogue: 0,0:00:12.00,0:00:18.00,Default,,0,0,0,, This three-minute talk features Dean Ornish,\N founder of the Preventative Medicine Research Institute.
-Dialogue: 0,0:00:18.00,0:00:23.00,Default,,0,0,0,, Ted Talks are made possible through the support of BMW,\N where ideas are everything.
-Dialogue: 0,0:00:23.00,0:00:25.00,Default,,0,0,0,, Here's Dean Ornish.
-Dialogue: 0,0:00:30.50,0:00:36.00,Default,,0,0,0,, With all the legitimate concerns about AIDS and avian fluid,\N I want to talk about the other pandemic,\N
-Dialogue: 0,0:00:36.00,0:00:42.00,Default,,0,0,0,, which is cardiovascular disease,\N diabetes,\N hypertension,\N all of which are completely preventable
-Dialogue: 0,0:00:42.00,0:00:45.00,Default,,0,0,0,, for at least 95% of people just by changing diet and lifestyle.
-Dialogue: 0,0:00:45.00,0:00:48.00,Default,,0,0,0,, And what's happening is that there's a globalization of illness occurring.
-Dialogue: 0,0:00:48.00,0:00:53.00,Default,,0,0,0,, The people are starting to eat like us and live like us and die like us.
-Dialogue: 0,0:00:53.00,0:00:58.00,Default,,0,0,0,, And in one generation,\N for example,\N AIDS has gone from having one of the lowest rates of heart disease
-Dialogue: 0,0:00:58.00,0:01:00.00,Default,,0,0,0,, and obesity and diabetes to one of the highest.
-Dialogue: 0,0:01:00.00,0:01:06.00,Default,,0,0,0,, And in Africa,\N cardiovascular disease equals the HIV and AIDS deaths in most countries.
-Dialogue: 0,0:01:06.00,0:01:10.00,Default,,0,0,0,, So there's a critical window of opportunity we have to make an important difference
-Dialogue: 0,0:01:10.00,0:01:15.00,Default,,0,0,0,, that can affect the lives of literally millions of people and practice preventive medicine on a global scale.
-Dialogue: 0,0:01:15.00,0:01:20.00,Default,,0,0,0,, Heart and blood vessel diseases still kill more people,\N not only in this country,\N but also worldwide,\N
-Dialogue: 0,0:01:20.00,0:01:25.00,Default,,0,0,0,, than everything else combined,\N and yet it's completely preventable for almost everybody.
-Dialogue: 0,0:01:25.00,0:01:28.00,Default,,0,0,0,, It's not only preventable,\N it's actually reversible.
-Dialogue: 0,0:01:28.00,0:01:33.00,Default,,0,0,0,, And for the last almost 29 years,\N we've been able to show that by simply changing diet and lifestyle,\N
-Dialogue: 0,0:01:33.00,0:01:39.00,Default,,0,0,0,, using these very high-tech,\N expensive state-of-the-art measures to prove have powerful these very simple and low-tech
-Dialogue: 0,0:01:39.00,0:01:45.00,Default,,0,0,0,, and low-cost interventions can be like quantitative arteriography before and after a year and cardiac pet scans.
-Dialogue: 0,0:01:45.00,0:01:50.00,Default,,0,0,0,, We showed a few months ago we published the first study shown that you can actually stop or reverse the progression of prostate cancer
-Dialogue: 0,0:01:50.00,0:01:53.00,Default,,0,0,0,, by making changes in diet and lifestyle.
-Dialogue: 0,0:01:53.00,0:02:00.00,Default,,0,0,0,, And 70% regression in the tumor growth or inhibition of the tumor growth compared to only 9% in the control group.
-Dialogue: 0,0:02:00.00,0:02:04.00,Default,,0,0,0,, And in the MRI and the MR spectroscopy here,\N the prostate tumor activity is shown in red.
-Dialogue: 0,0:02:04.00,0:02:07.00,Default,,0,0,0,, You can see it diminishing after a year.
-Dialogue: 0,0:02:07.00,0:02:11.00,Default,,0,0,0,, Now there is an epidemic of obesity,\N two thirds of adults and 15% of kids.
-Dialogue: 0,0:02:11.00,0:02:16.00,Default,,0,0,0,, What's really concerning to me is that diabetes has increased 70% in the past 10 years.
-Dialogue: 0,0:02:16.00,0:02:20.00,Default,,0,0,0,, And this may be the first generation in which our kids live a shorter lifespan than we do.
-Dialogue: 0,0:02:20.00,0:02:22.00,Default,,0,0,0,, That's pitiful and that's preventable.
-Dialogue: 0,0:02:22.00,0:02:28.00,Default,,0,0,0,, Now,\N what can we do about this? Well,\N you know,\N the diet that we found that can reverse heart disease and cancer is an Asian diet.
-Dialogue: 0,0:02:28.00,0:02:32.00,Default,,0,0,0,, But the people in Asia are starting to eat like we are,\N which is why they're starting to get sick like we are.
-Dialogue: 0,0:02:32.00,0:02:34.00,Default,,0,0,0,, So I've been working with a lot of the big food companies.
-Dialogue: 0,0:02:34.00,0:02:38.00,Default,,0,0,0,, They can make it fun and sexy and hip and crunch and convenient,\N eat healthier foods.
-Dialogue: 0,0:02:38.00,0:02:44.00,Default,,0,0,0,, Like,\N I share the advisory boards of McDonald's and PepsiCo and Conagra and Safeway and Zoom Del Monte.
-Dialogue: 0,0:02:44.00,0:02:46.00,Default,,0,0,0,, And they're finding that it's good business.
-Dialogue: 0,0:02:46.00,0:02:48.00,Default,,0,0,0,, The salads that you see at McDonald's came from their work.
-Dialogue: 0,0:02:48.00,0:02:50.00,Default,,0,0,0,, They're going to have an Asian salad at Pepsi.
-Dialogue: 0,0:02:50.00,0:02:53.00,Default,,0,0,0,, Two thirds of the revenue growth came from their better foods.
-Dialogue: 0,0:02:53.00,0:03:01.00,Default,,0,0,0,, And so if we can do that,\N then we can free up resources for buying drugs that you really do need for treating AIDS and HIV and malaria and preventing avian flu.
-Dialogue: 0,0:03:01.00,0:03:02.00,Default,,0,0,0,, Thank you.
-Dialogue: 0,0:03:02.00,0:03:16.00,Default,,0,0,0,, That was Dean Ornish,\N recorded at the Ted Conference in Monterey,\N California,\N February 2006.
-Dialogue: 0,0:03:16.00,0:03:25.00,Default,,0,0,0,, Ted Talks are produced by WNYC New York Public Radio for Ted,\N and made possible in part through the support of BMW,\N where ideas are everything.
-Dialogue: 0,0:03:25.00,0:03:29.00,Default,,0,0,0,, For more information on Ted,\N visit Ted.com.
-Dialogue: 0,0:03:32.00,0:03:39.00,Default,,0,0,0,, For more information on Ted Talks,\N visit Ted.com.
+Dialogue: 0,0:00:00.00,0:00:04.63,Default,,0,0,0,, Welcome to The Deep Dive. Today,\N we're tackling a really fundamental topic,\N
+Dialogue: 0,0:00:04.63,0:00:06.96,Default,,0,0,0,, environment management,\N and software deployment.
+Dialogue: 0,0:00:06.96,0:00:09.83,Default,,0,0,0,, Yeah,\N it's something everyone deals with,\N whether they realize it or not.
+Dialogue: 0,0:00:09.83,0:00:17.67,Default,,0,0,0,, Exactly. So,\N our mission today is to really unpack how software gets from an idea on a
+Dialogue: 0,0:00:17.67,0:00:23.83,Default,,0,0,0,, developer's machine all the way to running smoothly for users. And the key to that is understanding
+Dialogue: 0,0:00:23.83,0:00:28.48,Default,,0,0,0,, environments. And I think,\N you know,\N it's more than just saying dev test prod.
+Dialogue: 0,0:00:28.48,0:00:34.00,Default,,0,0,0,, Yeah. It digs into strategy,\N security,\N and really the speed you can deliver value.
+Dialogue: 0,0:00:34.00,0:00:38.48,Default,,0,0,0,, Absolutely,\N it's foundational. So,\N maybe let's start simple. What is an environment? At
+Dialogue: 0,0:00:38.48,0:00:42.39,Default,,0,0,0,, its core,\N it's just,\N well,\N it's the place where your code gets deployed and executed.
+Dialogue: 0,0:00:42.39,0:00:46.39,Default,,0,0,0,, Okay,\N just a place for code to run. Right. But the crucial part is why we need different
+Dialogue: 0,0:00:46.39,0:00:50.64,Default,,0,0,0,, environments. Throughout the whole software development lifecycle,\N having distinct stages
+Dialogue: 0,0:00:50.64,0:00:57.52,Default,,0,0,0,, lets us build,\N test,\N and refine things safely,\N iteratively,\N long before any real user sees it.
+Dialogue: 0,0:00:57.52,0:01:01.60,Default,,0,0,0,, Avoiding chaos. So,\N can you walk us through the typical environments you'd see,\N especially in
+Dialogue: 0,0:01:01.60,0:01:06.40,Default,,0,0,0,, like a modern CICD setup,\N continuous integration,\N continuous deployment?
+Dialogue: 0,0:01:06.40,0:01:12.79,Default,,0,0,0,, Sure. It usually starts right on the engineer's own machine. That's the local development environment,\N
+Dialogue: 0,0:01:12.79,0:01:18.87,Default,,0,0,0,, their laptop,\N basically. It's their personal space for coding,\N initial testing,\N debugging,\N
+Dialogue: 0,0:01:18.87,0:01:23.19,Default,,0,0,0,, kind of the first sanity check. Makes sense. The starting point. Exactly. Then,\N
+Dialogue: 0,0:01:23.19,0:01:27.35,Default,,0,0,0,, the code moves into what we generally call pre-production environments. Okay,\N pre-production.
+Dialogue: 0,0:01:27.35,0:01:32.15,Default,,0,0,0,, The first big one there is usually QA,\N quality assurance. This is where the code meets something
+Dialogue: 0,0:01:32.15,0:01:40.00,Default,,0,0,0,, that looks a lot like production. Similar hardware,\N data,\N dependencies,\N the goal is serious testing.
+Dialogue: 0,0:01:40.00,0:01:44.00,Default,,0,0,0,, Does it actually work correctly? Got it. Finding the bugs before they escape.
+Dialogue: 0,0:01:44.07,0:01:51.12,Default,,0,0,0,, Precisely. After QA,\N you might have an E2E environment end-to-end. Think of this as a stable place
+Dialogue: 0,0:01:51.12,0:01:56.48,Default,,0,0,0,, where different services,\N all in their pre-release state,\N can test how they integrate together.
+Dialogue: 0,0:01:56.48,0:01:58.96,Default,,0,0,0,, So,\N testing the interactions between different parts?
+Dialogue: 0,0:01:58.96,0:02:02.56,Default,,0,0,0,, Yeah,\N exactly. If everything looks good there,\N then we move towards production environments.
+Dialogue: 0,0:02:02.56,0:02:04.15,Default,,0,0,0,, Okay,\N the real deal is coming.
+Dialogue: 0,0:02:04.15,0:02:10.00,Default,,0,0,0,, Almost. First stop is often stage or staging. Now,\N stage is interesting because it actually
+Dialogue: 0,0:02:10.00,0:02:15.43,Default,,0,0,0,, accesses real production dependencies like maybe a production database replica or message queue.
+Dialogue: 0,0:02:15.43,0:02:19.91,Default,,0,0,0,, Whoa,\N okay. That sounds risky. It can be,\N which is why you're super careful.
+Dialogue: 0,0:02:19.91,0:02:25.52,Default,,0,0,0,, It's main job is to verify things like say a new database schema update works with the actual
+Dialogue: 0,0:02:25.52,0:02:32.24,Default,,0,0,0,, production database structure. But,\N and this is key,\N the traffic is only test traffic,\N no real users.
+Dialogue: 0,0:02:32.24,0:02:37.84,Default,,0,0,0,, Still,\N because you are touching production data systems,\N any tests run here need very careful
+Dialogue: 0,0:02:38.24,0:02:40.64,Default,,0,0,0,, review. Right,\N you don't want test data messing up production records.
+Dialogue: 0,0:02:40.64,0:02:46.15,Default,,0,0,0,, Definitely not. So,\N only after stage gives the thumbs up,\N does the code finally land in prod or
+Dialogue: 0,0:02:46.15,0:02:49.43,Default,,0,0,0,, production? That's the live environment serving actual users.
+Dialogue: 0,0:02:49.43,0:02:51.19,Default,,0,0,0,, Okay,\N that clarifies the flow.
+Dialogue: 0,0:02:51.19,0:02:57.92,Default,,0,0,0,, And the really key distinction to remember is QA and E2E are pre-production,\N no live traffic,\N no live data.
+Dialogue: 0,0:02:58.48,0:03:02.40,Default,,0,0,0,, Stage and prod,\N though,\N are considered production environments because they touch that live
+Dialogue: 0,0:03:02.40,0:03:06.87,Default,,0,0,0,, production data infrastructure. Stages like the final dress rehearsal on the real stage,\N
+Dialogue: 0,0:03:06.87,0:03:11.75,Default,,0,0,0,, just before the audience arrives. That's a great analogy. So,\N we know why we need them
+Dialogue: 0,0:03:11.75,0:03:17.91,Default,,0,0,0,, in the typical stages,\N but what actually makes up an environment is not just a server name,\N right?
+Dialogue: 0,0:03:17.91,0:03:21.03,Default,,0,0,0,, What are the components? No,\N you're absolutely right. It's more defined than that.
+Dialogue: 0,0:03:21.68,0:03:27.91,Default,,0,0,0,, There are really three core building blocks. First,\N obviously the code,\N your application's instructions.
+Dialogue: 0,0:03:27.91,0:03:32.80,Default,,0,0,0,, Okay. Second,\N the runtime prerequisites. All the stuff your code needs to run. So,\N if you have a
+Dialogue: 0,0:03:32.80,0:03:37.76,Default,,0,0,0,, Node.js app,\N that's the NodeBinary itself,\N all the NPM packages,\N you know,\N that sort of thing.
+Dialogue: 0,0:03:37.76,0:03:43.04,Default,,0,0,0,, The dependencies. Exactly. And third,\N and this is super important,\N the configuration.
+Dialogue: 0,0:03:43.04,0:03:48.24,Default,,0,0,0,, These are the settings specific to that environment. They tell the application how to behave,\N
+Dialogue: 0,0:03:48.24,0:03:52.72,Default,,0,0,0,, which database to connect to the QA1 or the prod one,\N stuff like that.
+Dialogue: 0,0:03:52.72,0:03:56.64,Default,,0,0,0,, Configuration is key for making the same code work differently in different places.
+Dialogue: 0,0:03:56.64,0:04:00.96,Default,,0,0,0,, It is. And this is where something like Docker images become,\N well,\N a real game changer.
+Dialogue: 0,0:04:01.43,0:04:07.60,Default,,0,0,0,, Docker heard of it. Right. So a Docker image bundles your code and all those runtime prerequisites,\N
+Dialogue: 0,0:04:07.60,0:04:13.36,Default,,0,0,0,, those dependencies into one single package,\N a deployable unit. Okay,\N self-contained.
+Dialogue: 0,0:04:13.36,0:04:19.19,Default,,0,0,0,, Totally. And the beauty is that same image can then run pretty much anywhere on the developers laptop
+Dialogue: 0,0:04:19.19,0:04:25.28,Default,,0,0,0,, in QA and production clusters. It gets rid of so many of those. Well,\N it worked on my machine
+Dialogue: 0,0:04:25.28,0:04:30.63,Default,,0,0,0,, problems because the environment inside the container is consistent. That makes deployments way
+Dialogue: 0,0:04:30.63,0:04:34.71,Default,,0,0,0,, more reliable,\N I bet. Huge difference. And when we talk configuration,\N
+Dialogue: 0,0:04:34.71,0:04:40.39,Default,,0,0,0,, it's not just like database connection strings. It also covers things like pointers to storage,\N
+Dialogue: 0,0:04:40.39,0:04:46.24,Default,,0,0,0,, caches,\N message cues,\N and crucially networking policy. Networking,\N how so? Well,\N
+Dialogue: 0,0:04:46.24,0:04:52.00,Default,,0,0,0,, configuration can define rules for ingress that's incoming traffic and egress outgoing traffic.
+Dialogue: 0,0:04:52.00,0:04:56.95,Default,,0,0,0,, This lets you isolate environments like you can set up rules to completely block any network traffic
+Dialogue: 0,0:04:57.03,0:05:01.68,Default,,0,0,0,, between your preprod environments and your prod environment,\N big security win. Okay,\N like a firewall
+Dialogue: 0,0:05:01.68,0:05:07.27,Default,,0,0,0,, between environments. Kind of. Yeah,\N or you could say only these specific engineers are allowed network
+Dialogue: 0,0:05:07.27,0:05:11.68,Default,,0,0,0,, access into the production environment while maybe the whole team can access preprod. It's about
+Dialogue: 0,0:05:11.68,0:05:16.31,Default,,0,0,0,, controlling access and data flow based on the environment. This is making a lot more sense. Now,\N
+Dialogue: 0,0:05:16.31,0:05:22.15,Default,,0,0,0,, for a lot of folks listening,\N Kubernetes is probably top of mind. How does Kubernetes fit into this
+Dialogue: 0,0:05:22.16,0:05:28.08,Default,,0,0,0,, picture? How does it help us actually create these environments? Kubernetes is really well suited
+Dialogue: 0,0:05:28.08,0:05:34.00,Default,,0,0,0,, for this. It has a built-in concept called namespaces. Namespaces? Think of a Kubernetes cluster as a big
+Dialogue: 0,0:05:34.00,0:05:38.87,Default,,0,0,0,, apartment building. A namespace is like one of the apartments inside. It gives you a way to divide
+Dialogue: 0,0:05:38.87,0:05:44.32,Default,,0,0,0,, up the cluster's resources among different teams or projects,\N or in our case,\N different environments.
+Dialogue: 0,0:05:44.32,0:05:49.92,Default,,0,0,0,, So each environment gets its own apartment. Pretty much. And each namespace provides a scope for
+Dialogue: 0,0:05:49.92,0:05:55.92,Default,,0,0,0,, unique names for resources. You can set resource corridors like CPU or memory limits. You apply
+Dialogue: 0,0:05:55.92,0:06:01.84,Default,,0,0,0,, role-based access control,\N RBC for permissions. You can even influence hardware isolation to some
+Dialogue: 0,0:06:01.84,0:06:07.75,Default,,0,0,0,, extent and crucially define network configuration specific to that namespace. So it's fair to say
+Dialogue: 0,0:06:07.75,0:06:13.75,Default,,0,0,0,, a Kubernetes namespace is essentially an environment in this context. Yeah,\N functionally,\N Kubernetes namespace
+Dialogue: 0,0:06:13.75,0:06:19.43,Default,,0,0,0,, is very close to being equivalent to an environment. Inside that namespace,\N you run your application
+Dialogue: 0,0:06:19.43,0:06:24.24,Default,,0,0,0,, instances. Kubernetes calls them pods. Pods,\N right. Those are the containers. Usually one or more
+Dialogue: 0,0:06:24.24,0:06:29.36,Default,,0,0,0,, Docker containers,\N yeah. And those environment-specific configurations we talked about,\N they get
+Dialogue: 0,0:06:29.36,0:06:34.39,Default,,0,0,0,, injected into the pods running within their specific namespace. You might also have other supporting
+Dialogue: 0,0:06:34.39,0:06:40.15,Default,,0,0,0,, pods in there too,\N maybe like a dedicated cache pod,\N or even a database pod just for that environment.
+Dialogue: 0,0:06:40.15,0:06:44.95,Default,,0,0,0,, Okay,\N let's make this super concrete. The source material had an example with a guest book app.
+Dialogue: 0,0:06:45.52,0:06:51.20,Default,,0,0,0,, How would that work with namespaces? Right. Good example. So you'd start by creating say two namespaces,\N
+Dialogue: 0,0:06:51.20,0:06:57.68,Default,,0,0,0,, guestbook killer and guestbook E2E. Okay,\N one for QA1 for E2E. Exactly. Then you deploy the guestbook
+Dialogue: 0,0:06:57.68,0:07:03.52,Default,,0,0,0,, application components,\N the front end,\N the reddest database master,\N the reddest slave. You deploy
+Dialogue: 0,0:07:03.52,0:07:09.28,Default,,0,0,0,, them into each of those namespaces. You'd use a command like Quebec to apply and specify the namespace
+Dialogue: 0,0:07:09.36,0:07:15.68,Default,,0,0,0,, with Nash and guestbook EE. So you're deploying the same set of components twice. Yes,\N identical
+Dialogue: 0,0:07:15.68,0:07:21.92,Default,,0,0,0,, application code and structure,\N but into separate namespaces. The big takeaway here is you now have
+Dialogue: 0,0:07:21.92,0:07:27.52,Default,,0,0,0,, the exact same application running in two distinct environments defined by those namespaces.
+Dialogue: 0,0:07:28.08,0:07:33.28,Default,,0,0,0,, And crucially,\N they are isolated. If you add a message to the guest book in the QA namespace.
+Dialogue: 0,0:07:33.28,0:07:38.56,Default,,0,0,0,, This is a show up in the E2E1. Correct. Each one has its own independent reddest database
+Dialogue: 0,0:07:38.56,0:07:44.63,Default,,0,0,0,, instance within its own namespace. Complete data isolation. That's clear. What about that network
+Dialogue: 0,0:07:44.63,0:07:49.51,Default,,0,0,0,, isolation example? You mentioned namespaces could talk to each other by default. Yeah,\N that's the
+Dialogue: 0,0:07:49.51,0:07:55.75,Default,,0,0,0,, default Kubernetes behavior. Any pod in any namespace can usually reach a service in any other namespace,\N
+Dialogue: 0,0:07:55.75,0:08:01.12,Default,,0,0,0,, which can be a security issue. You probably don't want your QA environment accidentally making calls
+Dialogue: 0,0:08:01.12,0:08:05.75,Default,,0,0,0,, to your production services. Definitely not. So Kubernetes gives you network policy resources. These let
+Dialogue: 0,0:08:05.75,0:08:10.31,Default,,0,0,0,, you define rules to restrict that traffic. Okay,\N how does that work? So imagine you create a
+Dialogue: 0,0:08:10.31,0:08:15.36,Default,,0,0,0,, QA namespace and a prod namespace. You put a little curl pod in both just something to make network
+Dialogue: 0,0:08:15.36,0:08:21.43,Default,,0,0,0,, requests. And in prod,\N you deploy an angin's web server. Simple web server in production. Right.
+Dialogue: 0,0:08:21.43,0:08:26.71,Default,,0,0,0,, By default,\N if you run curl from the pod in the cond namespace targeting the cond nameserver in
+Dialogue: 0,0:08:26.71,0:08:32.79,Default,,0,0,0,, the prod namespace,\N it'll connect just fine. Okay,\N default is open. Yep. But then you apply a
+Dialogue: 0,0:08:32.79,0:08:39.91,Default,,0,0,0,, network policy to the prod namespace. This policy says only allow ingress incoming traffic from pods
+Dialogue: 0,0:08:39.91,0:08:46.55,Default,,0,0,0,, that are also in the prod namespace. Locking it down. Exactly. Now if you try that curl command
+Dialogue: 0,0:08:46.55,0:08:53.19,Default,,0,0,0,, from the call pod again,\N block,\N connection timed out probably. But if you run curl from the pod
+Dialogue: 0,0:08:53.19,0:08:58.87,Default,,0,0,0,, inside the prod namespace to the congenx server also in prod,\N it works. It still works. So that network
+Dialogue: 0,0:08:58.87,0:09:04.00,Default,,0,0,0,, policy effectively creates a boundary,\N enforcing the environment separation at the network level.
+Dialogue: 0,0:09:04.00,0:09:09.03,Default,,0,0,0,, And just to recap,\N ingress is incoming traffic,\N egress is outgoing. That's powerful stuff. Yep.
+Dialogue: 0,0:09:09.03,0:09:13.20,Default,,0,0,0,, What really stands out to you about using namespaces like this,\N it seems like a very elegant way to
+Dialogue: 0,0:09:13.20,0:09:19.03,Default,,0,0,0,, organize things within one cluster. I think it's the the multi-layered isolation. It provides so
+Dialogue: 0,0:09:19.03,0:09:24.79,Default,,0,0,0,, naturally. It's not just naming separation. It's resource limits. It's access control via RBAC. It's
+Dialogue: 0,0:09:24.80,0:09:30.56,Default,,0,0,0,, the network policies all scope to that namespace boundary. It really helps manage complexity and
+Dialogue: 0,0:09:30.56,0:09:35.84,Default,,0,0,0,, security without needing totally separate infrastructure for every little environment at least initially.
+Dialogue: 0,0:09:35.84,0:09:41.68,Default,,0,0,0,, Right. But you said initially,\N we've established namespaces are great for carving up one cluster.
+Dialogue: 0,0:09:41.68,0:09:47.92,Default,,0,0,0,, But why do some organizations take that extra pretty big step of using entirely separate clusters
+Dialogue: 0,0:09:47.92,0:09:52.64,Default,,0,0,0,, for different environment types,\N like pre-proud versus prod? That sounds like a lot more overhead,\N
+Dialogue: 0,0:09:52.63,0:09:56.72,Default,,0,0,0,, doesn't it? More cost,\N more management. It definitely is more overhead,\N you're right. And it's a
+Dialogue: 0,0:09:56.72,0:10:02.79,Default,,0,0,0,, significant strategic decision. But the recommendation,\N especially as you scale,\N or if you handle sensitive
+Dialogue: 0,0:10:02.79,0:10:07.67,Default,,0,0,0,, data,\N is often to have at least two separate clusters. Right. One cluster dedicated solely to your
+Dialogue: 0,0:10:07.67,0:10:13.19,Default,,0,0,0,, pre-production environments,\N QA,\N E2E,\N Dev integration,\N whatever,\N and a completely separate cluster for
+Dialogue: 0,0:10:13.19,0:10:18.24,Default,,0,0,0,, your production environment,\N stage and prod. Okay. Why the complete separation. If namespaces offer
+Dialogue: 0,0:10:18.24,0:10:23.36,Default,,0,0,0,, good isolation. The absolute number one reason is blast radius reduction. It's about protecting
+Dialogue: 0,0:10:23.36,0:10:29.12,Default,,0,0,0,, your production environment. If someone makes a mistake in pre-proud,\N maybe applies a faulty configuration,\N
+Dialogue: 0,0:10:29.12,0:10:35.27,Default,,0,0,0,, or runs a resource-hungry test that goes wild,\N you want zero chance of that impacting your live
+Dialogue: 0,0:10:35.27,0:10:40.79,Default,,0,0,0,, customer-facing production environment. Ah. So even if namespaces should isolate,\N separate
+Dialogue: 0,0:10:40.79,0:10:46.24,Default,,0,0,0,, clusters provide a much harder physical or logical boundary. Exactly. It's a stronger guarantee.
+Dialogue: 0,0:10:46.24,0:10:51.84,Default,,0,0,0,, Think about a company like Intuit,\N handling financial data. They explicitly separate pre-proud
+Dialogue: 0,0:10:51.84,0:10:57.60,Default,,0,0,0,, and prod clusters,\N often in different AWS regions,\N or even different AWS accounts with separate virtual
+Dialogue: 0,0:10:57.60,0:11:03.60,Default,,0,0,0,, private clouds,\N PPCs. The isolation is paramount. Okay. That makes sense for high stakes environments.
+Dialogue: 0,0:11:03.60,0:11:07.20,Default,,0,0,0,, The cost is worth the safety. Right. And you absolutely need that pre-proud
+Dialogue: 0,0:11:07.20,0:11:11.84,Default,,0,0,0,, cluster to properly test things before they hit prod. But,\N and this is important,\N both clusters
+Dialogue: 0,0:11:11.84,0:11:17.28,Default,,0,0,0,, pre-proud and prod should really follow the same security best practices,\N same operational rigor.
+Dialogue: 0,0:11:17.28,0:11:22.24,Default,,0,0,0,, You want to find problems early in pre-proud,\N not have surprises because prod is configured differently.
+Dialogue: 0,0:11:22.24,0:11:27.84,Default,,0,0,0,, It also keeps developer productivity high if the environment's behave consistently. Got it. Consistent
+Dialogue: 0,0:11:27.84,0:11:33.44,Default,,0,0,0,, rigor across the board,\N even with separation. Okay. Let's shift gears slightly. We can't talk
+Dialogue: 0,0:11:33.44,0:11:38.16,Default,,0,0,0,, deployment without talking about Git,\N right? It's a foundation for most development workflows.
+Dialogue: 0,0:11:38.15,0:11:43.36,Default,,0,0,0,, How does our Git strategy,\N our code repositories,\N fit into managing these environments?
+Dialogue: 0,0:11:43.36,0:11:50.15,Default,,0,0,0,, Oh,\N yes. Git strategy is crucial here. And the first really strong recommendation is to use a separate
+Dialogue: 0,0:11:50.15,0:11:55.75,Default,,0,0,0,, Git repository for your Kubernetes manifests your configuration distinct from your application source code
+Dialogue: 0,0:11:55.75,0:12:00.07,Default,,0,0,0,, repo. Separate repos. Why not keep the config with the code it applies to?
+Dialogue: 0,0:12:00.07,0:12:05.91,Default,,0,0,0,, Several key reasons. First,\N clean separation of concerns. You might want to change,\N say,\N the number of
+Dialogue: 0,0:12:05.91,0:12:11.67,Default,,0,0,0,, replicas for your app,\N a config change,\N without triggering a full application build and test cycle,\N
+Dialogue: 0,0:12:11.67,0:12:16.63,Default,,0,0,0,, a code change. Okay,\N decouples changes. Right. Second,\N the audit log for configuration changes is
+Dialogue: 0,0:12:16.63,0:12:21.51,Default,,0,0,0,, much cleaner and easier to track in its own repo. Third,\N it supports applications made of multiple
+Dialogue: 0,0:12:21.51,0:12:26.87,Default,,0,0,0,, microservices,\N where maybe several code repos contribute to one overall deployment defined in the config
+Dialogue: 0,0:12:26.87,0:12:32.79,Default,,0,0,0,, repo. Interesting. Fourth,\N access control. The team allowed to change application code might be
+Dialogue: 0,0:12:32.80,0:12:37.76,Default,,0,0,0,, different from the team allowed to change production infrastructure config. Separate repos make
+Dialogue: 0,0:12:37.76,0:12:43.28,Default,,0,0,0,, managing those permissions easier. That's a big one in larger orgs. Definitely. Fifth,\N it avoids
+Dialogue: 0,0:12:43.28,0:12:48.96,Default,,0,0,0,, potential CI pipeline loops,\N where a build triggers a config commit,\N which triggers another build.
+Dialogue: 0,0:12:48.96,0:12:54.64,Default,,0,0,0,, Get the idea. And lastly,\N it aligns with the best practice of not storing secrets directly and
+Dialogue: 0,0:12:54.64,0:12:59.44,Default,,0,0,0,, Git secrets management is a separate topic,\N but keeping config separate helps enforce that.
+Dialogue: 0,0:12:59.44,0:13:03.76,Default,,0,0,0,, Okay,\N sold on separate repos for config. Now,\N within that config repo itself,\N
+Dialogue: 0,0:13:03.76,0:13:09.92,Default,,0,0,0,, how do we manage the differences between environments like QA,\N stage,\N prod? Good question.
+Dialogue: 0,0:13:09.92,0:13:15.04,Default,,0,0,0,, There are basically two main patterns for the config repo structure. One is using a single branch,\N
+Dialogue: 0,0:13:15.04,0:13:19.92,Default,,0,0,0,, often main,\N with multiple directories. Okay,\N explain that. So your main branch holds the core
+Dialogue: 0,0:13:19.92,0:13:26.88,Default,,0,0,0,, common configuration. Then you have specific directories like ca,\N e2e,\N stage,\N prod. Inside each of these
+Dialogue: 0,0:13:26.87,0:13:31.51,Default,,0,0,0,, directories,\N you define only the environment specific overrides or patches. Tools like customize
+Dialogue: 0,0:13:31.51,0:13:36.39,Default,,0,0,0,, work really well with this structure,\N like layering on the differences. Exactly. The alternative is
+Dialogue: 0,0:13:36.39,0:13:42.00,Default,,0,0,0,, using multiple branches. So you might have a ca branch,\N an e2e branch,\N a prod brand,\N and so on.
+Dialogue: 0,0:13:42.00,0:13:50.15,Default,,0,0,0,, Each branch contains the complete final manifest for that specific environment. Okay,\N pros and cons.
+Dialogue: 0,0:13:50.15,0:13:55.36,Default,,0,0,0,, The pro of multiple branches is it's very explicit. The branch is the environment's exact state.
+Dialogue: 0,0:13:55.36,0:14:00.63,Default,,0,0,0,, You get a separate commit history per environment,\N which is nice for auditing and makes rollbacks very
+Dialogue: 0,0:14:00.63,0:14:07.36,Default,,0,0,0,, clear. The con is that sharing common configuration becomes harder. Tools like customize that do the
+Dialogue: 0,0:14:07.36,0:14:13.12,Default,,0,0,0,, layering don't really work across get branches. You often end up having to manually merge or more
+Dialogue: 0,0:14:13.12,0:14:18.24,Default,,0,0,0,, likely cherry pick common changes between the branches,\N which can be error prone. Right,\N managing
+Dialogue: 0,0:14:18.24,0:14:23.03,Default,,0,0,0,, drift between branches sounds tricky. It can be. And related to this is the whole multi rep versus
+Dialogue: 0,0:14:23.03,0:14:28.00,Default,,0,0,0,, monorepo debate,\N but specifically for these config repositories. Oh boy,\N that debate again. Yeah.
+Dialogue: 0,0:14:28.00,0:14:33.12,Default,,0,0,0,, But for config,\N if you're a small startup,\N single team,\N maybe a monorepo for all your service
+Dialogue: 0,0:14:33.12,0:14:37.91,Default,,0,0,0,, configurations is simpler to manage initially. One place for everything. Right. But in a larger
+Dialogue: 0,0:14:37.91,0:14:43.75,Default,,0,0,0,, enterprise,\N with many teams working on different services at different speeds,\N a multi repo approach
+Dialogue: 0,0:14:43.75,0:14:50.00,Default,,0,0,0,, perhaps one config repo per service or team is often better. Why is that? It lets teams be more
+Dialogue: 0,0:14:50.00,0:14:55.12,Default,,0,0,0,, decoupled. They can manage their own release cadence without blocking others. If one team needs to
+Dialogue: 0,0:14:55.12,0:15:00.32,Default,,0,0,0,, roll back their services config,\N it doesn't affect unrelated services in the same repo. It also makes
+Dialogue: 0,0:15:00.32,0:15:05.67,Default,,0,0,0,, organizational changes easier if a service moves teams. Moving its dedicated config repo is simpler.
+Dialogue: 0,0:15:05.67,0:15:11.12,Default,,0,0,0,, It supports autonomy and reduces the blast radius of changes decoupling for agility and safety at
+Dialogue: 0,0:15:11.12,0:15:16.08,Default,,0,0,0,, scale makes sense. Okay,\N so we've got environments defined maybe in namespaces or separate clusters.
+Dialogue: 0,0:15:16.08,0:15:20.56,Default,,0,0,0,, We've got separate Git repos for code and config,\N but how do we actually manage the configuration
+Dialogue: 0,0:15:20.56,0:15:25.92,Default,,0,0,0,, itself without going crazy? You mentioned customize,\N but just writing raw YAML for every variation sounds
+Dialogue: 0,0:15:25.92,0:15:33.28,Default,,0,0,0,, awful. It really does. Trying to manually maintain slightly different YAML files for QA,\N E2E,\N stage,\N
+Dialogue: 0,0:15:33.28,0:15:39.04,Default,,0,0,0,, prod. Yeah. It gets incredibly unwieldy and error prone super fast. You absolutely need tools to
+Dialogue: 0,0:15:39.04,0:15:43.75,Default,,0,0,0,, help manage this complexity. What makes a good configuration tool in the Kubernetes world? Well,\N
+Dialogue: 0,0:15:43.75,0:15:49.51,Default,,0,0,0,, we look for a few key properties. Ideally,\N it should be declarative,\N you define the desired state,\N
+Dialogue: 0,0:15:49.51,0:15:56.55,Default,,0,0,0,, not the steps to get there. It should be readable,\N easy for humans to understand,\N flexible letting
+Dialogue: 0,0:15:56.55,0:16:01.75,Default,,0,0,0,, you do what you need without fighting the tool,\N and maintainable,\N making it easy to reuse common
+Dialogue: 0,0:16:01.75,0:16:07.43,Default,,0,0,0,, patterns and compose configurations. Declarative,\N readable,\N flexible,\N maintainable. Got it.
+Dialogue: 0,0:16:07.43,0:16:12.87,Default,,0,0,0,, The challenge though is that different people have very different needs. A cluster operator deploying
+Dialogue: 0,0:16:12.87,0:16:17.91,Default,,0,0,0,, standard third-party software has different requirements than a sauce developer deploying their own
+Dialogue: 0,0:16:17.91,0:16:23.27,Default,,0,0,0,, custom app multiple times a day with subtle environment variations. Finding one tool that's perfect
+Dialogue: 0,0:16:23.27,0:16:29.36,Default,,0,0,0,, for everyone is,\N well,\N tricky. Yeah,\N the classic trade-offs. So let's talk about some of the big
+Dialogue: 0,0:16:29.36,0:16:33.36,Default,,0,0,0,, players you mentioned customized. What about Helm? That seems really popular. Helm is definitely
+Dialogue: 0,0:16:33.36,0:16:38.55,Default,,0,0,0,, popular. It calls itself a package manager for Kubernetes and many use it for configuration. The common
+Dialogue: 0,0:16:38.56,0:16:44.40,Default,,0,0,0,, pattern is having a base chart and then separate values.yaml files for each environment that override
+Dialogue: 0,0:16:44.40,0:16:49.92,Default,,0,0,0,, defaults. Okay,\N so values files for environment specifics. What's good about Helm? Undoubtedly,\N Helm's
+Dialogue: 0,0:16:49.92,0:16:55.36,Default,,0,0,0,, biggest strength is its huge ecosystem of pre-built charts in its repository. Need a highly available
+Dialogue: 0,0:16:55.36,0:17:00.24,Default,,0,0,0,, redis cluster. Chances are there's a well-maintained Helm chart for it. You can just grab it,\N maybe tweak
+Dialogue: 0,0:17:00.24,0:17:06.32,Default,,0,0,0,, a few values and deploy. It saves a ton of time compared to building complex setups from scratch.
+Dialogue: 0,0:17:06.31,0:17:12.31,Default,,0,0,0,, So great for reusing community solutions. What's the downside? Well,\N the templating language Helm
+Dialogue: 0,0:17:12.31,0:17:17.51,Default,,0,0,0,, uses go template and can get messy. People joke,\N look at that beautiful Helm template. It said no
+Dialogue: 0,0:17:17.51,0:17:24.00,Default,,0,0,0,, whenever. Lots of curly braces,\N i-files logic,\N helper functions. It can become really hard to read
+Dialogue: 0,0:17:24.00,0:17:30.00,Default,,0,0,0,, and figure out the final yaml output. Right,\N template complexity. Anything else? For complex automated
+Dialogue: 0,0:17:30.00,0:17:35.67,Default,,0,0,0,, deployment pipeline,\N CD,\N it can feel a bit clunky. The proper Helm way often involves packaging
+Dialogue: 0,0:17:35.68,0:17:40.24,Default,,0,0,0,, a new version of your chart,\N bumping the version number,\N publishing it to a chart repository,\N
+Dialogue: 0,0:17:40.24,0:17:44.48,Default,,0,0,0,, just a change,\N like an image tag. It feels like overkill sometimes. So people find work around?
+Dialogue: 0,0:17:44.48,0:17:51.44,Default,,0,0,0,, Yeah,\N a very common pattern is to just use Helm template to render the final yaml locally or NCI
+Dialogue: 0,0:17:51.44,0:17:56.64,Default,,0,0,0,, and then pipe that output directly to Quebec to apply. Kind of bypassing the package management aspect
+Dialogue: 0,0:17:56.64,0:18:02.72,Default,,0,0,0,, for application deployments. Also,\N if you rely heavily on command line overrides,\N set key value,\N
+Dialogue: 0,0:18:02.72,0:18:06.79,Default,,0,0,0,, your deployment isn't purely declarative anymore,\N making it harder to reproduce later.
+Dialogue: 0,0:18:06.79,0:18:13.27,Default,,0,0,0,, Okay,\N so Helm,\N great ecosystem but templating complexity and potential CD awkwardness.
+Dialogue: 0,0:18:13.27,0:18:17.03,Default,,0,0,0,, What about customized again? You said it was simpler? Yeah,\N customized has really taken off,\N
+Dialogue: 0,0:18:17.03,0:18:22.96,Default,,0,0,0,, partly because it's now built into Quebec doll. Its big selling point is no parameters and templates.
+Dialogue: 0,0:18:22.96,0:18:27.92,Default,,0,0,0,, How does that work then? It uses an overlay approach. You have a base set of yaml manifests,\N
+Dialogue: 0,0:18:27.92,0:18:32.48,Default,,0,0,0,, and then for each environment,\N like in those directories we discussed,\N you create small
+Dialogue: 0,0:18:32.48,0:18:37.44,Default,,0,0,0,, customization files that specify changes to the base,\N like change the image tag or add the
+Dialogue: 0,0:18:37.44,0:18:43.20,Default,,0,0,0,, sanitation or increase replicas. These overlays are mostly just standard Kubernetes yaml snippets.
+Dialogue: 0,0:18:43.20,0:18:46.96,Default,,0,0,0,, So they're very easy to read and understand no complex templating logic.
+Dialogue: 0,0:18:46.96,0:18:52.48,Default,,0,0,0,, So much more readable potentially. What's the catch? The catch is,\N well no parameters and templates.
+Dialogue: 0,0:18:52.48,0:18:57.92,Default,,0,0,0,, Sometimes you do want a bit more dynamic power. For instance,\N setting an image tag based on a
+Dialogue: 0,0:18:57.92,0:19:03.51,Default,,0,0,0,, variable for some non-standard Kubernetes resource,\N a custom resource,\N can be difficult because
+Dialogue: 0,0:19:03.51,0:19:08.32,Default,,0,0,0,, customized is quite strict about what fields you can easily modify or parameterize.
+Dialogue: 0,0:19:08.32,0:19:12.16,Default,,0,0,0,, Its built-in vars feature only works on a specific white list of common fields.
+Dialogue: 0,0:19:12.80,0:19:17.03,Default,,0,0,0,, So simplicity comes at the cost of some flexibility for complex cases.
+Dialogue: 0,0:19:17.03,0:19:20.32,Default,,0,0,0,, Pretty much sums it up. Then there's another option. Jsonnet.
+Dialogue: 0,0:19:20.32,0:19:22.32,Default,,0,0,0,, Jsonnet. Haven't heard as much about that one.
+Dialogue: 0,0:19:22.32,0:19:27.20,Default,,0,0,0,, It's a bit different. Jsonnet isn't really a tool itself. It's more of a data templating language.
+Dialogue: 0,0:19:27.20,0:19:32.64,Default,,0,0,0,, Think of it like Json,\N but super-powered. It's designed to be declarative and hermetic,\N
+Dialogue: 0,0:19:32.64,0:19:35.75,Default,,0,0,0,, meaning the output depends only on the input. No side effects.
+Dialogue: 0,0:19:35.75,0:19:38.88,Default,,0,0,0,, Okay,\N a language for generating config. What makes it super-powered?
+Dialogue: 0,0:19:38.88,0:19:44.00,Default,,0,0,0,, It adds things Json lacks,\N like comments,\N multi-line strings,\N variables,\N parameters,\N
+Dialogue: 0,0:19:44.00,0:19:49.92,Default,,0,0,0,, conditionals,\N importing other files. But then it goes further with functions,\N object-oriented concepts,\N
+Dialogue: 0,0:19:49.92,0:19:54.16,Default,,0,0,0,, mixins. It lets you build really reusable and composable configurations.
+Dialogue: 0,0:19:54.16,0:19:55.60,Default,,0,0,0,, Sounds powerful. The good.
+Dialogue: 0,0:19:55.60,0:20:01.12,Default,,0,0,0,, Extremely powerful and flexible. It's rare to find a configuration problem you can't model
+Dialogue: 0,0:20:01.12,0:20:04.00,Default,,0,0,0,, cleanly in Jsonnet. It maximizes reuse.
+Dialogue: 0,0:20:04.00,0:20:04.72,Default,,0,0,0,, The bad.
+Dialogue: 0,0:20:04.72,0:20:08.00,Default,,0,0,0,, Well,\N the main thing is,\N it's not YAML. There's a learning curve.
+Dialogue: 0,0:20:08.00,0:20:12.08,Default,,0,0,0,, You have to think in terms of generating Json YAML,\N not writing it directly.
+Dialogue: 0,0:20:12.08,0:20:17.92,Default,,0,0,0,, You also need an extra step in your workflow to render the Jsonnet code into actual YAML,\N
+Dialogue: 0,0:20:17.92,0:20:22.32,Default,,0,0,0,, using a command like Jsonnet YAML stream,\N before you can apply it with QBactyl.
+Dialogue: 0,0:20:22.31,0:20:26.24,Default,,0,0,0,, But the upside is,\N it guarantees the output will be valid,\N Jsonnet YAML.
+Dialogue: 0,0:20:26.24,0:20:31.67,Default,,0,0,0,, Oh,\N and quick note. Don't confuse the Jsonnet language with an older,\N now-defunct tool called
+Dialogue: 0,0:20:31.67,0:20:32.87,Default,,0,0,0,, Kisonnet,\N which used it.
+Dialogue: 0,0:20:32.87,0:20:37.11,Default,,0,0,0,, Right. So Jsonnet is powerful,\N but has a learning curve in an extra rendering step.
+Dialogue: 0,0:20:37.11,0:20:42.31,Default,,0,0,0,, Exactly. So you see Helm customized Jsonnet. They all have different strength and weaknesses
+Dialogue: 0,0:20:42.31,0:20:46.24,Default,,0,0,0,, across those criteria. Declarative,\N readable,\N flexible,\N maintainable.
+Dialogue: 0,0:20:46.24,0:20:49.35,Default,,0,0,0,, There's no single silver bullet. It depends on your team and your needs.
+Dialogue: 0,0:20:49.36,0:20:51.12,Default,,0,0,0,, That's a really helpful comparison.
+Dialogue: 0,0:20:51.12,0:20:55.92,Default,,0,0,0,, Okay. One last major area. Let's talk about the lifespan of these environments. Do they stick
+Dialogue: 0,0:20:55.92,0:21:00.96,Default,,0,0,0,, around forever,\N or are some temporary? That's another key concept. The difference between
+Dialogue: 0,0:21:00.96,0:21:03.68,Default,,0,0,0,, durable environments and a femoral environment.
+Dialogue: 0,0:21:03.68,0:21:04.88,Default,,0,0,0,, Verbal and a femoral.
+Dialogue: 0,0:21:04.88,0:21:08.32,Default,,0,0,0,, Durable environments are the ones you expect to be,\N well,\N durable.
+Dialogue: 0,0:21:08.32,0:21:10.80,Default,,0,0,0,, Always available. Production is the obvious one.
+Dialogue: 0,0:21:10.80,0:21:16.08,Default,,0,0,0,, Often your main E2E integration environment might also be durable because other teams rely on it
+Dialogue: 0,0:21:16.07,0:21:19.83,Default,,0,0,0,, being there. The resources for these are permanently committed.
+Dialogue: 0,0:21:19.83,0:21:20.63,Default,,0,0,0,, Always on.
+Dialogue: 0,0:21:20.63,0:21:24.96,Default,,0,0,0,, Right. Then you have a femoral environments. These are temporary.
+Dialogue: 0,0:21:24.96,0:21:29.75,Default,,0,0,0,, They aren't relied on by others long term,\N and their resources aren't permanently allocated.
+Dialogue: 0,0:21:29.75,0:21:30.48,Default,,0,0,0,, Like what?
+Dialogue: 0,0:21:30.48,0:21:32.63,Default,,0,0,0,, Your stage environment might be a femoral.
+Dialogue: 0,0:21:32.63,0:21:36.00,Default,,0,0,0,, Maybe you spin it up just for pre-release checks and tear it down afterwards.
+Dialogue: 0,0:21:36.79,0:21:42.55,Default,,0,0,0,, A really common use case now is creating an femoral environment automatically for every single pull
+Dialogue: 0,0:21:43.51,0:21:48.55,Default,,0,0,0,, request just to run tests against that specific change and then deleting it once the PR is merged
+Dialogue: 0,0:21:48.55,0:21:49.11,Default,,0,0,0,, or closed.
+Dialogue: 0,0:21:49.11,0:21:51.35,Default,,0,0,0,, A preview environment. Very cool.
+Dialogue: 0,0:21:51.35,0:21:55.20,Default,,0,0,0,, Exactly. They're great for quick feedback loops and efficient resource use.
+Dialogue: 0,0:21:55.20,0:21:57.67,Default,,0,0,0,, Now,\N thinking about life cycles brings up rollback.
+Dialogue: 0,0:21:57.67,0:21:59.75,Default,,0,0,0,, Right. If something goes wrong after deployment.
+Dialogue: 0,0:21:59.75,0:22:04.07,Default,,0,0,0,, With Kubernetes and a GitOps approach where Git is your source of truth for
+Dialogue: 0,0:22:04.07,0:22:09.44,Default,,0,0,0,, config rollback is often beautifully simple. You just revert the change and get,\N reapply the previous
+Dialogue: 0,0:22:09.44,0:22:14.40,Default,,0,0,0,, configuration and Kubernetes figures out how to reconcile the state back to what it was.
+Dialogue: 0,0:22:14.40,0:22:16.79,Default,,0,0,0,, Okay. Sounds easy enough for the application itself.
+Dialogue: 0,0:22:16.79,0:22:23.27,Default,,0,0,0,, It usually is for the app config and code,\N but there's a big,\N but what about things like databases?
+Dialogue: 0,0:22:23.27,0:22:27.84,Default,,0,0,0,, I know. Can't just rollback a database snapshot,\N can you? You'd lose data.
+Dialogue: 0,0:22:27.84,0:22:34.00,Default,,0,0,0,, Precisely. You can't just revert the database schema or data to a previous point in time without
+Dialogue: 0,0:22:34.00,0:22:38.88,Default,,0,0,0,, causing data loss for anything that happens since then. This means your database schema changes
+Dialogue: 0,0:22:38.88,0:22:44.08,Default,,0,0,0,, have to be designed to be backward compatible,\N backward compatible,\N meaning the new schema must
+Dialogue: 0,0:22:44.08,0:22:48.48,Default,,0,0,0,, still work with the previous version of your application code,\N at least temporarily during the
+Dialogue: 0,0:22:48.48,0:22:53.20,Default,,0,0,0,, rollback window. In practice,\N this often means you can safely add new columns,\N the old code will
+Dialogue: 0,0:22:53.20,0:22:58.72,Default,,0,0,0,, just ignore them,\N but you generally cannot remove columns or change the definition of existing columns
+Dialogue: 0,0:22:58.72,0:23:03.68,Default,,0,0,0,, in a way that breaks the old code. Wow. That requires careful planning for database changes.
+Dialogue: 0,0:23:03.68,0:23:10.40,Default,,0,0,0,, It absolutely does. It's why using database migration tools like flyway or liquid base is highly
+Dialogue: 0,0:23:10.40,0:23:16.72,Default,,0,0,0,, recommended. These tools help you manage schema changes in a version controlled incremental way,\N
+Dialogue: 0,0:23:16.72,0:23:21.92,Default,,0,0,0,, often applying changes alongside your code deployments,\N following that same get ups process.
+Dialogue: 0,0:23:21.92,0:23:25.68,Default,,0,0,0,, It's a critical piece for safe rollbacks that involve database changes.
+Dialogue: 0,0:23:25.68,0:23:30.56,Default,,0,0,0,, That's a really crucial point about databases. Okay. Wow. We've covered a huge amount of ground here
+Dialogue: 0,0:23:30.55,0:23:35.83,Default,,0,0,0,, on environment management. We really have. It touches so many aspects of the development life cycle.
+Dialogue: 0,0:23:35.83,0:23:41.20,Default,,0,0,0,, Definitely. So just a quickly recap for everyone listening. Environments are absolutely essential,\N
+Dialogue: 0,0:23:41.20,0:23:46.96,Default,,0,0,0,, providing dedicated stages from dev to production. Kubernetes name spaces give us a fantastic way to
+Dialogue: 0,0:23:46.96,0:23:52.96,Default,,0,0,0,, implement these within a cluster,\N offering that vital isolation. We saw that strategic kit practices
+Dialogue: 0,0:23:52.96,0:23:58.72,Default,,0,0,0,, like separate config repos and choosing the right config tools,\N Helm customized JSON it with all their
+Dialogue: 0,0:23:58.72,0:24:04.16,Default,,0,0,0,, trade-offs are critical for managing complexity. And finally,\N understanding the difference between
+Dialogue: 0,0:24:04.16,0:24:09.68,Default,,0,0,0,, durable,\N always on environments and temporary,\N ephemeral ones plus the nuances of rollback,\N
+Dialogue: 0,0:24:09.68,0:24:14.88,Default,,0,0,0,, especially with databases is key for resilience. Yeah. That covers the main points,\N I think.
+Dialogue: 0,0:24:14.88,0:24:18.88,Default,,0,0,0,, So as we wrap up,\N maybe a final thought for our listeners to chew on something to consider as
+Dialogue: 0,0:24:18.88,0:24:25.03,Default,,0,0,0,, they navigate this complex space. Okay. Well,\N given how quickly tools and best practices evolve in
+Dialogue: 0,0:24:25.03,0:24:31.27,Default,,0,0,0,, this area,\N maybe the provocative question is,\N what's the real north star? When you're faced with
+Dialogue: 0,0:24:31.27,0:24:36.24,Default,,0,0,0,, all these choices,\N namespaces versus clusters,\N customized versus Helm monorepo versus multi-repo,\N
+Dialogue: 0,0:24:36.24,0:24:40.72,Default,,0,0,0,, what fundamental principle should guide your decisions to balance that constant tension between
+Dialogue: 0,0:24:40.72,0:24:44.87,Default,,0,0,0,, moving fast and staying stable? Where should you really focus your energy?
