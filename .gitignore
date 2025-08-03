@@ -92,3 +92,8 @@ docs/_build/
 # Editor configs
 .idea/
 *.code-workspace
+*.mp4
+*.mp3
+*.mkv
+*.m4a
+*.wav
