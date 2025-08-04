@@ -1,99 +1,70 @@
-# Byte-compiled / optimized / DLL files
+# === Python ===
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
 *.so
-
-# Virtual environments
-venv/
-env/
-.venv/
-.env/
-ENV/
+*.egg-info/
+*.pyo
+*.pyd
 .Python
-
-# pipenv
-Pipfile.lock
-
-# poetry
-poetry.lock
-
-# pyenv
-.python-version
-
-# pytest
-.cache/
-.pytest_cache/
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# coverage
-htmlcov/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyright / pylance
-pyrightconfig.json
-
-# VS Code
-.vscode/
-
-# Mac/Linux/Windows system files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# SQLite DB
+env/
+venv/
+ENV/
+.venv/
 *.sqlite3
 
-# local secrets / config
-.env
-*.env
-.env.*
-
-# Testing artifacts
-*.tmp
-*.bak
-*.swp
-*.swo
-
-# Dist / build
-build/
-dist/
-*.egg-info/
-.eggs/
-*.whl
-
-# Sphinx docs
-docs/_build/
-
-# Cython
-*.c
-*.cpp
-
-# Editor configs
+# === IDE & Editor ===
+.vscode/
 .idea/
-*.code-workspace
+*.sublime-project
+*.sublime-workspace
+.ipynb_checkpoints/
+
+# === OS-generated ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.bak
+
+# === Logs & Dumps ===
+*.log
+*.out
+*.err
+moviepy_video_editing.log
+
+# === Build / Packaging ===
+dist/
+build/
+*.spec
+
+# === Media Temp Files ===
+*.temp.mp4
+*.temp_audio.mp3
+*.temp_audio.m4a
+*.temp.mov
+
+# === Output folders ===
+output/
+shorts/
+subtitles/
+videos/
+*.ass
+*.srt
 *.mp4
-*.mp3
-*.mkv
-*.m4a
-*.wav
+*.avi
+*.mov
+
+# === Temporary / Testing ===
+*.tmp
+*.test.*
+test_*.py
+.cache/
+.mypy_cache/
+.pytest_cache/
+
+# === Assets (ignore contents, keep structure) ===
+assets/
+assets/audio/*
+assets/images/*
+!assets/audio/.gitkeep
+!assets/images/.gitkeep
