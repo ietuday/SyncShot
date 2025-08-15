@@ -7,6 +7,7 @@ from config import (
 from pipeline.video_generator import generate_video
 from pipeline.shorts_creator import create_shorts
 
+
 def main():
     print("🔄 SyncShot Pipeline Starting...")
 
