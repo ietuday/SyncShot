@@ -1,5 +1,6 @@
 import os
 
+
 # Input folders
 AUDIO_FOLDER = "assets/audio"
 IMAGE_FOLDER = "assets/images"
