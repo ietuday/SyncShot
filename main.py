@@ -1,5 +1,4 @@
 import os
-import random
 from config import (
     AUDIO_FOLDER, IMAGE_FOLDER,
     OUTPUT_VIDEO, SHORTS_DIR, SUBTITLE_DIR, MODEL_SIZE
@@ -27,7 +26,6 @@ def main():
     ]
     if not image_files:
         raise FileNotFoundError("No image files found.")
-    random.shuffle(image_files)
 
     generate_video(audio_file, image_files, OUTPUT_VIDEO, subtitle_dir=SUBTITLE_DIR, model_size=MODEL_SIZE)
 
