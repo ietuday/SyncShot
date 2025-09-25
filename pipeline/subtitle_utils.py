@@ -1,41 +1,58 @@
-import time
-from faster_whisper import WhisperModel
+import whisper
+import os
 
-def transcribe_audio_to_ass(audio_path, ass_output_path, model_size="base"):
-    print("🚀 Loading Faster-Whisper model...")
-    model = WhisperModel(model_size, compute_type="auto")
+def transcribe_audio_to_ass(audio_path, ass_output, model_size="base", translate=False):
+    """
+    Transcribe or translate audio into ASS subtitle format.
+    - audio_path: path to input audio file
+    - ass_output: path to output .ass subtitle file
+    - model_size: whisper model size ("tiny", "base", "small", "medium", "large")
+    - translate: if True, output subtitles in English (translate from Hindi)
+    """
+    model = whisper.load_model(model_size)
+    task = "translate" if translate else "transcribe"
 
-    print(f"🎙️ Transcribing: {audio_path}")
-    t0 = time.time()
-    segments, _ = model.transcribe(audio_path, beam_size=5)
-    print(f"🧠 Transcription completed in {time.time() - t0:.2f}s")
+    print(f"🎙️ Running Whisper ({model_size}, task={task})...")
+    result = model.transcribe(audio_path, task=task)
 
-    ass_header = """[Script Info]
+    # Write ASS subtitle file
+    with open(ass_output, "w", encoding="utf-8") as f:
+        f.write(_to_ass(result["segments"]))
+
+    print(f"📝 Subtitles saved: {ass_output}")
+
+
+def _to_ass(segments):
+    """
+    Convert Whisper segments into ASS subtitle format.
+    """
+    header = """[Script Info]
 ScriptType: v4.00+
+Collisions: Normal
 PlayResX: 1920
 PlayResY: 1080
+Timer: 100.0000
 
 [V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, BackColour, OutlineColour, Bold, Italic, Underline, Alignment, MarginL, MarginR, MarginV, BorderStyle, Outline, Shadow, Encoding
-Style: Default,Impact,110,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,5,50,50,60,1,5,0,1
+Format: Name, Fontname, Fontsize, PrimaryColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,48,&H00FFFFFF,&H00000000,0,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
+    body = ""
+    for seg in segments:
+        start = _format_timestamp(seg["start"])
+        end = _format_timestamp(seg["end"])
+        text = seg["text"].replace("\n", " ")
+        body += f"Dialogue: 0,{start},{end},Default,,0,0,0,,{text}\n"
+    return header + body
 
-    def format_ass_time(seconds):
-        h = int(seconds // 3600)
-        m = int((seconds % 3600) // 60)
-        s = int(seconds % 60)
-        cs = int((seconds - int(seconds)) * 100)
-        return f"{h:01}:{m:02}:{s:02}.{cs:02}"
 
-    with open(ass_output_path, "w", encoding="utf-8") as f:
-        f.write(ass_header)
-        for segment in segments:
-            start = format_ass_time(segment.start)
-            end = format_ass_time(segment.end)
-            text = segment.text.replace('\n', ' ').replace(',', ',\\N')
-            f.write(f"Dialogue: 0,{start},{end},Default,,0,0,0,,{text}\n")
-
-    print(f"✅ ASS subtitle file generated: {ass_output_path}")
+def _format_timestamp(seconds: float) -> str:
+    """Convert seconds to ASS timestamp (h:mm:ss.cs)."""
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+    cs = int((seconds - int(seconds)) * 100)  # centiseconds
+    return f"{h:d}:{m:02d}:{s:02d}.{cs:02d}"
