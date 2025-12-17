@@ -17,7 +17,7 @@ SHORTS_DIR = os.path.join(OUTPUT_BASE, "shorts")
 RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 # Video output file
-OUTPUT_VIDEO = os.path.join(VIDEO_DIR, f"output_{RUN_ID}.mp4")
+OUTPUT_VIDEO = os.path.join(VIDEO_DIR, f"output.mp4")
 
 # Whisper model config
 # Options: "tiny", "base", "small", "medium", "large"
