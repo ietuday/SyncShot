@@ -1,0 +1,15 @@
+Summarize the latest cricket news using the provided sources.
+Focus on:
+
+Match results and key highlights
+
+Player performances (top scorers, bowlers, milestones)
+
+Team updates, injuries, squad changes
+
+Ongoing or upcoming tournaments and series
+
+Important records, controversies, or official announcements
+
+Present the information in clear bullet points, keep it fact-based, and prioritize recent and relevant updates.
+
