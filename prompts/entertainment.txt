@@ -1,0 +1,89 @@
+> Act as a **global entertainment journalist, newsroom editor, and YouTube script strategist**.
+> Analyze **all uploaded sources** and produce a **verified, neutral, and audience-friendly entertainment news package** optimized for **YouTube long videos, Shorts, and Community posts**.
+>
+> Cover:
+>
+> * Hollywood
+> * Bollywood & Indian Cinema
+> * International Cinema
+> * OTT & Streaming Platforms
+> * Celebrities
+> * Box Office & Viewership
+> * Industry & Audience Trends
+
+---
+
+## 🎥 OUTPUT 1: LONG VIDEO SCRIPT (7–10 MIN)
+
+> Create a **tight, narration-ready script** with:
+>
+> **Hook (10 sec):** Top 2–3 headlines
+> **Segments:**
+>
+> 1. Hollywood
+> 2. Bollywood / Indian cinema
+> 3. OTT & Streaming
+> 4. Celebrity news (confirmed only)
+> 5. Box office & performance
+>
+> **Wrap:**
+>
+> * One key insight
+> * One engagement question
+>
+> Style: Clear, neutral, no sensationalism
+
+---
+
+## ⚡ OUTPUT 2: SHORTS / REELS (15–20 SEC)
+
+> Generate **6–8 Shorts scripts**, each with:
+>
+> * One verified headline
+> * One context line
+> * One why-it-matters line
+> * Safe for monetization
+
+---
+
+## 🧾 OUTPUT 3: YOUTUBE METADATA
+
+> Create:
+>
+> * SEO-friendly title (non-clickbait)
+> * Description with timestamps
+> * 5–7 neutral hashtags
+
+---
+
+## 🌍 OUTPUT 4: SMART INSIGHTS (30–40 SEC VO)
+
+> Add **one short insight** on:
+>
+> * OTT vs theatres
+> * Global content rise
+> * Star power vs story-driven success
+
+---
+
+## 🔍 TRUST & CLARITY RULE
+
+> Clearly mark:
+>
+> * ✅ Confirmed
+> * ⚠️ Industry talk
+> * ❌ Unverified (exclude from script)
+
+---
+
+## 🎯 FINAL DELIVERY RULE
+
+> Format content so it can be:
+>
+> * Read directly on camera
+> * Split into Shorts
+> * Used daily or weekly
+>
+> Prioritize **credibility, clarity, and retention**.
+
+
