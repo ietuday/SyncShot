@@ -59,7 +59,19 @@ def main():
 
     # ✂️ Create shorts
     logger.info("Creating shorts into: %s", SHORTS_DIR)
-    create_shorts(subtitled_video, shorts_dir=SHORTS_DIR)
+    #create_shorts(subtitled_video, shorts_dir=SHORTS_DIR)
+    create_shorts(
+        subtitled_video,
+        shorts_dir=SHORTS_DIR,
+        fps=FPS,
+        preset=PRESET,
+        mode="start",     # ✅ start -> end
+        short_len=30,     # ✅ 30 sec each
+        count=None,       # ✅ None = generate all possible 30s shorts till video end
+        layout="fit_bg",       # ✅ recommended
+        anchor_x="center",
+        anchor_y="center",
+    )
 
     logger.info("SyncShot Pipeline Completed ✅")
 
