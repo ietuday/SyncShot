@@ -66,8 +66,8 @@ def main():
         fps=FPS,
         preset=PRESET,
         mode="start",     # ✅ start -> end
-        short_len=30,     # ✅ 30 sec each
-        count=None,       # ✅ None = generate all possible 30s shorts till video end
+        short_len=50,     # ✅ 50 sec each
+        count=None,       # ✅ None = generate all possible 50s shorts till video end
         layout="fit_bg",       # ✅ recommended
         anchor_x="center",
         anchor_y="center",
