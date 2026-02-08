@@ -4,11 +4,56 @@ import uuid
 import subprocess
 from tqdm import tqdm
 from moviepy import ImageClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
+import random
+from moviepy import vfx
 
 from .image_utils import resize_image
 from .subtitle_utils import transcribe_audio_to_ass
 
 logger = logging.getLogger(__name__)
+
+
+def make_animated_image_clip(img_array, duration: float, zoom_max: float = 0.06) -> ImageClip:
+    """
+    Ken Burns style: subtle zoom in/out + center crop.
+    Works with both MoviePy v1 (fx) and v2 (with_effects).
+    """
+    clip = ImageClip(img_array).with_duration(duration) if hasattr(ImageClip(img_array), "with_duration") \
+        else ImageClip(img_array).set_duration(duration)
+
+    zoom_in = random.choice([True, False])
+
+    def zoom_factor(t: float) -> float:
+        d = max(duration, 0.001)
+        p = t / d
+        if zoom_in:
+            return 1.0 + (zoom_max * p)          # 1 -> 1+zoom
+        return 1.0 + (zoom_max * (1.0 - p))      # 1+zoom -> 1
+
+    w, h = clip.size
+
+    # ---- MoviePy v2+ (effects are classes: vfx.Resize, vfx.Crop) ----
+    if hasattr(clip, "with_effects") and hasattr(vfx, "Resize"):
+        clip = clip.with_effects([
+            vfx.Resize(zoom_factor),
+            vfx.Crop(x_center=w / 2, y_center=h / 2, width=w, height=h),
+        ])
+        return clip
+
+    # ---- MoviePy v1 (effects are functions: vfx.resize, vfx.crop) ----
+    # fallback if fx exists
+    if hasattr(clip, "fx"):
+        clip = clip.fx(vfx.resize, zoom_factor)
+        clip = clip.fx(vfx.crop, x_center=w / 2, y_center=h / 2, width=w, height=h)
+        return clip
+
+    # ---- Extra fallback: old methods on clip directly ----
+    if hasattr(clip, "resize"):
+        clip = clip.resize(zoom_factor)
+    if hasattr(clip, "crop"):
+        clip = clip.crop(x_center=w / 2, y_center=h / 2, width=w, height=h)
+
+    return clip
 
 
 def _ffmpeg_ass_filter(ass_path: str) -> str:
@@ -132,7 +177,14 @@ def generate_video(
                 if img_array is None:
                     logger.warning("Skipping invalid image: %s", img_path)
                     continue
-                clips.append(ImageClip(img_array, duration=image_duration))
+                #clips.append(ImageClip(img_array, duration=image_duration))
+                animated = make_animated_image_clip(
+                    img_array=img_array,
+                    duration=image_duration,
+                    zoom_max=0.06,   # ✅ 6% zoom max (subtle + premium)
+                )
+                clips.append(animated)
+
             except Exception:
                 logger.exception("Failed processing image: %s", img_path)
 
