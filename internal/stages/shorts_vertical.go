@@ -13,7 +13,13 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 		clipSeconds = 57
 	}
 
-	videoAbs, _ := filepath.Abs(video)
+	videoAbs, err := filepath.Abs(video)
+	if err != nil {
+		return err
+	}
+	if err := utils.EnsureDirs(outDir); err != nil {
+		return err
+	}
 
 	totalSec, err := utils.ProbeDurationSeconds(videoAbs)
 	if err != nil {
@@ -28,7 +34,8 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 		clips = 1
 	}
 
-	limit := 3
+	// Limit parallel shorts (CPU heavy)
+	limit := 2
 	sem := make(chan struct{}, limit)
 	var wg sync.WaitGroup
 
@@ -42,22 +49,34 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 			start := idx * clipSeconds
 			out := filepath.Join(outDir, fmt.Sprintf("short_%03d.mp4", idx))
 
-			filter := "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=20:1[bg];" +
+			// ✅ Use filter_complex (not -vf)
+			// Background: scale/crop to fill 1080x1920 + blur
+			// Foreground: scale to fit inside 1080x1920
+			// Overlay centered
+			filterComplex := "" +
+				"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=20:1[bg];" +
 				"[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];" +
-				"[bg][fg]overlay=(W-w)/2:(H-h)/2"
+				"[bg][fg]overlay=(W-w)/2:(H-h)/2[v]"
 
 			args := []string{
 				"-y",
 				"-ss", fmt.Sprintf("%d", start),
 				"-i", videoAbs,
 				"-t", fmt.Sprintf("%d", clipSeconds),
-				"-vf", filter,
+
+				"-filter_complex", filterComplex,
+
+				// ✅ map filtered video + audio
+				"-map", "[v]",
+				"-map", "0:a:0?",
+
+				// encode
 				"-c:v", "libx264",
 				"-pix_fmt", "yuv420p",
 				"-c:a", "aac",
 				"-b:a", "160k",
 
-				// progress to stdout
+				// progress
 				"-progress", "pipe:1",
 				"-nostats",
 

@@ -2,7 +2,10 @@ package stages
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"syncshotgo/internal/utils"
 )
@@ -16,78 +19,88 @@ func RenderYouTubeVideo(
 	fps int,
 ) error {
 
-	// 1) Build ABSOLUTE glob pattern: /abs/path/to/processed_images/*.jpg
+	if secondsPerImage <= 0 {
+		secondsPerImage = 3.5
+	}
+	if fps <= 0 {
+		fps = 30
+	}
+
 	absImagesDir, err := filepath.Abs(imagesDir)
 	if err != nil {
 		return err
 	}
-	imagePattern := filepath.Join(absImagesDir, "*.jpg")
 
-	// 2) Absolute paths for audio/output (handles spaces + unicode)
-	audioAbs, err := filepath.Abs(audio)
+	// Collect processed jpgs
+	imgs, _ := filepath.Glob(filepath.Join(absImagesDir, "*.jpg"))
+	if len(imgs) == 0 {
+		return fmt.Errorf("no images found in %s", absImagesDir)
+	}
+	sort.Strings(imgs)
+
+	// Build concat list file
+	workDir := "./output/work"
+	_ = os.MkdirAll(workDir, os.ModePerm)
+	listPath := filepath.Join(workDir, "list.txt")
+
+	f, err := os.Create(listPath)
 	if err != nil {
 		return err
 	}
-	outputAbs, err := filepath.Abs(output)
-	if err != nil {
-		return err
-	}
+	defer f.Close()
 
-	// 3) Full duration = audio duration (for progress %)
+	for _, img := range imgs {
+		abs, _ := filepath.Abs(img)
+		abs = strings.ReplaceAll(abs, "'", "'\\''")
+		fmt.Fprintf(f, "file '%s'\n", abs)
+		fmt.Fprintf(f, "duration %.3f\n", secondsPerImage)
+	}
+	// Last file repeated (concat requirement)
+	lastAbs, _ := filepath.Abs(imgs[len(imgs)-1])
+	lastAbs = strings.ReplaceAll(lastAbs, "'", "'\\''")
+	fmt.Fprintf(f, "file '%s'\n", lastAbs)
+
+	audioAbs, _ := filepath.Abs(audio)
+	outputAbs, _ := filepath.Abs(output)
+
 	totalSec, err := utils.ProbeDurationSeconds(audioAbs)
 	if err != nil {
 		log.Warn("ffprobe audio duration failed; progress may be inaccurate: " + err.Error())
 		totalSec = 0
 	}
 
-	// 4) Keep each image on screen for secondsPerImage
-	// ffmpeg expects rational, e.g. 1/3.500 means "1 image every 3.5 seconds"
-	if secondsPerImage <= 0 {
-		secondsPerImage = 3.5
-	}
-	imageRate := fmt.Sprintf("1/%.3f", secondsPerImage)
-
 	args := []string{
 		"-y",
 
-		// Loop images forever
+		// Loop the slideshow forever; audio decides final length
 		"-stream_loop", "-1",
 
-		// Image input (glob)
-		"-framerate", imageRate,
-		"-pattern_type", "glob",
-		"-i", imagePattern,
+		"-f", "concat",
+		"-safe", "0",
+		"-i", listPath,
 
-		// Audio input
 		"-i", audioAbs,
 
-		// End when audio ends (=> full 18+ min video)
+		// Force output to contain video + audio
+		"-map", "0:v:0",
+		"-map", "1:a:0",
+
+		// End with audio duration
 		"-shortest",
 
-		// Encode
 		"-c:v", "libx264",
 		"-pix_fmt", "yuv420p",
-		"-r", fmt.Sprintf("%d", max(1, fps)),
+		"-r", fmt.Sprintf("%d", fps),
+
 		"-c:a", "aac",
 		"-b:a", "192k",
-		"-vf", "scale=1920:1080",
 
-		// Progress
 		"-progress", "pipe:1",
 		"-nostats",
 
 		outputAbs,
 	}
 
-	log.Info("Rendering YouTube video from imagesDir: " + absImagesDir)
-	log.Info("Image glob: " + imagePattern)
-
+	log.Info("Concat list: " + listPath)
 	return utils.RunFFmpegWithProgress(log, totalSec, args...)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }
