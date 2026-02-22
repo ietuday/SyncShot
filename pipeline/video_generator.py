@@ -2,9 +2,13 @@ import logging
 import os
 import uuid
 import subprocess
-from tqdm import tqdm
-from moviepy import ImageClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
 import random
+from typing import List, Optional
+
+from tqdm import tqdm
+
+# MoviePy (works across v1/v2 with the compat helpers below)
+from moviepy import ImageClip, AudioFileClip, CompositeVideoClip
 from moviepy import vfx
 
 from .image_utils import resize_image
@@ -12,14 +16,56 @@ from .subtitle_utils import transcribe_audio_to_ass
 
 logger = logging.getLogger(__name__)
 
+# -----------------------------
+# MoviePy version-compat helpers
+# -----------------------------
+def _set_duration(clip, duration: float):
+    return clip.with_duration(duration) if hasattr(clip, "with_duration") else clip.set_duration(duration)
 
+def _set_start(clip, start: float):
+    return clip.with_start(start) if hasattr(clip, "with_start") else clip.set_start(start)
+
+def _resize_dynamic(clip, zoom_fn):
+    # v2+ prefers effects classes
+    if hasattr(clip, "with_effects") and hasattr(vfx, "Resize"):
+        return clip.with_effects([vfx.Resize(zoom_fn)])
+    # v1 uses fx(function)
+    if hasattr(clip, "fx") and hasattr(vfx, "resize"):
+        return clip.fx(vfx.resize, zoom_fn)
+    # fallback
+    if hasattr(clip, "resize"):
+        return clip.resize(zoom_fn)
+    return clip
+
+def _crossfadein(clip, t: float):
+    # v1
+    if hasattr(clip, "crossfadein"):
+        return clip.crossfadein(t)
+    # v2+ (if available)
+    if hasattr(clip, "with_effects") and hasattr(vfx, "CrossFadeIn"):
+        return clip.with_effects([vfx.CrossFadeIn(t)])
+    return clip
+
+def _crossfadeout(clip, t: float):
+    # v1
+    if hasattr(clip, "crossfadeout"):
+        return clip.crossfadeout(t)
+    # v2+ (if available)
+    if hasattr(clip, "with_effects") and hasattr(vfx, "CrossFadeOut"):
+        return clip.with_effects([vfx.CrossFadeOut(t)])
+    return clip
+
+
+# -----------------------------
+# Animated clip (Ken Burns)
+# -----------------------------
 def make_animated_image_clip(img_array, duration: float, zoom_max: float = 0.06) -> ImageClip:
     """
-    Ken Burns style: subtle zoom in/out + center crop.
-    Works with both MoviePy v1 (fx) and v2 (with_effects).
+    Subtle zoom in/out per image (Ken Burns).
+    This is safe across MoviePy v1/v2 using compat resize helper.
     """
-    clip = ImageClip(img_array).with_duration(duration) if hasattr(ImageClip(img_array), "with_duration") \
-        else ImageClip(img_array).set_duration(duration)
+    clip = ImageClip(img_array)
+    clip = _set_duration(clip, duration)
 
     zoom_in = random.choice([True, False])
 
@@ -30,32 +76,57 @@ def make_animated_image_clip(img_array, duration: float, zoom_max: float = 0.06)
             return 1.0 + (zoom_max * p)          # 1 -> 1+zoom
         return 1.0 + (zoom_max * (1.0 - p))      # 1+zoom -> 1
 
-    w, h = clip.size
-
-    # ---- MoviePy v2+ (effects are classes: vfx.Resize, vfx.Crop) ----
-    if hasattr(clip, "with_effects") and hasattr(vfx, "Resize"):
-        clip = clip.with_effects([
-            vfx.Resize(zoom_factor),
-            vfx.Crop(x_center=w / 2, y_center=h / 2, width=w, height=h),
-        ])
-        return clip
-
-    # ---- MoviePy v1 (effects are functions: vfx.resize, vfx.crop) ----
-    # fallback if fx exists
-    if hasattr(clip, "fx"):
-        clip = clip.fx(vfx.resize, zoom_factor)
-        clip = clip.fx(vfx.crop, x_center=w / 2, y_center=h / 2, width=w, height=h)
-        return clip
-
-    # ---- Extra fallback: old methods on clip directly ----
-    if hasattr(clip, "resize"):
-        clip = clip.resize(zoom_factor)
-    if hasattr(clip, "crop"):
-        clip = clip.crop(x_center=w / 2, y_center=h / 2, width=w, height=h)
-
+    clip = _resize_dynamic(clip, zoom_factor)
     return clip
 
 
+# -----------------------------
+# Crossfade slideshow builder
+# -----------------------------
+def build_crossfade_slideshow(clips: List[ImageClip], fade: float = 0.6) -> CompositeVideoClip:
+    """
+    Overlap each next clip by `fade` seconds and crossfade.
+    Returns a CompositeVideoClip timeline.
+    """
+    if not clips:
+        raise ValueError("No clips to build slideshow")
+
+    # Ensure fade is sane relative to clip durations
+    min_dur = min(float(getattr(c, "duration", 0) or 0) for c in clips)
+    if fade <= 0:
+        fade = 0.0
+    elif min_dur > 0 and fade >= (min_dur * 0.8):
+        # keep fade smaller than clip duration
+        fade = max(0.05, min_dur * 0.3)
+
+    timeline = []
+    t = 0.0
+
+    # First clip starts at 0
+    first = clips[0]
+    timeline.append(_set_start(first, t))
+    t += float(first.duration or 0.0)
+
+    for c in clips[1:]:
+        # start next clip `fade` seconds before current timeline time (overlap)
+        t = max(0.0, t - fade)
+
+        # fade out previous clip
+        timeline[-1] = _crossfadeout(timeline[-1], fade)
+
+        # fade in current clip
+        c2 = _crossfadein(c, fade)
+        c2 = _set_start(c2, t)
+        timeline.append(c2)
+
+        t += float(c.duration or 0.0)
+
+    return CompositeVideoClip(timeline)
+
+
+# -----------------------------
+# Subtitles burn using ffmpeg
+# -----------------------------
 def _ffmpeg_ass_filter(ass_path: str) -> str:
     """
     Build a safe ffmpeg ass= filter value.
@@ -69,7 +140,7 @@ def _ffmpeg_ass_filter(ass_path: str) -> str:
     # Escape for ffmpeg filter parsing:
     # - backslash -> double backslash
     # - colon -> \:
-    # - single quote -> '\''
+    # - single quote -> \'
     p = p.replace("\\", "\\\\")
     p = p.replace(":", r"\:")
     p = p.replace("'", r"\'")
@@ -98,7 +169,6 @@ def burn_subtitles(video_path: str, ass_path: str, output_path_with_subs: str, s
     ]
 
     logger.debug("FFmpeg cmd: %s", " ".join(cmd))
-
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode != 0 or not os.path.exists(output_path_with_subs):
@@ -117,6 +187,9 @@ def burn_subtitles(video_path: str, ass_path: str, output_path_with_subs: str, s
     return output_path_with_subs
 
 
+# -----------------------------
+# Main API
+# -----------------------------
 def generate_video(
     audio_path: str,
     image_paths: list[str],
@@ -126,13 +199,18 @@ def generate_video(
     fps: int = 24,
     preset: str = "medium",
     translate_subs: bool = True,
+    fade_duration: float = 0.6,     # ✅ crossfade seconds
+    zoom_max: float = 0.06,         # ✅ ken burns max zoom (0.04–0.08 sweet spot)
 ) -> str:
     """
-    Generate a video with audio + image slideshow, add subtitles (transcribe/translate),
-    then burn subtitles with ffmpeg.
+    Generate a video with:
+    - audio + image slideshow
+    - subtle image zoom animation
+    - crossfade transitions between images
+    - subtitles generated as .ass and burned with ffmpeg
     """
-    audio = None
-    video = None
+    audio: Optional[AudioFileClip] = None
+    video: Optional[CompositeVideoClip] = None
     clips: list[ImageClip] = []
 
     try:
@@ -148,8 +226,8 @@ def generate_video(
         ass_output = os.path.join(subtitle_dir, f"subs_{uuid.uuid4().hex}.ass")
 
         logger.info(
-            "generate_video start audio=%s images=%d out=%s fps=%d preset=%s model=%s translate=%s",
-            audio_path, len(image_paths), output_path, fps, preset, model_size, translate_subs
+            "generate_video start audio=%s images=%d out=%s fps=%d preset=%s model=%s translate=%s fade=%.2fs zoom=%.2f%%",
+            audio_path, len(image_paths), output_path, fps, preset, model_size, translate_subs, fade_duration, zoom_max * 100
         )
 
         # Generate subtitles
@@ -161,7 +239,7 @@ def generate_video(
         )
         logger.info("ASS generated: %s", ass_output)
 
-        # prepare audio & images
+        # prepare audio
         audio = AudioFileClip(audio_path)
         duration = float(audio.duration or 0.0)
         if duration <= 0:
@@ -170,18 +248,23 @@ def generate_video(
         image_duration = duration / len(image_paths)
         logger.info("Audio duration=%.2fs -> per-image duration=%.3fs", duration, image_duration)
 
-        # Build image clips
+        # If image_duration is too small, reduce fade automatically
+        if image_duration <= 0.8:
+            # avoid fade dominating clip time
+            fade_duration = min(fade_duration, max(0.1, image_duration * 0.25))
+
+        # Build animated image clips
         for img_path in tqdm(image_paths, desc="🖼️ Processing Images"):
             try:
                 img_array = resize_image(img_path)
                 if img_array is None:
                     logger.warning("Skipping invalid image: %s", img_path)
                     continue
-                #clips.append(ImageClip(img_array, duration=image_duration))
+
                 animated = make_animated_image_clip(
                     img_array=img_array,
                     duration=image_duration,
-                    zoom_max=0.06,   # ✅ 6% zoom max (subtle + premium)
+                    zoom_max=zoom_max,
                 )
                 clips.append(animated)
 
@@ -191,10 +274,10 @@ def generate_video(
         if not clips:
             raise ValueError("No valid images to create video.")
 
-        logger.info("Creating slideshow clips=%d", len(clips))
+        logger.info("Creating slideshow clips=%d fade=%.2fs", len(clips), fade_duration)
 
-        video = concatenate_videoclips(clips, method="compose")
-        video = CompositeVideoClip([video])
+        # ✅ Crossfade slideshow instead of hard cuts
+        video = build_crossfade_slideshow(clips, fade=fade_duration)
         video.audio = audio
 
         logger.info("Writing base video: %s", output_path)
@@ -205,7 +288,7 @@ def generate_video(
             fps=fps,
             preset=preset,
             threads=os.cpu_count() or 4,
-            logger=None,  # prevents MoviePy console spam; your logs stay clean
+            logger=None,  # keeps logs clean
         )
 
         output_with_subs = os.path.splitext(output_path)[0] + "_subtitled.mp4"
