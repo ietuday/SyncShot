@@ -18,15 +18,32 @@ func main() {
 		OutVideoPath:    "./output/video/final.mp4",
 		OutShortsDir:    "./output/shorts",
 		WorkDir:         "./output/work",
-		FPS:             30,
-		SecondsPerImage: 3.5,
+		FPS:             24,
+		SecondsPerImage: 3.0,
 		ClipSeconds:     50,
-		MaxWorkers:      6,
+		MaxWorkers:      8,
 	}
 
 	log.Info("Starting SyncShot-Go")
 
-	err := pipeline.Run(log, cfg)
+	// ✅ NEW: clear previous outputs
+	log.Info("Cleaning previous output files")
+
+	err := utils.CleanOutput(
+		cfg.WorkDir,
+		cfg.OutShortsDir,
+		cfg.OutVideoPath,
+	)
+
+	if err != nil {
+		log.Error("Failed to clean output: " + err.Error())
+		os.Exit(1)
+	}
+
+	log.Info("Cleanup complete")
+
+	// run pipeline
+	err = pipeline.Run(log, cfg)
 	if err != nil {
 		log.Error(fmt.Sprintf("Pipeline failed: %v", err))
 		os.Exit(1)
