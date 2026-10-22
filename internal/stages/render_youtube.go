@@ -92,6 +92,11 @@ func RenderYouTubeVideoWithOverlays(
  outputAbs, err := filepath.Abs(output)
  if err != nil { return err }
  if err := os.MkdirAll(filepath.Dir(outputAbs),0755); err != nil { return err }
+ tempFile, err := os.CreateTemp(filepath.Dir(outputAbs), ".syncshot-*.mp4")
+ if err != nil { return fmt.Errorf("create temporary video: %w", err) }
+ tempPath := tempFile.Name()
+ if err := tempFile.Close(); err != nil { os.Remove(tempPath); return err }
+ defer os.Remove(tempPath)
 
 	// Create progress bar for video rendering
 	bar := progressbar.NewOptions64(
@@ -167,7 +172,7 @@ func RenderYouTubeVideoWithOverlays(
 		"-progress", "pipe:1",
 		"-nostats",
 
-		outputAbs,
+		tempPath,
 	)
 
 	log.Info("Concat list: " + listPath)
@@ -187,7 +192,10 @@ func RenderYouTubeVideoWithOverlays(
 		select {
 		case err := <-errCh:
 			bar.Finish()
-			return err
+            if err != nil { return fmt.Errorf("render video: %w", err) }
+            if err := validateRenderedMedia(tempPath); err != nil { return err }
+            if err := promoteVideo(tempPath, outputAbs); err != nil { return err }
+            return nil
 		case <-ticker.C:
 			// Let the progress bar animate
 		}
