@@ -22,6 +22,7 @@ func validateRenderedMedia(path string) error {
 // output if the rename fails. Both files are created on the same filesystem.
 func promoteVideo(tempPath, finalPath string) error {
  if filepath.Dir(tempPath) != filepath.Dir(finalPath) { return fmt.Errorf("temporary video and final video must share a directory") }
+ if err := recoverPublishedPath(finalPath); err != nil { return err }
  backup := finalPath+".syncshot-backup"
  if _, err := os.Stat(finalPath); err == nil {
   if err := os.Rename(finalPath, backup); err != nil { return fmt.Errorf("backup prior video: %w",err) }
