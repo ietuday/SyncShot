@@ -1,6 +1,7 @@
 package stages
 
 import (
+ "context"
  "fmt"
  "os"
  "path/filepath"
@@ -11,6 +12,10 @@ import (
 )
 
 func ProcessImagesWorkerPool(log *utils.Logger, images []string, outDir string, workers int) ([]string, error) {
+ return ProcessImagesWorkerPoolContext(context.Background(),log,images,outDir,workers)
+}
+
+func ProcessImagesWorkerPoolContext(ctx context.Context, log *utils.Logger, images []string, outDir string, workers int) ([]string, error) {
  images = filterImageFiles(images)
  if len(images) == 0 { return nil, fmt.Errorf("no valid images found") }
  if workers <= 0 { workers = 2 }
@@ -25,8 +30,9 @@ func ProcessImagesWorkerPool(log *utils.Logger, images []string, outDir string, 
  worker := func() {
   defer wg.Done()
   for j := range jobs {
+   if ctx.Err()!=nil { continue }
    args := []string{"-y", "-i", j.in, "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2", "-frames:v", "1", "-q:v", "2", j.out}
-   if err := utils.RunFFmpegWithProgress(log, 0, args...); err != nil {
+   if err := utils.RunFFmpegWithProgressContext(ctx,log, 0, args...); err != nil {
     mu.Lock()
     if firstErr == nil { firstErr = fmt.Errorf("process %s: %w", j.in, err) }
     mu.Unlock()
@@ -38,10 +44,11 @@ func ProcessImagesWorkerPool(log *utils.Logger, images []string, outDir string, 
  out := make([]string, len(images))
  for i, p := range images {
   out[i] = filepath.Join(outDir, fmt.Sprintf("img_%06d.jpg", i))
-  jobs <- job{p, out[i]}
+  select { case jobs <- job{p, out[i]}: case <-ctx.Done(): close(jobs); wg.Wait(); return nil, ctx.Err() }
  }
  close(jobs)
  wg.Wait()
+ if ctx.Err()!=nil { return nil, ctx.Err() }
  if firstErr != nil { return nil, firstErr }
  for _, p := range out {
   info, err := os.Stat(p)
