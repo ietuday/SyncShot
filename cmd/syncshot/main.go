@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"context"
+ "fmt"
+ "os/signal"
+ "syscall"
 	"os"
 
 	"syncshotgo/internal/pipeline"
@@ -29,7 +32,9 @@ func main() {
 
 	log.Info("Starting SyncShot-Go")
 	// Do not delete successful output files before validating the inputs.
-	if err := pipeline.Run(log, cfg); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+ defer stop()
+ if err := pipeline.RunContext(ctx, log, cfg); err != nil {
 		log.Error(fmt.Sprintf("Pipeline failed: %v", err))
 		os.Exit(1)
 	}
