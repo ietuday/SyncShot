@@ -1,7 +1,8 @@
 package stages
 
 import (
-	"fmt"
+	"context"
+ "fmt"
  "os"
  "errors"
 	"path/filepath"
@@ -19,7 +20,12 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 
 // CreateShortsVerticalWithPan creates vertical shorts with optional smart panning effect
 func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string, clipSeconds int, maxWorkers int, enablePan bool) error {
-	if clipSeconds <= 0 {
+	return CreateShortsVerticalWithPanContext(context.Background(),log,video,outDir,clipSeconds,maxWorkers,enablePan)
+}
+
+func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, video string, outDir string, clipSeconds int, maxWorkers int, enablePan bool) error {
+ if err:=ctx.Err(); err!=nil { return err }
+ if clipSeconds <= 0 {
 		clipSeconds = 57
 	}
 	if maxWorkers <= 0 {
@@ -65,13 +71,14 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
  errCh := make(chan error, clips)
 
 	for i := 0; i < clips; i++ {
-		wg.Add(1)
-		sem <- struct{}{}
+        select { case sem <- struct{}{}: case <-ctx.Done(): wg.Wait(); return ctx.Err() }
+        wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
 			defer func() { <-sem }()
 
-			start := idx * clipSeconds
+			if ctx.Err()!=nil { return }
+            start := idx * clipSeconds
 			out := filepath.Join(stageDir, fmt.Sprintf("short_%03d.mp4", idx))
 
 			// Smart crop: intelligently crop landscape to vertical format
@@ -117,7 +124,7 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 				out,
 			}
 
-			if err := utils.RunFFmpegWithProgress(log, clipSeconds, args...); err != nil {
+			if err := utils.RunFFmpegWithProgressContext(ctx,log,clipSeconds,args...); err != nil {
 				errCh <- fmt.Errorf("short %d failed: %w", idx, err)
 				return
 			}
@@ -130,6 +137,7 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 	}
 
 	wg.Wait()
+ if ctx.Err()!=nil { return ctx.Err() }
  close(errCh)
  var failures []error
  for err := range errCh { failures = append(failures, err) }
