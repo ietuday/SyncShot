@@ -36,7 +36,8 @@ func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, 
 	if err != nil {
 		return err
 	}
-	parent := filepath.Dir(outDir)
+	if err := recoverPublishedPath(outDir); err != nil { return err }
+ parent := filepath.Dir(outDir)
  if err := utils.EnsureDirs(parent); err != nil { return err }
  stageDir, err := os.MkdirTemp(parent, ".shorts-staging-*")
  if err != nil { return fmt.Errorf("create Shorts staging directory: %w", err) }
