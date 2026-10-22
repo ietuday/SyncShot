@@ -29,6 +29,9 @@ jobs:
         run: go vet ./...
       - name: Build
         run: go build ./cmd/syncshot
+      - name: Full CLI cancellation smoke test
+        timeout-minutes: 8
+        run: bash scripts/cancel-smoke-test.sh
       - name: FFmpeg end-to-end smoke test
         timeout-minutes: 8
         run: bash scripts/smoke-test.sh
