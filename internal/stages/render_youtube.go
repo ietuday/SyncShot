@@ -198,7 +198,7 @@ func RenderYouTubeVideoWithOverlaysContext(
 	// Wrap the rendering with progress bar updates
 	errCh := make(chan error, 1)
 	go func() {
-		errCh <- utils.RunFFmpegWithProgressContext(ctx, log, totalSec, args...)
+		errCh <- utils.RunFFmpegWithRetryContext(ctx, log, totalSec, args...)
 	}()
 
 	// Monitor progress
