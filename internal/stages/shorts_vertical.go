@@ -2,6 +2,8 @@ package stages
 
 import (
 	"fmt"
+ "os"
+ "errors"
 	"path/filepath"
 	"sync"
 	"time"
@@ -28,9 +30,11 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 	if err != nil {
 		return err
 	}
-	if err := utils.EnsureDirs(outDir); err != nil {
-		return err
-	}
+	parent := filepath.Dir(outDir)
+ if err := utils.EnsureDirs(parent); err != nil { return err }
+ stageDir, err := os.MkdirTemp(parent, ".shorts-staging-*")
+ if err != nil { return fmt.Errorf("create Shorts staging directory: %w", err) }
+ defer os.RemoveAll(stageDir)
 
 	totalSec, err := utils.ProbeDurationSeconds(videoAbs)
 	if err != nil {
@@ -68,7 +72,7 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 			defer func() { <-sem }()
 
 			start := idx * clipSeconds
-			out := filepath.Join(outDir, fmt.Sprintf("short_%03d.mp4", idx))
+			out := filepath.Join(stageDir, fmt.Sprintf("short_%03d.mp4", idx))
 
 			// Smart crop: intelligently crop landscape to vertical format
 			// Scale to fill the entire 1080x1920 frame (with zoom)
@@ -127,7 +131,16 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 
 	wg.Wait()
  close(errCh)
- var firstErr error
- for err := range errCh { if firstErr == nil { firstErr = err } }
- return firstErr
+ var failures []error
+ for err := range errCh { failures = append(failures, err) }
+ if len(failures) != 0 { return errors.Join(failures...) }
+ for i := 0; i < clips; i++ {
+  path := filepath.Join(stageDir,fmt.Sprintf("short_%03d.mp4",i))
+  info, err := os.Stat(path)
+  if err != nil { return fmt.Errorf("missing Short %d: %w", i, err) }
+  if info.Size() == 0 { return fmt.Errorf("Short %d is empty",i) }
+  if err := validateRenderedMedia(path); err != nil { return fmt.Errorf("Short %d invalid: %w",i,err) }
+ }
+ if err := publishShortsDirectory(stageDir,outDir); err != nil { return err }
+ return nil
 }
