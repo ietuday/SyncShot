@@ -32,7 +32,7 @@ func ProcessImagesWorkerPoolContext(ctx context.Context, log *utils.Logger, imag
   for j := range jobs {
    if ctx.Err()!=nil { continue }
    args := []string{"-y", "-i", j.in, "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2", "-frames:v", "1", "-q:v", "2", j.out}
-   if err := utils.RunFFmpegWithProgressContext(ctx,log, 0, args...); err != nil {
+   if err := utils.RunFFmpegWithRetryContext(ctx,log, 0, args...); err != nil {
     mu.Lock()
     if firstErr == nil { firstErr = fmt.Errorf("process %s: %w", j.in, err) }
     mu.Unlock()
