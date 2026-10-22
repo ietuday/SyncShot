@@ -58,6 +58,7 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 	// Parallel shorts using worker pool
 	sem := make(chan struct{}, maxWorkers)
 	var wg sync.WaitGroup
+ errCh := make(chan error, clips)
 
 	for i := 0; i < clips; i++ {
 		wg.Add(1)
@@ -113,7 +114,7 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 			}
 
 			if err := utils.RunFFmpegWithProgress(log, clipSeconds, args...); err != nil {
-				log.Error(fmt.Sprintf("short %d failed: %v", idx, err))
+				errCh <- fmt.Errorf("short %d failed: %w", idx, err)
 				return
 			}
 
@@ -125,5 +126,8 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 	}
 
 	wg.Wait()
-	return nil
+ close(errCh)
+ var firstErr error
+ for err := range errCh { if firstErr == nil { firstErr = err } }
+ return firstErr
 }
