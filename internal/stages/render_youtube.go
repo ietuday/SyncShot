@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+ "math"
 
 	"syncshotgo/internal/utils"
 
@@ -51,42 +52,46 @@ func RenderYouTubeVideoWithOverlays(
 	}
 
 	// Collect processed jpgs
-	imgs, _ := filepath.Glob(filepath.Join(absImagesDir, "*.jpg"))
-	if len(imgs) == 0 {
+	imgs, globErr := filepath.Glob(filepath.Join(absImagesDir, "*.jpg"))
+	if globErr != nil { return fmt.Errorf("scan processed images: %w", globErr) }
+ if len(imgs) == 0 {
 		return fmt.Errorf("no images found in %s", absImagesDir)
 	}
 	sort.Strings(imgs)
 
 	// Build concat list file
-	workDir := "./output/work"
-	_ = os.MkdirAll(workDir, os.ModePerm)
+	workDir := filepath.Dir(imagesDir)
+	if err := os.MkdirAll(workDir, 0755); err != nil { return err }
 	listPath := filepath.Join(workDir, "list.txt")
 
 	f, err := os.Create(listPath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
-	for _, img := range imgs {
+	audioAbs, err := filepath.Abs(audio)
+ if err != nil { return err }
+ totalSec, err := utils.ProbeDurationSeconds(audioAbs)
+ if err != nil { return fmt.Errorf("probe narration: %w", err) }
+ if totalSec <= 0 { return fmt.Errorf("invalid narration duration %d", totalSec) }
+ secondsPerImage, err = SceneSeconds(float64(totalSec), len(imgs), secondsPerImage)
+ if err != nil { return err }
+ for _, img := range imgs {
 		abs, _ := filepath.Abs(img)
 		abs = strings.ReplaceAll(abs, "'", "'\\''")
-		fmt.Fprintf(f, "file '%s'\n", abs)
-		fmt.Fprintf(f, "duration %.3f\n", secondsPerImage)
+		if _, err := fmt.Fprintf(f, "file '%s'\n", abs); err != nil { return err }
+		if _, err := fmt.Fprintf(f, "duration %.6f\n", secondsPerImage); err != nil { return err }
 	}
 	// Last file repeated (concat requirement)
 	lastAbs, _ := filepath.Abs(imgs[len(imgs)-1])
 	lastAbs = strings.ReplaceAll(lastAbs, "'", "'\\''")
-	fmt.Fprintf(f, "file '%s'\n", lastAbs)
+	if _, err := fmt.Fprintf(f, "file '%s'\n", lastAbs); err != nil { return err }
 
-	audioAbs, _ := filepath.Abs(audio)
-	outputAbs, _ := filepath.Abs(output)
-
-	totalSec, err := utils.ProbeDurationSeconds(audioAbs)
-	if err != nil {
-		log.Warn("ffprobe audio duration failed; progress may be inaccurate: " + err.Error())
-		totalSec = 0
-	}
+	if err := f.Close(); err != nil { return fmt.Errorf("close concat list: %w", err) }
+ outputAbs, err := filepath.Abs(output)
+ if err != nil { return err }
+ if err := os.MkdirAll(filepath.Dir(outputAbs),0755); err != nil { return err }
 
 	// Create progress bar for video rendering
 	bar := progressbar.NewOptions64(
@@ -112,34 +117,32 @@ func RenderYouTubeVideoWithOverlays(
 	}
 
 	// Add overlay inputs if provided
-	inputCount := 2 // video + audio
+	// overlay inputs follow narration stream
 	if subscribePath != "" {
-		args = append(args, "-i", subscribePath)
-		inputCount++
+		args = append(args, "-loop", "1", "-i", subscribePath)
 	}
 	if notificationPath != "" {
-		args = append(args, "-i", notificationPath)
-		inputCount++
+		args = append(args, "-loop", "1", "-i", notificationPath)
 	}
 
 	// Build filter complex for overlays
 	var filterComplex string
 	if subscribePath != "" || notificationPath != "" {
 		// Start with video input and format
-		filterComplex = "[0:v]scale=1920:1080[base]"
+		filterComplex = "[0:v]scale=1920:1080,format=yuv420p[base]"
 
 		if subscribePath != "" && notificationPath != "" {
 			// Both overlays: subscribe + notification
 			// Subscribe button (bottom right)
-			filterComplex += fmt.Sprintf(";[2]scale=200:60[sub];[base][sub]overlay=x=W-220:y=H-80[tmp]")
+			filterComplex += fmt.Sprintf(";[2:v]scale=200:60,format=rgba,colorchannelmixer=aa=%.3f[sub];[base][sub]overlay=x=W-220:y=H-80:shortest=1[tmp]", math.Max(0, math.Min(1, float64(subscribeOpacity))))
 			// Notification bell (top right)
-			filterComplex += fmt.Sprintf(";[3]scale=80:80[notif];[tmp][notif]overlay=x=W-100:y=20[v]")
+			filterComplex += fmt.Sprintf(";[3:v]scale=80:80,format=rgba,colorchannelmixer=aa=%.3f[notif];[tmp][notif]overlay=x=W-100:y=20:shortest=1[v]", math.Max(0, math.Min(1, float64(notificationOpacity))))
 		} else if subscribePath != "" {
 			// Only subscribe button
-			filterComplex += fmt.Sprintf(";[2]scale=200:60[sub];[base][sub]overlay=x=W-220:y=H-80[v]")
+			filterComplex += fmt.Sprintf(";[2:v]scale=200:60,format=rgba,colorchannelmixer=aa=%.3f[sub];[base][sub]overlay=x=W-220:y=H-80:shortest=1[v]", math.Max(0, math.Min(1, float64(subscribeOpacity))))
 		} else {
 			// Only notification bell
-			filterComplex += fmt.Sprintf(";[2]scale=80:80[notif];[base][notif]overlay=x=W-100:y=20[v]")
+			filterComplex += fmt.Sprintf(";[2:v]scale=80:80,format=rgba,colorchannelmixer=aa=%.3f[notif];[base][notif]overlay=x=W-100:y=20:shortest=1[v]", math.Max(0, math.Min(1, float64(notificationOpacity))))
 		}
 
 		args = append(args, "-filter_complex", filterComplex)
