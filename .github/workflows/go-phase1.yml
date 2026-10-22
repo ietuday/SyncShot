@@ -6,6 +6,7 @@ on:
       - 'internal/**'
       - 'go.mod'
       - 'go.sum'
+      - 'scripts/**'
       - '.github/workflows/go-phase1.yml'
   push:
     branches: [feature/enhanced-video-pipeline]
@@ -28,3 +29,6 @@ jobs:
         run: go vet ./...
       - name: Build
         run: go build ./cmd/syncshot
+      - name: FFmpeg end-to-end smoke test
+        timeout-minutes: 8
+        run: bash scripts/smoke-test.sh
