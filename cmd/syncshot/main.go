@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+ "os"
 	
 	"syncshotgo/internal/pipeline"
 	"syncshotgo/internal/utils"
@@ -36,7 +37,7 @@ func main() {
 	err = pipeline.Run(log, cfg)
 	if err != nil {
 		log.Error(fmt.Sprintf("Pipeline failed: %v", err))
-		return
+        os.Exit(1)
 	}
 
 	log.Info("Pipeline completed successfully")
