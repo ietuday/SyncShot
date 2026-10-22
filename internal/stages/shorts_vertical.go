@@ -124,7 +124,7 @@ func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, 
 				out,
 			}
 
-			if err := utils.RunFFmpegWithProgressContext(ctx,log,clipSeconds,args...); err != nil {
+			if err := utils.RunFFmpegWithRetryContext(ctx,log,clipSeconds,args...); err != nil {
 				errCh <- fmt.Errorf("short %d failed: %w", idx, err)
 				return
 			}
