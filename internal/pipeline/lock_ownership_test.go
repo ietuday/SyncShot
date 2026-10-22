@@ -28,7 +28,7 @@ func TestRunLockDoesNotRemoveReplacement(t *testing.T) {
  release,err:=acquireRunLock(work)
  if err!=nil {t.Fatal(err)}
  lockPath:=filepath.Join(filepath.Dir(work),".work.syncshot.lock")
- if err:=os.Remove(lockPath);err!=nil {t.Fatal(err)}
+ if err:=os.Rename(lockPath,lockPath+".original");err!=nil {t.Fatal(err)}
  if err:=os.WriteFile(lockPath,[]byte("pid=another\\n"),0600);err!=nil {t.Fatal(err)}
  if err:=release();err==nil {t.Fatal("expected ownership mismatch")}
  data,err:=os.ReadFile(lockPath)
