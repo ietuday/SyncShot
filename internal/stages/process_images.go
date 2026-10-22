@@ -1,121 +1,69 @@
 package stages
 
 import (
-	"fmt"
-	"path/filepath"
-	"sort"
-	"strings"
-	"sync"
-	"time"
-
-	"syncshotgo/internal/utils"
-
-	"github.com/schollz/progressbar/v3"
+ "context"
+ "fmt"
+ "os"
+ "path/filepath"
+ "sort"
+ "strings"
+ "sync"
+ "syncshotgo/internal/utils"
 )
 
-func ProcessImagesWorkerPool(
-	log *utils.Logger,
-	images []string,
-	outDir string,
-	workers int,
-) ([]string, error) {
+func ProcessImagesWorkerPool(log *utils.Logger, images []string, outDir string, workers int) ([]string, error) {
+ return ProcessImagesWorkerPoolContext(context.Background(),log,images,outDir,workers)
+}
 
-	if err := utils.EnsureDirs(outDir); err != nil {
-		return nil, err
-	}
-
-	// Filter only images (avoid .txt/.gitkeep)
-	images = filterImageFiles(images)
-	if len(images) == 0 {
-		return nil, fmt.Errorf("no valid images found to process")
-	}
-
-	if workers <= 0 {
-		workers = 4
-	}
-
-	type job struct {
-		inPath  string
-		outPath string
-	}
-	jobs := make(chan job)
-	errCh := make(chan error, 1)
-
-	// Progress bar
-	bar := progressbar.NewOptions64(
-		int64(len(images)),
-		progressbar.OptionSetDescription("Processing images"),
-		progressbar.OptionShowIts(),
-		progressbar.OptionSetWidth(15),
-		progressbar.OptionThrottle(100*time.Millisecond),
-	)
-	var progressMutex sync.Mutex
-
-	var wg sync.WaitGroup
-	for i := 0; i < workers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := range jobs {
-				// Convert to jpg and normalize size (optional but good)
-				args := []string{
-					"-y",
-					"-i", j.inPath,
-					"-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2",
-					"-q:v", "2",
-					j.outPath,
-				}
-				if err := utils.RunFFmpegWithProgress(log, 0, args...); err != nil {
-					select {
-					case errCh <- fmt.Errorf("image convert failed (%s): %w", j.inPath, err):
-					default:
-					}
-					return
-				}
-				// Update progress bar
-				progressMutex.Lock()
-				bar.Add(1)
-				progressMutex.Unlock()
-			}
-		}()
-	}
-
-	// Create deterministic names so slideshow order stays stable
-	sort.Strings(images)
-	out := make([]string, 0, len(images))
-
-	for idx, in := range images {
-		outPath := filepath.Join(outDir, fmt.Sprintf("img_%03d.jpg", idx))
-		out = append(out, outPath)
-		jobs <- job{inPath: in, outPath: outPath}
-	}
-
-	close(jobs)
-	wg.Wait()
-
-	select {
-	case err := <-errCh:
-		return nil, err
-	default:
-	}
-
-	// Validate output exists
-	matches, _ := filepath.Glob(filepath.Join(outDir, "*.jpg"))
-	if len(matches) == 0 {
-		return nil, fmt.Errorf("processed_images folder is empty: %s", outDir)
-	}
-
-	return out, nil
+func ProcessImagesWorkerPoolContext(ctx context.Context, log *utils.Logger, images []string, outDir string, workers int) ([]string, error) {
+ images = filterImageFiles(images)
+ if len(images) == 0 { return nil, fmt.Errorf("no valid images found") }
+ if workers <= 0 { workers = 2 }
+ if workers > len(images) { workers = len(images) }
+ if err := utils.EnsureDirs(outDir); err != nil { return nil, err }
+ sort.Strings(images)
+ type job struct { in, out string }
+ jobs := make(chan job)
+ var wg sync.WaitGroup
+ var mu sync.Mutex
+ var firstErr error
+ worker := func() {
+  defer wg.Done()
+  for j := range jobs {
+   if ctx.Err()!=nil { continue }
+   args := []string{"-y", "-i", j.in, "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2", "-frames:v", "1", "-q:v", "2", j.out}
+   if err := utils.RunFFmpegWithRetryContext(ctx,log, 0, args...); err != nil {
+    mu.Lock()
+    if firstErr == nil { firstErr = fmt.Errorf("process %s: %w", j.in, err) }
+    mu.Unlock()
+    continue // Drain all jobs; producer cannot deadlock.
+   }
+  }
+ }
+ for i := 0; i < workers; i++ { wg.Add(1); go worker() }
+ out := make([]string, len(images))
+ for i, p := range images {
+  out[i] = filepath.Join(outDir, fmt.Sprintf("img_%06d.jpg", i))
+  select { case jobs <- job{p, out[i]}: case <-ctx.Done(): close(jobs); wg.Wait(); return nil, ctx.Err() }
+ }
+ close(jobs)
+ wg.Wait()
+ if ctx.Err()!=nil { return nil, ctx.Err() }
+ if firstErr != nil { return nil, firstErr }
+ for _, p := range out {
+  info, err := os.Stat(p)
+  if err != nil { return nil, fmt.Errorf("expected processed image %s: %w", p, err) }
+  if info.Size() == 0 { return nil, fmt.Errorf("processed image is empty: %s", p) }
+ }
+ return out, nil
 }
 
 func filterImageFiles(paths []string) []string {
-	ok := make([]string, 0, len(paths))
-	for _, p := range paths {
-		ext := strings.ToLower(filepath.Ext(p))
-		switch ext {
-		case ".jpg", ".jpeg", ".png", ".webp", ".bmp":
-			ok = append(ok, p)
-		}
-	}
-	return ok
+ result := make([]string, 0, len(paths))
+ for _, p := range paths {
+  switch strings.ToLower(filepath.Ext(p)) {
+  case ".jpg", ".jpeg", ".png", ".webp", ".bmp": result = append(result, p)
+  }
+ }
+ return result
 }

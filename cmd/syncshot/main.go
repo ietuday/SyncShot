@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"context"
+ "fmt"
+ "os/signal"
+ "syscall"
 	"os"
 
 	"syncshotgo/internal/pipeline"
@@ -9,50 +12,32 @@ import (
 )
 
 func main() {
-
 	log := utils.NewLogger()
 
 	cfg := pipeline.Config{
-		AudioDir:        "./inputs/audio",
-		ImagesDir:       "./inputs/images",
-		OutVideoPath:    "./output/video/final.mp4",
-		OutShortsDir:    "./output/shorts",
-		WorkDir:         "./output/work",
-		FPS:             24,
-		SecondsPerImage: 3.0,
-		ClipSeconds:     50,
-		MaxWorkers:      8,
-		// Overlay settings - enable/disable as needed
-		AddSubscribeButton:  true, // Add YouTube subscribe button
-		AddNotificationBell: true, // Add notification bell icon
-		SubscribeOpacity:    0.8,  // 80% opacity
-		NotificationOpacity: 0.8,  // 80% opacity
+		AudioDir:            "./inputs/audio",
+		ImagesDir:           "./inputs/images",
+		OutVideoPath:        "./output/video/final.mp4",
+		OutShortsDir:        "./output/shorts",
+		WorkDir:             "./output/work",
+		FPS:                 24,
+		SecondsPerImage:     3.0,
+		ClipSeconds:         50,
+		MaxWorkers:          8,
+		AddSubscribeButton:  true,
+		AddNotificationBell: true,
+		SubscribeOpacity:    0.8,
+		NotificationOpacity: 0.8,
 	}
 
 	log.Info("Starting SyncShot-Go")
-
-	// ✅ NEW: clear previous outputs
-	log.Info("Cleaning previous output files")
-
-	err := utils.CleanOutput(
-		cfg.WorkDir,
-		cfg.OutShortsDir,
-		cfg.OutVideoPath,
-	)
-
-	if err != nil {
-		log.Error("Failed to clean output: " + err.Error())
-		os.Exit(1)
-	}
-
-	log.Info("Cleanup complete")
-
-	// run pipeline
-	err = pipeline.Run(log, cfg)
-	if err != nil {
+	// Do not delete successful output files before validating the inputs.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+ defer stop()
+ if err := pipeline.RunContext(ctx, log, cfg); err != nil {
 		log.Error(fmt.Sprintf("Pipeline failed: %v", err))
 		os.Exit(1)
 	}
 
-	log.Info("Video and Shorts created successfully")
+	log.Info("Pipeline completed successfully")
 }
