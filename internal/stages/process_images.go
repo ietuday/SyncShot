@@ -6,8 +6,11 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"syncshotgo/internal/utils"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 func ProcessImagesWorkerPool(
@@ -38,6 +41,16 @@ func ProcessImagesWorkerPool(
 	jobs := make(chan job)
 	errCh := make(chan error, 1)
 
+	// Progress bar
+	bar := progressbar.NewOptions64(
+		int64(len(images)),
+		progressbar.OptionSetDescription("Processing images"),
+		progressbar.OptionShowIts(),
+		progressbar.OptionSetWidth(15),
+		progressbar.OptionThrottle(100*time.Millisecond),
+	)
+	var progressMutex sync.Mutex
+
 	var wg sync.WaitGroup
 	for i := 0; i < workers; i++ {
 		wg.Add(1)
@@ -59,6 +72,10 @@ func ProcessImagesWorkerPool(
 					}
 					return
 				}
+				// Update progress bar
+				progressMutex.Lock()
+				bar.Add(1)
+				progressMutex.Unlock()
 			}
 		}()
 	}

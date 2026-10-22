@@ -22,6 +22,11 @@ func main() {
 		SecondsPerImage: 3.0,
 		ClipSeconds:     50,
 		MaxWorkers:      8,
+		// Overlay settings - enable/disable as needed
+		AddSubscribeButton:  true, // Add YouTube subscribe button
+		AddNotificationBell: true, // Add notification bell icon
+		SubscribeOpacity:    0.8,  // 80% opacity
+		NotificationOpacity: 0.8,  // 80% opacity
 	}
 
 	log.Info("Starting SyncShot-Go")

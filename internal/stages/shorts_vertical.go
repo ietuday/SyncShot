@@ -4,13 +4,24 @@ import (
 	"fmt"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"syncshotgo/internal/utils"
+
+	"github.com/schollz/progressbar/v3"
 )
 
-func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSeconds int) error {
+func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSeconds int, maxWorkers int) error {
+	return CreateShortsVerticalWithPan(log, video, outDir, clipSeconds, maxWorkers, false)
+}
+
+// CreateShortsVerticalWithPan creates vertical shorts with optional smart panning effect
+func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string, clipSeconds int, maxWorkers int, enablePan bool) error {
 	if clipSeconds <= 0 {
 		clipSeconds = 57
+	}
+	if maxWorkers <= 0 {
+		maxWorkers = 2
 	}
 
 	videoAbs, err := filepath.Abs(video)
@@ -34,9 +45,18 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 		clips = 1
 	}
 
-	// Limit parallel shorts (CPU heavy)
-	limit := 2
-	sem := make(chan struct{}, limit)
+	// Progress bar for shorts creation
+	bar := progressbar.NewOptions64(
+		int64(clips),
+		progressbar.OptionSetDescription("Creating shorts"),
+		progressbar.OptionShowIts(),
+		progressbar.OptionSetWidth(15),
+		progressbar.OptionThrottle(100*time.Millisecond),
+	)
+	var progressMutex sync.Mutex
+
+	// Parallel shorts using worker pool
+	sem := make(chan struct{}, maxWorkers)
 	var wg sync.WaitGroup
 
 	for i := 0; i < clips; i++ {
@@ -49,14 +69,22 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 			start := idx * clipSeconds
 			out := filepath.Join(outDir, fmt.Sprintf("short_%03d.mp4", idx))
 
-			// ✅ Use filter_complex (not -vf)
-			// Background: scale/crop to fill 1080x1920 + blur
-			// Foreground: scale to fit inside 1080x1920
-			// Overlay centered
-			filterComplex := "" +
-				"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=20:1[bg];" +
-				"[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];" +
-				"[bg][fg]overlay=(W-w)/2:(H-h)/2[v]"
+			// Smart crop: intelligently crop landscape to vertical format
+			// Scale to fill the entire 1080x1920 frame (with zoom)
+			// Then crop to center (can be adjusted for different framing)
+			var filterComplex string
+
+			if enablePan {
+				// With panning: subtle zoom effect that moves across the frame
+				zoomEnd := 1.1
+				filterComplex = fmt.Sprintf(
+					"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-1080)/2:(in_h-1920)/2,zoompan=z='min(zoom+0.0005,%.1f)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fps=24[v]",
+					zoomEnd,
+				)
+			} else {
+				// Static crop: no panning, just intelligent crop
+				filterComplex = "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-1080)/2:(in_h-1920)/2[v]"
+			}
 
 			args := []string{
 				"-y",
@@ -66,29 +94,33 @@ func CreateShortsVertical(log *utils.Logger, video string, outDir string, clipSe
 
 				"-filter_complex", filterComplex,
 
-				// ✅ map filtered video + audio
+				// Map filtered video + audio
 				"-map", "[v]",
 				"-map", "0:a:0?",
 
-				// encode
+				// Encode with optimized settings
 				"-c:v", "libx264",
+				"-preset", "fast",
 				"-pix_fmt", "yuv420p",
 				"-c:a", "aac",
 				"-b:a", "160k",
 
-				// progress
+				// Progress
 				"-progress", "pipe:1",
 				"-nostats",
 
 				out,
 			}
 
-			log.Info(fmt.Sprintf("Creating short %d/%d (with progress)...", idx+1, clips))
 			if err := utils.RunFFmpegWithProgress(log, clipSeconds, args...); err != nil {
 				log.Error(fmt.Sprintf("short %d failed: %v", idx, err))
 				return
 			}
-			log.Info("short -> " + out)
+
+			// Update progress bar
+			progressMutex.Lock()
+			bar.Add(1)
+			progressMutex.Unlock()
 		}(i)
 	}
 

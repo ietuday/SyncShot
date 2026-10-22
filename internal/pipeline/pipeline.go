@@ -18,6 +18,11 @@ type Config struct {
 	SecondsPerImage float64
 	ClipSeconds     int
 	MaxWorkers      int
+	// Overlay settings
+	AddSubscribeButton  bool
+	AddNotificationBell bool
+	SubscribeOpacity    float32 // 0.0-1.0
+	NotificationOpacity float32 // 0.0-1.0
 }
 
 func Run(log *utils.Logger, cfg Config) error {
@@ -72,29 +77,49 @@ func Run(log *utils.Logger, cfg Config) error {
 		return err
 	}
 
+	// 4.5) Prepare overlays if enabled
+	var subscribePath, notificationPath string
+	if cfg.AddSubscribeButton || cfg.AddNotificationBell {
+		overlayConfig := stages.OverlayConfig{
+			EnableSubscribe:     cfg.AddSubscribeButton,
+			EnableNotification:  cfg.AddNotificationBell,
+			SubscribeOpacity:    cfg.SubscribeOpacity,
+			NotificationOpacity: cfg.NotificationOpacity,
+		}
+		subscribePath, notificationPath, err = stages.PrepareOverlays(log, overlayConfig, cfg.WorkDir)
+		if err != nil {
+			return err
+		}
+	}
+
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
-	if err := stages.RenderYouTubeVideo(
+	if err := stages.RenderYouTubeVideoWithOverlays(
 		log,
 		workProcessed, // ✅ important: use processed_images folder
 		audio,
 		cfg.OutVideoPath,
 		cfg.SecondsPerImage,
 		cfg.FPS,
+		subscribePath,
+		notificationPath,
+		cfg.SubscribeOpacity,
+		cfg.NotificationOpacity,
 	); err != nil {
 		return err
 	}
 
-	// 6) Create Shorts (N clips of 57s or configured seconds)
-	log.Info("Creating Shorts")
-	if err := stages.CreateShortsVertical(
-		log,
-		cfg.OutVideoPath,
-		cfg.OutShortsDir,
-		cfg.ClipSeconds,
-	); err != nil {
-		return err
-	}
+	// 6) Create Shorts (N clips of 57s or configured seconds) - parallel using worker pool
+	// log.Info("Creating Shorts")
+	// if err := stages.CreateShortsVertical(
+	// 	log,
+	// 	cfg.OutVideoPath,
+	// 	cfg.OutShortsDir,
+	// 	cfg.ClipSeconds,
+	// 	cfg.MaxWorkers,
+	// ); err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
