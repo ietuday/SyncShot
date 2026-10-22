@@ -22,3 +22,15 @@ func TestLockLeftByCrashIsNotAutomaticallyOverwritten(t *testing.T) {
  if err:=os.WriteFile(p,[]byte("pid=99999999\n"),0600);err!=nil {t.Fatal(err)}
  if _,err:=acquireRunLock(filepath.Join(dir,"work"));err==nil {t.Fatal("expected stale lock block")}
 }
+
+func TestRunLockDoesNotRemoveReplacement(t *testing.T) {
+ work:=filepath.Join(t.TempDir(),"work")
+ release,err:=acquireRunLock(work)
+ if err!=nil {t.Fatal(err)}
+ lockPath:=filepath.Join(filepath.Dir(work),".work.syncshot.lock")
+ if err:=os.Remove(lockPath);err!=nil {t.Fatal(err)}
+ if err:=os.WriteFile(lockPath,[]byte("pid=another\\n"),0600);err!=nil {t.Fatal(err)}
+ if err:=release();err==nil {t.Fatal("expected ownership mismatch")}
+ data,err:=os.ReadFile(lockPath)
+ if err!=nil || string(data)!="pid=another\\n" {t.Fatalf("replacement lock changed: %q %v",data,err)}
+}
