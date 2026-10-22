@@ -24,7 +24,7 @@ func TestFFmpegContextTimeout(t *testing.T) {
  if runtime.GOOS == "windows" { t.Skip("requires Unix shell") }
  dir := t.TempDir()
  executable := filepath.Join(dir, "ffmpeg")
- if err := os.WriteFile(executable, []byte("#!/bin/sh\nsleep 10\n"),0755); err != nil { t.Fatal(err) }
+ if err := os.WriteFile(executable, []byte("#!/bin/sh\nexec sleep 10\n"),0755); err != nil { t.Fatal(err) }
  t.Setenv("PATH",dir+string(os.PathListSeparator)+os.Getenv("PATH"))
  ctx,cancel:=context.WithTimeout(context.Background(),100*time.Millisecond)
  defer cancel()
