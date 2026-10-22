@@ -16,6 +16,7 @@ func publishShortsDirectory(stageDir, destination string) error {
  if err != nil { return err }
  if stageParent != destParent { return fmt.Errorf("Shorts staging and destination must share a parent directory") }
  if err := os.MkdirAll(destParent, 0755); err != nil { return err }
+ if err := recoverPublishedPath(destination); err != nil { return err }
  backup := destination+".syncshot-backup"
  if _, err := os.Stat(backup); err == nil {
   return fmt.Errorf("existing Shorts backup requires recovery: %s",backup)
