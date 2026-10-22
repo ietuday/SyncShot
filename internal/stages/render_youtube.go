@@ -1,7 +1,8 @@
 package stages
 
 import (
-	"fmt"
+	"context"
+ "fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -28,6 +29,22 @@ func RenderYouTubeVideo(
 // RenderYouTubeVideoWithOverlays renders video with optional overlays
 func RenderYouTubeVideoWithOverlays(
 	log *utils.Logger,
+	imagesDir string,
+	audio string,
+	output string,
+	secondsPerImage float64,
+	fps int,
+	subscribePath string,
+	notificationPath string,
+	subscribeOpacity float32,
+	notificationOpacity float32,
+) error {
+ return RenderYouTubeVideoWithOverlaysContext(ctx, log, imagesDir, audio, output, secondsPerImage, fps, subscribePath, notificationPath, subscribeOpacity, notificationOpacity)
+}
+
+func RenderYouTubeVideoWithOverlaysContext(
+	ctx context.Context,
+ log *utils.Logger,
 	imagesDir string,
 	audio string,
 	output string,
@@ -181,7 +198,7 @@ func RenderYouTubeVideoWithOverlays(
 	// Wrap the rendering with progress bar updates
 	errCh := make(chan error, 1)
 	go func() {
-		errCh <- utils.RunFFmpegWithProgress(log, totalSec, args...)
+		errCh <- utils.RunFFmpegWithProgressContext(ctx, log, totalSec, args...)
 	}()
 
 	// Monitor progress
