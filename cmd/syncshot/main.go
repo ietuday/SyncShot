@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
-
+	
 	"syncshotgo/internal/pipeline"
 	"syncshotgo/internal/utils"
 )
@@ -31,28 +30,14 @@ func main() {
 
 	log.Info("Starting SyncShot-Go")
 
-	// ✅ NEW: clear previous outputs
-	log.Info("Cleaning previous output files")
-
-	err := utils.CleanOutput(
-		cfg.WorkDir,
-		cfg.OutShortsDir,
-		cfg.OutVideoPath,
-	)
-
-	if err != nil {
-		log.Error("Failed to clean output: " + err.Error())
-		os.Exit(1)
-	}
-
-	log.Info("Cleanup complete")
+ // Preserve previous outputs until inputs have been validated; no destructive preflight cleanup.
 
 	// run pipeline
 	err = pipeline.Run(log, cfg)
 	if err != nil {
 		log.Error(fmt.Sprintf("Pipeline failed: %v", err))
-		os.Exit(1)
+		return
 	}
 
-	log.Info("Video and Shorts created successfully")
+	log.Info("Pipeline completed successfully")
 }
