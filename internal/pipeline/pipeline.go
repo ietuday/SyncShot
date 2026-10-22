@@ -33,6 +33,9 @@ func Run(log *utils.Logger, cfg Config) error {
 func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
  if err:=ctx.Err(); err!=nil { return err }
  if err := cfg.Validate(); err != nil { return fmt.Errorf("invalid configuration: %w", err) }
+ release, err := acquireRunLock(cfg.WorkDir)
+ if err != nil { return err }
+ defer func() { if unlockErr := release(); unlockErr != nil { log.Warn("Failed to remove run lock: "+unlockErr.Error()) } }()
 
 	workProcessed := filepath.Join(cfg.WorkDir, "processed_images")
 	workSubtitles := filepath.Join(cfg.WorkDir, "subtitles")
