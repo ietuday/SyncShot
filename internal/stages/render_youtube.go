@@ -109,6 +109,7 @@ func RenderYouTubeVideoWithOverlaysContext(
  outputAbs, err := filepath.Abs(output)
  if err != nil { return err }
  if err := os.MkdirAll(filepath.Dir(outputAbs),0755); err != nil { return err }
+ if err := recoverPublishedPath(outputAbs); err != nil { return err }
  tempFile, err := os.CreateTemp(filepath.Dir(outputAbs), ".syncshot-*.mp4")
  if err != nil { return fmt.Errorf("create temporary video: %w", err) }
  tempPath := tempFile.Name()
