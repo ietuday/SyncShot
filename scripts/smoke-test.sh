@@ -31,3 +31,25 @@ duration="$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1
 awk -v d="$duration" 'BEGIN { if (d < 2.0 || d > 4.5) exit 1 }' || { echo "Unexpected duration: $duration"; exit 1; }
 
 echo "Smoke test passed: final video and Shorts have correct dimensions, duration and audio."
+
+
+# Failure injection: an invalid image must never replace the last valid
+# published video or Shorts batch.
+video_before="$(sha256sum output/video/final.mp4 | cut -d' ' -f1)"
+short_before="$(sha256sum output/shorts/short_000.mp4 | cut -d' ' -f1)"
+printf 'not a valid PNG' > inputs/images/003.png
+if "$TMP/syncshot"; then
+  echo "ERROR: SyncShot succeeded with an invalid image" >&2
+  exit 1
+fi
+video_after="$(sha256sum output/video/final.mp4 | cut -d' ' -f1)"
+short_after="$(sha256sum output/shorts/short_000.mp4 | cut -d' ' -f1)"
+test "$video_before" = "$video_after" || { echo "Previous video changed after failure"; exit 1; }
+test "$short_before" = "$short_after" || { echo "Previous Shorts changed after failure"; exit 1; }
+
+# Failed jobs must release the run lock and allow a clean subsequent run.
+rm inputs/images/003.png
+"$TMP/syncshot"
+test -s output/video/final.mp4
+test -s output/shorts/short_000.mp4
+echo "Failure recovery smoke test passed."
