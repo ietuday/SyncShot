@@ -26,6 +26,7 @@ type Config struct {
 }
 
 func Run(log *utils.Logger, cfg Config) error {
+ if err := cfg.Validate(); err != nil { return fmt.Errorf("invalid configuration: %w", err) }
 
 	workProcessed := filepath.Join(cfg.WorkDir, "processed_images")
 	workSubtitles := filepath.Join(cfg.WorkDir, "subtitles")
@@ -109,17 +110,12 @@ func Run(log *utils.Logger, cfg Config) error {
 		return err
 	}
 
-	// 6) Create Shorts (N clips of 57s or configured seconds) - parallel using worker pool
-	// log.Info("Creating Shorts")
-	// if err := stages.CreateShortsVertical(
-	// 	log,
-	// 	cfg.OutVideoPath,
-	// 	cfg.OutShortsDir,
-	// 	cfg.ClipSeconds,
-	// 	cfg.MaxWorkers,
-	// ); err != nil {
-	// 	return err
-	// }
-
-	return nil
+	// 6) Create vertical Shorts only when requested.
+ if cfg.ClipSeconds > 0 {
+  log.Info("Creating Shorts")
+  if err := stages.CreateShortsVertical(log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers); err != nil {
+   return fmt.Errorf("create shorts: %w", err)
+  }
+ }
+ return nil
 }
