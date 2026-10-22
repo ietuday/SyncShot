@@ -19,7 +19,7 @@ const DefaultFFmpegTimeout = 45 * time.Minute
 func RunFFmpegWithProgress(log *Logger, totalSeconds int, args ...string) error {
  ctx, cancel := context.WithTimeout(context.Background(), DefaultFFmpegTimeout)
  defer cancel()
- return RunFFmpegWithProgressContext(ctx, log, totalSeconds, args...)
+ return RunFFmpegWithRetryContext(ctx, log, totalSeconds, args...)
 }
 
 // RunFFmpegWithProgressContext runs FFmpeg, drains output streams concurrently,
@@ -72,7 +72,7 @@ func RunFFmpegWithProgressContext(ctx context.Context, log *Logger, totalSeconds
  if err := ctx.Err(); err != nil { return fmt.Errorf("ffmpeg interrupted: %w", err) }
  if waitErr != nil {
   log.Error("FFmpeg failed. Recent stderr:\n" + tail.String())
-  return fmt.Errorf("ffmpeg exited: %w", waitErr)
+  return &FFmpegRunError{Cause: waitErr, Stderr: tail.String()}
  }
  if scanErr != nil { return fmt.Errorf("read ffmpeg progress: %w", scanErr) }
  return nil
