@@ -39,7 +39,7 @@ func RenderYouTubeVideoWithOverlays(
 	subscribeOpacity float32,
 	notificationOpacity float32,
 ) error {
- return RenderYouTubeVideoWithOverlaysContext(ctx, log, imagesDir, audio, output, secondsPerImage, fps, subscribePath, notificationPath, subscribeOpacity, notificationOpacity)
+ return RenderYouTubeVideoWithOverlaysContext(context.Background(), log, imagesDir, audio, output, secondsPerImage, fps, subscribePath, notificationPath, subscribeOpacity, notificationOpacity)
 }
 
 func RenderYouTubeVideoWithOverlaysContext(
