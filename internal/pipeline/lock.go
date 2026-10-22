@@ -25,9 +25,16 @@ func acquireRunLock(workDir string) (func() error, error) {
   _ = os.Remove(lockPath)
   return nil, err
  }
+ ownedInfo, statErr := file.Stat()
+ if statErr != nil { _ = file.Close(); _ = os.Remove(lockPath); return nil, statErr }
  if err := file.Close(); err != nil {
   _ = os.Remove(lockPath)
   return nil, err
  }
- return func() error { return os.Remove(lockPath) }, nil
+ return func() error {
+  current, err := os.Lstat(lockPath)
+  if err != nil { return err }
+  if !os.SameFile(ownedInfo,current) { return fmt.Errorf("lock ownership changed; refusing removal: %s",lockPath) }
+  return os.Remove(lockPath)
+ }, nil
 }
