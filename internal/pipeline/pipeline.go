@@ -1,7 +1,8 @@
 package pipeline
 
 import (
-	"fmt"
+	"context"
+ "fmt"
 	"path/filepath"
 
 	"syncshotgo/internal/stages"
@@ -26,6 +27,11 @@ type Config struct {
 }
 
 func Run(log *utils.Logger, cfg Config) error {
+ return RunContext(context.Background(), log, cfg)
+}
+
+func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
+ if err:=ctx.Err(); err!=nil { return err }
  if err := cfg.Validate(); err != nil { return fmt.Errorf("invalid configuration: %w", err) }
 
 	workProcessed := filepath.Join(cfg.WorkDir, "processed_images")
@@ -61,7 +67,8 @@ func Run(log *utils.Logger, cfg Config) error {
 
 	// 3) Process images (resize/letterbox to 1920x1080)
 	log.Info("Processing images")
-	processed, err := stages.ProcessImagesWorkerPool(
+	processed, err := stages.ProcessImagesWorkerPoolContext(
+        ctx,
 		log,
 		images,
 		workProcessed,
@@ -95,7 +102,8 @@ func Run(log *utils.Logger, cfg Config) error {
 
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
-	if err := stages.RenderYouTubeVideoWithOverlays(
+	if err := stages.RenderYouTubeVideoWithOverlaysContext(
+        ctx,
 		log,
 		workProcessed, // ✅ important: use processed_images folder
 		audio,
@@ -113,7 +121,7 @@ func Run(log *utils.Logger, cfg Config) error {
 	// 6) Create vertical Shorts only when requested.
  if cfg.ClipSeconds > 0 {
   log.Info("Creating Shorts")
-  if err := stages.CreateShortsVertical(log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers); err != nil {
+  if err := stages.CreateShortsVerticalWithPanContext(ctx, log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers, false); err != nil {
    return fmt.Errorf("create shorts: %w", err)
   }
  }
