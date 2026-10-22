@@ -1,0 +1,30 @@
+name: Phase 2 cinematic checks
+on:
+  push:
+    branches: [feature/phase2-cinematic-rendering]
+  pull_request:
+    paths:
+      - 'internal/cinematic/**'
+      - 'internal/stages/cinematic.go'
+      - 'internal/pipeline/**'
+      - '.github/workflows/phase2-cinematic.yml'
+jobs:
+  cinematic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Unit and rendering tests
+        run: go test -count=1 ./...
+      - name: Race checks
+        run: go test -race ./internal/cinematic ./internal/pipeline
+      - name: Vet
+        run: go vet ./...
+      - name: Build
+        run: go build ./cmd/syncshot
