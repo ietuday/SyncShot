@@ -2,6 +2,7 @@ package stages
 
 import (
  "os"
+ "fmt"
  "os/exec"
  "path/filepath"
  "testing"
@@ -60,4 +61,26 @@ func TestRecoverInterruptedPairPublication(t *testing.T){
  if err:=RecoverVideoShortsPublication(video,shorts);err!=nil{t.Fatal(err)}
  b,err:=os.ReadFile(video);if err!=nil||string(b)!="previous video"{t.Fatal("video not restored")}
  b,err=os.ReadFile(filepath.Join(shorts,"previous"));if err!=nil||string(b)!="previous shorts"{t.Fatal("Shorts not restored")}
+}
+
+func TestRenameFailureRollsBackBothOutputs(t *testing.T){
+ root:=t.TempDir()
+ video:=filepath.Join(root,"final.mp4")
+ shorts:=filepath.Join(root,"shorts")
+ stagedVideo:=filepath.Join(root,"staged.mp4")
+ stagedShorts:=filepath.Join(root,"staged-shorts")
+ if err:=os.Mkdir(shorts,0755);err!=nil{t.Fatal(err)}
+ if err:=os.Mkdir(stagedShorts,0755);err!=nil{t.Fatal(err)}
+ if err:=os.WriteFile(video,[]byte("old video"),0600);err!=nil{t.Fatal(err)}
+ if err:=os.WriteFile(filepath.Join(shorts,"old"),[]byte("old shorts"),0600);err!=nil{t.Fatal(err)}
+ testMP4(t,stagedVideo)
+ testMP4(t,filepath.Join(stagedShorts,"short_000.mp4"))
+ rename:=func(from,to string)error{
+  if from==stagedShorts&&to==shorts{return fmt.Errorf("injected Shorts publish failure")}
+  return os.Rename(from,to)
+ }
+ if err:=publishVideoAndShortsWithRename(stagedVideo,video,stagedShorts,shorts,rename);err==nil{t.Fatal("expected injected failure")}
+ b,err:=os.ReadFile(video);if err!=nil||string(b)!="old video"{t.Fatal("video rollback failed")}
+ b,err=os.ReadFile(filepath.Join(shorts,"old"));if err!=nil||string(b)!="old shorts"{t.Fatal("Shorts rollback failed")}
+ if _,err:=os.Stat(journalPath(video));!os.IsNotExist(err){t.Fatalf("transaction journal remains: %v",err)}
 }
