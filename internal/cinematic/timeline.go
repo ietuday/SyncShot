@@ -91,7 +91,7 @@ func (t Timeline) BuildFilter() (string,string,error) {
   var filter string
   switch motion {
   case Static:
-   filter=fmt.Sprintf("[%d:v]fps=%d,scale=%d:%d:force_original_aspect_ratio=decrease,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1,trim=end_frame=%d,setpts=PTS-STARTPTS,format=yuv420p[s%d]",i,t.FPS,w,h,w,h,frames,i)
+   filter=fmt.Sprintf("[%d:v]fps=%d,scale=%d:%d:force_original_aspect_ratio=decrease,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1,trim=end_frame=%d,setpts=PTS-STARTPTS,fps=%d,format=yuv420p[s%d]",i,t.FPS,w,h,w,h,frames,t.FPS,i)
   default:
    // Crop from an oversized, letterboxed canvas. All expressions are generated
    // from known enum values and integer dimensions; no user-supplied filter text.
