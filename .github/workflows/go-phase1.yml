@@ -13,6 +13,8 @@ on:
 jobs:
   go:
     runs-on: ubuntu-24.04
+    container:
+      image: jrottenberg/ffmpeg:7.1-ubuntu2404
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -20,14 +22,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - name: Ensure FFmpeg
-        timeout-minutes: 5
+      - name: Verify bundled FFmpeg
         run: |
-          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ffmpeg
-          fi
-          command -v ffmpeg
-          command -v ffprobe
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
       - name: Unit tests
