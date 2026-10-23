@@ -95,14 +95,14 @@ func (t Timeline) BuildFilter() (string,string,error) {
   default:
    // Crop from an oversized, letterboxed canvas. All expressions are generated
    // from known enum values and integer dimensions; no user-supplied filter text.
-   sw,sh:=int(math.Ceil(float64(w)*1.12)),int(math.Ceil(float64(h)*1.12))
+   sw,sh:=2*int(math.Ceil(float64(w)*1.12/2)),2*int(math.Ceil(float64(h)*1.12/2))
    x,y,z:="(iw-iw/zoom)/2","(ih-ih/zoom)/2","min(zoom+0.0004,1.10)"
    switch motion {
    case ZoomOut: z="max(1.10-on*0.0004,1.0)"
    case PanLeft: z="1.10";x="(iw-iw/zoom)*(1-min(on/"+fmt.Sprintf("%d",max(1,frames-1))+",1))"
    case PanRight: z="1.10";x="(iw-iw/zoom)*min(on/"+fmt.Sprintf("%d",max(1,frames-1))+",1)"
    }
-   filter=fmt.Sprintf("[%d:v]scale=%d:%d:force_original_aspect_ratio=decrease,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,zoompan=z='%s':x='%s':y='%s':d=1:s=%dx%d:fps=%d,trim=end_frame=%d,setpts=PTS-STARTPTS,format=yuv420p[s%d]",i,sw,sh,sw,sh,z,x,y,w,h,t.FPS,frames,i)
+   filter=fmt.Sprintf("[%d:v]scale=%d:%d:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,zoompan=z='%s':x='%s':y='%s':d=1:s=%dx%d:fps=%d,trim=end_frame=%d,setpts=PTS-STARTPTS,format=yuv420p[s%d]",i,sw,sh,sw,sh,z,x,y,w,h,t.FPS,frames,i)
   }
   parts=append(parts,filter)
   if i==0 {
