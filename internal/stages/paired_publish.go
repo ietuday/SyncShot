@@ -52,7 +52,12 @@ func RecoverVideoShortsPublication(video,shorts string) error {
 // PublishVideoAndShorts stages both outputs before replacing either of them.
 // On errors and interrupted writes, the journal supports rolling back to the
 // last paired outputs. Do not run concurrently for the same destinations.
-func PublishVideoAndShorts(stageVideo,video,stageShorts,shorts string) (err error) {
+func PublishVideoAndShorts(stageVideo,video,stageShorts,shorts string) error {
+ return publishVideoAndShortsWithRename(stageVideo,video,stageShorts,shorts,os.Rename)
+}
+
+// rename is injectable for deterministic rollback and failure-injection tests.
+func publishVideoAndShortsWithRename(stageVideo,video,stageShorts,shorts string,rename func(string,string)error) (err error) {
  if filepath.Clean(video)==filepath.Clean(shorts) {return fmt.Errorf("video and Shorts destinations collide")}
  for _,item:=range []struct{src,dst string}{{stageVideo,video},{stageShorts,shorts}}{
   a,e:=filepath.Abs(filepath.Dir(item.src));if e!=nil{return e}
@@ -84,9 +89,9 @@ func PublishVideoAndShorts(stageVideo,video,stageShorts,shorts string) (err erro
  }()
  for _,item:=range []struct{src,dst string;had bool}{{stageVideo,video,j.VideoHad},{stageShorts,shorts,j.ShortsHad}}{
   if item.had {
-   if err:=os.Rename(item.dst,item.dst+".syncshot-transaction-backup");err!=nil{return err}
+   if err:=rename(item.dst,item.dst+".syncshot-transaction-backup");err!=nil{return err}
   }
-  if err:=os.Rename(item.src,item.dst);err!=nil{return err}
+  if err:=rename(item.src,item.dst);err!=nil{return err}
  }
  // Both outputs are published. Removing the journal commits this pair.
  // Backups remain until commit so failure before this point can roll back.
