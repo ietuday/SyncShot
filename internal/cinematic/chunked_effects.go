@@ -120,7 +120,13 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
   filter+=";[narrmix][ducked]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[aout]"
   audioMap="[aout]"
  }
- final:=filepath.Join(dir,"final.mp4")
+ // Stage beside destination to satisfy the production publisher's
+ // same-directory rename and rollback requirements.
+ stagedFile,err:=os.CreateTemp(filepath.Dir(output),".cinematic-final-*.mp4")
+ if err!=nil{return err}
+ final:=stagedFile.Name()
+ if err:=stagedFile.Close();err!=nil{os.Remove(final);return err}
+ defer os.Remove(final)
  args=append(args,"-filter_complex",filter,"-map",videoLabel,"-map",audioMap,
   "-t",strconv.FormatFloat(t.Duration(),'f',6,64),
   "-c:v","libx264","-pix_fmt","yuv420p","-r",strconv.Itoa(t.FPS),
