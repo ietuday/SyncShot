@@ -11,6 +11,11 @@ func (c Config) Validate() error {
  for name, val := range map[string]string{"audio directory": c.AudioDir, "images directory":c.ImagesDir, "output video":c.OutVideoPath, "work directory":c.WorkDir} {
   if val == "" { return fmt.Errorf("%s is required", name) }
  }
+ if c.MusicPath!="" {
+  if !c.CinematicEnabled {return fmt.Errorf("background music requires cinematic mode")}
+  if math.IsNaN(c.MusicVolume)||math.IsInf(c.MusicVolume,0)||c.MusicVolume<=0||c.MusicVolume>1 {return fmt.Errorf("music volume must be >0 and <=1")}
+  if math.IsNaN(c.MusicFadeSeconds)||math.IsInf(c.MusicFadeSeconds,0)||c.MusicFadeSeconds<0 {return fmt.Errorf("music fade must be finite and nonnegative")}
+ } else if c.MusicVolume!=0 || c.MusicFadeSeconds!=0 || c.MusicDucking {return fmt.Errorf("music options require MusicPath")}
  if c.SubtitleMode!="" && c.SubtitleMode!="import" && c.SubtitleMode!="whisper" {return fmt.Errorf("invalid subtitle mode %q",c.SubtitleMode)}
  if c.SubtitleMode=="import" && c.SubtitleSRTPath=="" {return fmt.Errorf("subtitle import requires SubtitleSRTPath")}
  if c.SubtitleMode=="whisper" && c.SubtitleSRTPath!="" {return fmt.Errorf("whisper mode cannot use SubtitleSRTPath")}
