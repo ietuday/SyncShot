@@ -37,3 +37,21 @@ func TestAutoSceneSecondsValidation(t *testing.T) {
   if err:=cfg.Validate();err!=nil {t.Errorf("rejected valid scene seconds %v: %v",value,err)}
  }
 }
+
+func TestPreviewAndRenderProfiles(t *testing.T) {
+ c:=validConfig(t)
+ c.CinematicEnabled=true
+ c.PreviewSeconds=15
+ c.RenderProfile="720p"
+ if err:=c.Validate();err!=nil {t.Fatalf("valid preview: %v",err)}
+ for _,profile:=range []string{"4k","480p"} {
+  bad:=c;bad.RenderProfile=profile
+  if err:=bad.Validate();err==nil{t.Errorf("accepted %s",profile)}
+ }
+ bad:=c;bad.PreviewSeconds=-1
+ if err:=bad.Validate();err==nil{t.Fatal("negative preview accepted")}
+ bad=c;bad.CinematicTimelinePath="scene.json"
+ if err:=bad.Validate();err==nil{t.Fatal("preview of manual timeline accepted")}
+ bad=c;bad.CinematicEnabled=false
+ if err:=bad.Validate();err==nil{t.Fatal("non-cinematic preview accepted")}
+}
