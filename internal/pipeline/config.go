@@ -14,8 +14,7 @@ func (c Config) Validate() error {
  if c.CinematicChunkScenes<0 {return fmt.Errorf("cinematic chunk size must not be negative")}
  if c.CinematicChunkScenes>0 {
   if !c.CinematicEnabled||c.CinematicTimelinePath!="" {return fmt.Errorf("chunked rendering requires automatic cinematic mode")}
-  if c.CinematicCrossfade!=0 {return fmt.Errorf("chunked rendering currently requires zero crossfade")}
-  if c.MusicPath!=""||c.SubtitleMode!=""||c.SubtitleSRTPath!=""||c.AddSubscribeButton||c.AddNotificationBell {return fmt.Errorf("chunked rendering currently does not support music, subtitles or image overlays")}
+  // Full-duration effects are added after visual chunks have been stitched.
  }
  if c.MusicPath!="" {
   if !c.CinematicEnabled {return fmt.Errorf("background music requires cinematic mode")}

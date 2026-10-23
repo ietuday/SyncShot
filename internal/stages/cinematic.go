@@ -45,7 +45,7 @@ func RenderCinematicChunkedProfile(ctx context.Context,log *utils.Logger,imagesD
  if err!=nil {return err}
  log.Info(fmt.Sprintf("Scene plan: %d scene(s) from %d image(s), narration %.2fs, planned %.2fs, fade %.2fs",len(timeline.Scenes),len(images),duration,timeline.Duration(),fade))
  if err:=recoverPublishedPath(output);err!=nil {return err}
- if chunkScenes>0 {return cinematic.RenderChunked(ctx,log,timeline,audio,output,chunkScenes,promoteVideo)}
+ if chunkScenes>0 {return cinematic.RenderChunkedEffects(ctx,log,timeline,audio,output,chunkScenes,overlays,promoteVideo)}
  return cinematic.RenderWithOverlays(ctx,log,timeline,audio,output,overlays,promoteVideo)
 }
 
