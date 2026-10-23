@@ -23,14 +23,17 @@ func main() {
 		FPS:                 24,
 		SecondsPerImage:     3.0,
 		ClipSeconds:         50,
-		MaxWorkers:          8,
+		MaxWorkers:          4,
+		CinematicEnabled:   true,
+		CinematicCrossfade: 0.5,
+		CinematicMotion:    "zoom_in",
 		AddSubscribeButton:  true,
 		AddNotificationBell: true,
 		SubscribeOpacity:    0.8,
 		NotificationOpacity: 0.8,
 	}
 
-	log.Info("Starting SyncShot-Go")
+	log.Info("Starting SyncShot-Go — Cinematic Mode")
 	// Do not delete successful output files before validating the inputs.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
  defer stop()
