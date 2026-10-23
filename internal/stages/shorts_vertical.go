@@ -97,6 +97,7 @@ func CreateSmartShortsContext(ctx context.Context, log *utils.Logger, video,outD
 				// Map filtered video + audio
 				"-map", "[v]",
 				"-map", "0:a:0?",
+                "-map", "0:s?",
 
 				// Encode with optimized settings
 				"-c:v", "libx264",
@@ -104,6 +105,7 @@ func CreateSmartShortsContext(ctx context.Context, log *utils.Logger, video,outD
 				"-pix_fmt", "yuv420p",
 				"-c:a", "aac",
 				"-b:a", "160k",
+                "-c:s", "mov_text",
 
 				// Progress
 				"-progress", "pipe:1",
