@@ -6,10 +6,15 @@ import (
 	"path/filepath"
 
 	"syncshotgo/internal/stages"
+ "syncshotgo/internal/cinematic"
 	"syncshotgo/internal/utils"
 )
 
 type Config struct {
+ CinematicEnabled bool
+ CinematicTimelinePath string
+ CinematicCrossfade float64
+ CinematicMotion cinematic.Motion
 	AudioDir        string
 	ImagesDir       string
 	OutVideoPath    string
@@ -105,7 +110,21 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
-	if err := stages.RenderYouTubeVideoWithOverlaysContext(
+ if cfg.CinematicEnabled {
+  cinematicOverlays := cinematic.Overlays{SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
+  if cfg.AddSubscribeButton { cinematicOverlays.SubscribePath=subscribePath }
+  if cfg.AddNotificationBell { cinematicOverlays.NotificationPath=notificationPath }
+  var cinematicErr error
+  if cfg.CinematicTimelinePath != "" {
+   cinematicErr = stages.RenderCinematicTimelineWithOverlays(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath,cinematicOverlays)
+  } else {
+   cinematicErr = stages.RenderCinematicWithOverlays(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cinematicOverlays)
+  }
+  if err := cinematicErr; err != nil {
+   return fmt.Errorf("cinematic rendering: %w", err)
+  }
+ } else {
+ 	if err := stages.RenderYouTubeVideoWithOverlaysContext(
         ctx,
 		log,
 		workProcessed, // ✅ important: use processed_images folder
@@ -120,6 +139,8 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	); err != nil {
 		return err
 	}
+
+ }
 
 	// 6) Create vertical Shorts only when requested.
  if cfg.ClipSeconds > 0 {

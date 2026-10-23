@@ -1,0 +1,46 @@
+name: Phase 2 cinematic checks
+on:
+  push:
+    branches: [feature/phase2-cinematic-rendering]
+  pull_request:
+    paths:
+      - 'internal/cinematic/**'
+      - 'internal/stages/cinematic.go'
+      - 'internal/pipeline/**'
+      - '.github/workflows/phase2-cinematic.yml'
+jobs:
+  cinematic:
+    runs-on: ubuntu-24.04
+    container:
+      image: jrottenberg/ffmpeg:7.1-ubuntu2404
+      volumes:
+        - /etc/ssl/certs:/etc/ssl/certs:ro
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Verify bundled FFmpeg
+        run: |
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+      - name: Unit and rendering tests
+        run: go test -count=1 ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Build
+        run: go build ./cmd/syncshot
+
+  race:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Race detector (without FFmpeg integration)
+        run: go test -short -race ./...
