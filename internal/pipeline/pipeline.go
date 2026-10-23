@@ -91,10 +91,10 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	}
 	log.Info(fmt.Sprintf("Processed %d images into %s", len(processed), workProcessed))
 
-	// 4) Subtitles (placeholder)
-	srtPath := filepath.Join(workSubtitles, "captions.srt")
-	if err := stages.GeneratePlaceholderSRT(srtPath); err != nil {
-		return err
+	// 4) Prepare optional, validated subtitles.
+	subtitlePath, err := subtitles.Prepare(ctx, audio, cfg.SubtitleSRTPath, cfg.SubtitleMode, workSubtitles)
+	if err != nil {
+		return fmt.Errorf("prepare subtitles: %w", err)
 	}
 
 	// 4.5) Prepare overlays if enabled
