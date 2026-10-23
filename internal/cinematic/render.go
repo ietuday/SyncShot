@@ -19,7 +19,7 @@ func Render(ctx context.Context, log *utils.Logger, timeline Timeline, audio, ou
 }
 
 // Overlays contains optional static images for cinematic compositing.
-type Overlays struct { SubtitlePath string; SubscribePath string; NotificationPath string; SubscribeOpacity float32; NotificationOpacity float32 }
+type Overlays struct { MusicPath string; MusicVolume float64; MusicFadeSeconds float64; MusicDucking bool; SubtitlePath string; SubscribePath string; NotificationPath string; SubscribeOpacity float32; NotificationOpacity float32 }
 
 func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timeline, audio, output string, overlays Overlays, publish func(string,string)error) error {
  if err:=timeline.Validate();err!=nil {return err}
@@ -52,6 +52,15 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   subtitleIndex=len(timeline.Scenes)+1+len(overlaySteps)
   args=append(args,"-i",overlays.SubtitlePath)
  }
+ musicIndex:=-1
+ if overlays.MusicPath!="" {
+  if _,err:=os.Stat(overlays.MusicPath);err!=nil{return fmt.Errorf("music file: %w",err)}
+  if math.IsNaN(overlays.MusicVolume) || math.IsInf(overlays.MusicVolume,0) || overlays.MusicVolume<=0 || overlays.MusicVolume>1 {return fmt.Errorf("music volume must be >0 and <=1")}
+  if math.IsNaN(overlays.MusicFadeSeconds) || math.IsInf(overlays.MusicFadeSeconds,0) || overlays.MusicFadeSeconds<0 || overlays.MusicFadeSeconds>timeline.Duration() {return fmt.Errorf("music fade must be between zero and video duration")}
+  musicIndex=len(timeline.Scenes)+1+len(overlaySteps)
+  if subtitleIndex>=0 {musicIndex++}
+  args=append(args,"-stream_loop","-1","-i",overlays.MusicPath)
+ }
  for i,o:=range overlaySteps {
   inputIndex:=len(timeline.Scenes)+1+i
   alpha:=math.Max(0,math.Min(1,float64(o.opacity)))
@@ -60,8 +69,27 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   filter+=fmt.Sprintf(";[%d:v]scale=%d:%d,format=rgba,colorchannelmixer=aa=%.3f[graphic%d];%s[graphic%d]overlay=x=%s:y=%s:shortest=1%s",inputIndex,o.width,o.height,alpha,i,previous,i,overlayX(o.x),overlayY(o.y),next)
   label=next
  }
+ audioLabel:=fmt.Sprintf("%d:a:0",len(timeline.Scenes))
+ if musicIndex>=0 {
+  // Narration remains primary; music is limited and ducked whenever speech is present.
+  musicFilter:=fmt.Sprintf("[%d:a:0]aresample=48000,volume=%.4f",musicIndex,overlays.MusicVolume)
+  if overlays.MusicFadeSeconds>0 {
+   musicFilter+=fmt.Sprintf(",afade=t=in:st=0:d=%.3f,afade=t=out:st=%.3f:d=%.3f",overlays.MusicFadeSeconds,math.Max(0,timeline.Duration()-overlays.MusicFadeSeconds),overlays.MusicFadeSeconds)
+  }
+  filter+=";"+musicFilter+"[musicbed]"
+  filter+=fmt.Sprintf(";[%s]aresample=48000,asplit=2[narrmix][narrkey]",audioLabel)
+  if overlays.MusicDucking {
+   filter+=";[musicbed][narrkey]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=300[ducked]"
+  } else {
+   filter+=";[musicbed]anull[ducked]"
+  }
+  filter+=";[narrmix][ducked]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[aout]"
+  audioLabel="aout"
+ }
+ audioMap:=audioLabel
+ if musicIndex<0 {audioMap=audioLabel} else {audioMap="["+audioLabel+"]"}
  args=append(args,"-filter_complex",filter,
-  "-map",label,"-map",fmt.Sprintf("%d:a:0",len(timeline.Scenes)),
+  "-map",label,"-map",audioMap,
   "-t",strconv.FormatFloat(timeline.Duration(),'f',6,64),
   "-c:v","libx264","-pix_fmt","yuv420p","-r",strconv.Itoa(timeline.FPS),
   "-c:a","aac","-b:a","192k","-movflags","+faststart",
