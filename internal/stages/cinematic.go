@@ -25,6 +25,11 @@ func RenderCinematicAutoWithOverlays(ctx context.Context,log *utils.Logger,image
 }
 
 func RenderCinematicProfileWithOverlays(ctx context.Context,log *utils.Logger,imagesDir,audio,output string,fps int,fade float64,motion cinematic.Motion,targetSceneSeconds float64,width,height int,overlays cinematic.Overlays) error {
+ return RenderCinematicChunkedProfile(ctx,log,imagesDir,audio,output,fps,fade,motion,targetSceneSeconds,width,height,overlays,0)
+}
+
+// RenderCinematicChunkedProfile opts into bounded scene groups when chunkScenes > 0.
+func RenderCinematicChunkedProfile(ctx context.Context,log *utils.Logger,imagesDir,audio,output string,fps int,fade float64,motion cinematic.Motion,targetSceneSeconds float64,width,height int,overlays cinematic.Overlays,chunkScenes int) error {
  images,err:=filepath.Glob(filepath.Join(imagesDir,"*.jpg"))
  if err!=nil {return err}
  sort.Strings(images)
@@ -40,6 +45,7 @@ func RenderCinematicProfileWithOverlays(ctx context.Context,log *utils.Logger,im
  if err!=nil {return err}
  log.Info(fmt.Sprintf("Scene plan: %d scene(s) from %d image(s), narration %.2fs, planned %.2fs, fade %.2fs",len(timeline.Scenes),len(images),duration,timeline.Duration(),fade))
  if err:=recoverPublishedPath(output);err!=nil {return err}
+ if chunkScenes>0 {return cinematic.RenderChunked(ctx,log,timeline,audio,output,chunkScenes,promoteVideo)}
  return cinematic.RenderWithOverlays(ctx,log,timeline,audio,output,overlays,promoteVideo)
 }
 
