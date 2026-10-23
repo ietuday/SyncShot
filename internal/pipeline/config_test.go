@@ -2,6 +2,7 @@ package pipeline
 
 import (
  "os"
+ "math"
  "testing"
 )
 
@@ -22,4 +23,17 @@ func TestConfigValidation(t *testing.T) {
  cfg=validConfig(t)
  if err:=os.Remove(cfg.AudioDir); err!=nil { t.Fatal(err) }
  if err:=cfg.Validate(); err==nil { t.Fatal("expected missing audio directory error") }
+}
+
+func TestAutoSceneSecondsValidation(t *testing.T) {
+ for _, value := range []float64{-1, math.NaN(), math.Inf(1), math.Inf(-1)} {
+  cfg:=validConfig(t)
+  cfg.CinematicAutoSceneSeconds=value
+  if err:=cfg.Validate();err==nil {t.Errorf("accepted invalid scene seconds: %v",value)}
+ }
+ for _, value := range []float64{0,30,90} {
+  cfg:=validConfig(t)
+  cfg.CinematicAutoSceneSeconds=value
+  if err:=cfg.Validate();err!=nil {t.Errorf("rejected valid scene seconds %v: %v",value,err)}
+ }
 }
