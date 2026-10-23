@@ -13,6 +13,7 @@ import (
 )
 
 type Config struct {
+ CinematicChunkScenes int
  PreviewSeconds int
  RenderProfile string
  SmartShortsEnabled bool
@@ -143,7 +144,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
   } else {
    width,height:=1920,1080
    if cfg.RenderProfile=="720p" {width,height=1280,720}
-   cinematicErr = stages.RenderCinematicProfileWithOverlays(ctx, log, workProcessed, audio, renderOutput, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cfg.CinematicAutoSceneSeconds,width,height,cinematicOverlays)
+   cinematicErr = stages.RenderCinematicChunkedProfile(ctx, log, workProcessed, audio, renderOutput, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cfg.CinematicAutoSceneSeconds,width,height,cinematicOverlays,cfg.CinematicChunkScenes)
   }
   if err := cinematicErr; err != nil {
    return fmt.Errorf("cinematic rendering: %w", err)
