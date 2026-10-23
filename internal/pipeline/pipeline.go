@@ -7,10 +7,13 @@ import (
 
 	"syncshotgo/internal/stages"
  "syncshotgo/internal/cinematic"
+ "syncshotgo/internal/subtitles"
 	"syncshotgo/internal/utils"
 )
 
 type Config struct {
+ SubtitleMode string
+ SubtitleSRTPath string
  CinematicEnabled bool
  CinematicTimelinePath string
  CinematicCrossfade float64
@@ -88,10 +91,10 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	}
 	log.Info(fmt.Sprintf("Processed %d images into %s", len(processed), workProcessed))
 
-	// 4) Subtitles (placeholder)
-	srtPath := filepath.Join(workSubtitles, "captions.srt")
-	if err := stages.GeneratePlaceholderSRT(srtPath); err != nil {
-		return err
+	// 4) Prepare optional, validated subtitles.
+	subtitlePath, err := subtitles.Prepare(ctx, audio, cfg.SubtitleSRTPath, cfg.SubtitleMode, workSubtitles)
+	if err != nil {
+		return fmt.Errorf("prepare subtitles: %w", err)
 	}
 
 	// 4.5) Prepare overlays if enabled
@@ -112,7 +115,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
  if cfg.CinematicEnabled {
-  cinematicOverlays := cinematic.Overlays{SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
+  cinematicOverlays := cinematic.Overlays{SubtitlePath:subtitlePath,SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
   if cfg.AddSubscribeButton { cinematicOverlays.SubscribePath=subscribePath }
   if cfg.AddNotificationBell { cinematicOverlays.NotificationPath=notificationPath }
   var cinematicErr error
@@ -125,6 +128,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
    return fmt.Errorf("cinematic rendering: %w", err)
   }
  } else {
+  if subtitlePath!="" {return fmt.Errorf("subtitles currently require cinematic rendering")}
  	if err := stages.RenderYouTubeVideoWithOverlaysContext(
         ctx,
 		log,

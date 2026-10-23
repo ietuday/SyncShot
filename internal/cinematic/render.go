@@ -19,7 +19,7 @@ func Render(ctx context.Context, log *utils.Logger, timeline Timeline, audio, ou
 }
 
 // Overlays contains optional static images for cinematic compositing.
-type Overlays struct { SubscribePath string; NotificationPath string; SubscribeOpacity float32; NotificationOpacity float32 }
+type Overlays struct { SubtitlePath string; SubscribePath string; NotificationPath string; SubscribeOpacity float32; NotificationOpacity float32 }
 
 func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timeline, audio, output string, overlays Overlays, publish func(string,string)error) error {
  if err:=timeline.Validate();err!=nil {return err}
@@ -46,6 +46,12 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   if _,err:=os.Stat(o.path);err!=nil {return fmt.Errorf("overlay image %s: %w",o.path,err)}
   args=append(args,"-loop","1","-framerate",strconv.Itoa(timeline.FPS),"-i",o.path)
  }
+ subtitleIndex:=-1
+ if overlays.SubtitlePath!="" {
+  if _,err:=os.Stat(overlays.SubtitlePath);err!=nil{return fmt.Errorf("subtitle SRT: %w",err)}
+  subtitleIndex=len(timeline.Scenes)+1+len(overlaySteps)
+  args=append(args,"-i",overlays.SubtitlePath)
+ }
  for i,o:=range overlaySteps {
   inputIndex:=len(timeline.Scenes)+1+i
   alpha:=math.Max(0,math.Min(1,float64(o.opacity)))
@@ -59,7 +65,11 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   "-t",strconv.FormatFloat(timeline.Duration(),'f',6,64),
   "-c:v","libx264","-pix_fmt","yuv420p","-r",strconv.Itoa(timeline.FPS),
   "-c:a","aac","-b:a","192k","-movflags","+faststart",
-  "-progress","pipe:1","-nostats",staged)
+  "-progress","pipe:1","-nostats")
+ if subtitleIndex>=0 {
+  args=append(args,"-map",fmt.Sprintf("%d:0",subtitleIndex),"-c:s","mov_text","-metadata:s:s:0","language=und")
+ }
+ args=append(args,staged)
  if err:=utils.RunFFmpegWithRetryContext(ctx,log,int(timeline.Duration()),args...);err!=nil {return fmt.Errorf("cinematic rendering: %w",err)}
  if err:=ctx.Err();err!=nil {return err}
  info,err:=os.Stat(staged)
