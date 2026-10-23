@@ -72,7 +72,20 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	if err != nil {
 		return err
 	}
+ // Recover any interrupted paired publication before preparing new artifacts.
+ paired:=cfg.ClipSeconds>0 && cfg.PreviewSeconds==0
+ if paired {
+  if err:=stages.RecoverVideoShortsPublication(cfg.OutVideoPath,cfg.OutShortsDir);err!=nil{return fmt.Errorf("recover outputs: %w",err)}
+ }
  renderOutput:=cfg.OutVideoPath
+ if paired {
+  stage,err:=os.CreateTemp(filepath.Dir(cfg.OutVideoPath),".syncshot-video-stage-*.mp4")
+  if err!=nil{return err}
+  renderOutput=stage.Name()
+  if err:=stage.Close();err!=nil{os.Remove(renderOutput);return err}
+  os.Remove(renderOutput)
+  defer os.Remove(renderOutput)
+ }
  if cfg.PreviewSeconds>0 {
   renderOutput=filepath.Join(filepath.Dir(cfg.OutVideoPath),"preview.mp4")
   if filepath.Clean(renderOutput)==filepath.Clean(cfg.OutVideoPath) {return fmt.Errorf("preview output must differ from final video")}
@@ -174,9 +187,16 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
   if cfg.SmartShortsEnabled {
    if cfg.CinematicTimelinePath=="" {sceneSeconds=cfg.CinematicAutoSceneSeconds}
   }
-  if err := stages.CreateSmartShortsContext(ctx, log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers, sceneSeconds, cropMode); err != nil {
-   return fmt.Errorf("create shorts: %w", err)
+  parent:=filepath.Dir(cfg.OutShortsDir)
+  stagedShorts,err:=os.MkdirTemp(parent,".syncshot-shorts-stage-*")
+  if err!=nil{return err}
+  if err:=os.Remove(stagedShorts);err!=nil{return err}
+  defer os.RemoveAll(stagedShorts)
+  if err:=stages.CreateSmartShortsContext(ctx, log, renderOutput, stagedShorts, cfg.ClipSeconds, cfg.MaxWorkers, sceneSeconds, cropMode);err!=nil{
+   return fmt.Errorf("create Shorts before publication: %w",err)
   }
+  if err:=ctx.Err();err!=nil{return err}
+  if err:=stages.PublishVideoAndShorts(renderOutput,cfg.OutVideoPath,stagedShorts,cfg.OutShortsDir);err!=nil{return fmt.Errorf("publish video and Shorts: %w",err)}
  }
  return nil
 }
