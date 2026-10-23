@@ -12,6 +12,8 @@ import (
 )
 
 type Config struct {
+ SmartShortsEnabled bool
+ SmartShortsCrop string
  MusicPath string
  MusicVolume float64
  MusicFadeSeconds float64
@@ -154,7 +156,12 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	// 6) Create vertical Shorts only when requested.
  if cfg.ClipSeconds > 0 {
   log.Info("Creating Shorts")
-  if err := stages.CreateShortsVerticalWithPanContext(ctx, log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers, false); err != nil {
+  cropMode:=cfg.SmartShortsCrop
+  sceneSeconds:=0.0
+  if cfg.SmartShortsEnabled {
+   if cfg.CinematicTimelinePath=="" {sceneSeconds=cfg.CinematicAutoSceneSeconds}
+  }
+  if err := stages.CreateSmartShortsContext(ctx, log, cfg.OutVideoPath, cfg.OutShortsDir, cfg.ClipSeconds, cfg.MaxWorkers, sceneSeconds, cropMode); err != nil {
    return fmt.Errorf("create shorts: %w", err)
   }
  }
