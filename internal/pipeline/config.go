@@ -20,6 +20,7 @@ func (c Config) Validate() error {
  if c.SubtitleMode=="import" && c.SubtitleSRTPath=="" {return fmt.Errorf("subtitle import requires SubtitleSRTPath")}
  if c.SubtitleMode=="whisper" && c.SubtitleSRTPath!="" {return fmt.Errorf("whisper mode cannot use SubtitleSRTPath")}
  if (c.SubtitleMode!="" || c.SubtitleSRTPath!="") && !c.CinematicEnabled {return fmt.Errorf("subtitles require cinematic rendering")}
+ if c.SmartShortsCrop!="" && c.SmartShortsCrop!="center" && c.SmartShortsCrop!="left" && c.SmartShortsCrop!="right" && c.SmartShortsCrop!="pan" {return fmt.Errorf("invalid smart Shorts crop mode %q",c.SmartShortsCrop)}
  if c.FPS <= 0 || c.FPS > 120 { return fmt.Errorf("FPS must be 1..120") }
  if math.IsNaN(c.SecondsPerImage) || math.IsInf(c.SecondsPerImage, 0) || c.SecondsPerImage <= 0 { return fmt.Errorf("seconds per image must be finite and positive") }
  if math.IsNaN(c.CinematicAutoSceneSeconds) || math.IsInf(c.CinematicAutoSceneSeconds, 0) || c.CinematicAutoSceneSeconds < 0 { return fmt.Errorf("cinematic auto scene seconds must be finite and nonnegative") }
