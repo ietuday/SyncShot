@@ -27,6 +27,7 @@ func main() {
 		CinematicEnabled:   true,
 		CinematicCrossfade: 0.5,
 		CinematicMotion:    "zoom_in",
+        CinematicAutoSceneSeconds: 30,
 		AddSubscribeButton:  false,
 		AddNotificationBell: false,
 		SubscribeOpacity:    0.8,

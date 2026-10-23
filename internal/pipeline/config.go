@@ -13,6 +13,7 @@ func (c Config) Validate() error {
  }
  if c.FPS <= 0 || c.FPS > 120 { return fmt.Errorf("FPS must be 1..120") }
  if math.IsNaN(c.SecondsPerImage) || math.IsInf(c.SecondsPerImage, 0) || c.SecondsPerImage <= 0 { return fmt.Errorf("seconds per image must be finite and positive") }
+ if math.IsNaN(c.CinematicAutoSceneSeconds) || math.IsInf(c.CinematicAutoSceneSeconds, 0) || c.CinematicAutoSceneSeconds < 0 { return fmt.Errorf("cinematic auto scene seconds must be finite and nonnegative") }
  if c.MaxWorkers <= 0 { return fmt.Errorf("max workers must be positive") }
  if c.SubscribeOpacity < 0 || c.SubscribeOpacity > 1 || c.NotificationOpacity < 0 || c.NotificationOpacity > 1 { return fmt.Errorf("overlay opacity must be 0..1") }
  if c.ClipSeconds < 0 { return fmt.Errorf("clip seconds cannot be negative") }
