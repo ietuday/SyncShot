@@ -74,6 +74,16 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	if err != nil {
 		return err
 	}
+ renderOutput:=cfg.OutVideoPath
+ if cfg.PreviewSeconds>0 {
+  renderOutput=filepath.Join(filepath.Dir(cfg.OutVideoPath),"preview.mp4")
+  if filepath.Clean(renderOutput)==filepath.Clean(cfg.OutVideoPath) {return fmt.Errorf("preview output must differ from final video")}
+  clipped:=filepath.Join(cfg.WorkDir,"preview-audio.wav")
+  if err:=stages.TrimPreviewAudio(ctx,audio,clipped,cfg.PreviewSeconds);err!=nil{return fmt.Errorf("prepare preview: %w",err)}
+  defer os.Remove(clipped)
+  audio=clipped
+  log.Info(fmt.Sprintf("Preview: %ds to %s",cfg.PreviewSeconds,renderOutput))
+ }
 
 	// 2) Scan images
 	log.Info("Scanning images")
