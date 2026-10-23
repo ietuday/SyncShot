@@ -12,6 +12,7 @@ import (
 
 type Config struct {
  CinematicEnabled bool
+ CinematicTimelinePath string
  CinematicCrossfade float64
  CinematicMotion cinematic.Motion
 	AudioDir        string
@@ -111,7 +112,13 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	log.Info("Creating YouTube video")
  if cfg.CinematicEnabled {
   if cfg.AddSubscribeButton || cfg.AddNotificationBell { log.Warn("Cinematic mode currently renders without subscribe/bell overlays") }
-  if err := stages.RenderCinematic(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion); err != nil {
+  var cinematicErr error
+  if cfg.CinematicTimelinePath != "" {
+   cinematicErr = stages.RenderCinematicTimeline(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath)
+  } else {
+   cinematicErr = stages.RenderCinematic(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion)
+  }
+  if err := cinematicErr; err != nil {
    return fmt.Errorf("cinematic rendering: %w", err)
   }
  } else {
