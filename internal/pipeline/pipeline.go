@@ -111,12 +111,14 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
  if cfg.CinematicEnabled {
-  if cfg.AddSubscribeButton || cfg.AddNotificationBell { log.Warn("Cinematic mode currently renders without subscribe/bell overlays") }
+  cinematicOverlays := cinematic.Overlays{SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
+  if cfg.AddSubscribeButton { cinematicOverlays.SubscribePath=subscribePath }
+  if cfg.AddNotificationBell { cinematicOverlays.NotificationPath=notificationPath }
   var cinematicErr error
   if cfg.CinematicTimelinePath != "" {
-   cinematicErr = stages.RenderCinematicTimeline(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath)
+   cinematicErr = stages.RenderCinematicTimelineWithOverlays(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath,cinematicOverlays)
   } else {
-   cinematicErr = stages.RenderCinematic(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion)
+   cinematicErr = stages.RenderCinematicWithOverlays(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cinematicOverlays)
   }
   if err := cinematicErr; err != nil {
    return fmt.Errorf("cinematic rendering: %w", err)
