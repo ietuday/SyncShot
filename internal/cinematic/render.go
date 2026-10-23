@@ -7,6 +7,7 @@ import (
  "os"
  "path/filepath"
  "strconv"
+ "strings"
 
  "syncshotgo/internal/utils"
 )
@@ -24,8 +25,10 @@ type Overlays struct { MusicPath string; MusicVolume float64; MusicFadeSeconds f
 func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timeline, audio, output string, overlays Overlays, publish func(string,string)error) error {
  if err:=timeline.Validate();err!=nil {return err}
  if err:=ctx.Err();err!=nil {return err}
- filter,label,err:=timeline.BuildFilter()
+ uniqueImages,sceneRefs,splitPrefix:=sharedSceneInputs(timeline)
+ filter,label,err:=timeline.buildFilterInputs(sceneRefs)
  if err!=nil {return err}
+ if splitPrefix!="" {filter=splitPrefix+";"+filter}
  if err:=os.MkdirAll(filepath.Dir(output),0755);err!=nil {return err}
  temp,err:=os.CreateTemp(filepath.Dir(output),".cinematic-*.mp4")
  if err!=nil {return err}
@@ -34,7 +37,7 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
  defer os.Remove(staged)
 
  args:=[]string{"-hide_banner","-y"}
- for _,p:=range timeline.InputPaths() {
+ for _,p:=range uniqueImages {
   if _,err:=os.Stat(p);err!=nil {return fmt.Errorf("scene image %s: %w",p,err)}
   args=append(args,"-loop","1","-framerate",strconv.Itoa(timeline.FPS),"-i",p)
  }
@@ -49,7 +52,7 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
  subtitleIndex:=-1
  if overlays.SubtitlePath!="" {
   if _,err:=os.Stat(overlays.SubtitlePath);err!=nil{return fmt.Errorf("subtitle SRT: %w",err)}
-  subtitleIndex=len(timeline.Scenes)+1+len(overlaySteps)
+  subtitleIndex=len(uniqueImages)+1+len(overlaySteps)
   args=append(args,"-i",overlays.SubtitlePath)
  }
  musicIndex:=-1
@@ -57,19 +60,19 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   if _,err:=os.Stat(overlays.MusicPath);err!=nil{return fmt.Errorf("music file: %w",err)}
   if math.IsNaN(overlays.MusicVolume) || math.IsInf(overlays.MusicVolume,0) || overlays.MusicVolume<=0 || overlays.MusicVolume>1 {return fmt.Errorf("music volume must be >0 and <=1")}
   if math.IsNaN(overlays.MusicFadeSeconds) || math.IsInf(overlays.MusicFadeSeconds,0) || overlays.MusicFadeSeconds<0 || overlays.MusicFadeSeconds>timeline.Duration() {return fmt.Errorf("music fade must be between zero and video duration")}
-  musicIndex=len(timeline.Scenes)+1+len(overlaySteps)
+  musicIndex=len(uniqueImages)+1+len(overlaySteps)
   if subtitleIndex>=0 {musicIndex++}
   args=append(args,"-stream_loop","-1","-i",overlays.MusicPath)
  }
  for i,o:=range overlaySteps {
-  inputIndex:=len(timeline.Scenes)+1+i
+  inputIndex:=len(uniqueImages)+1+i
   alpha:=math.Max(0,math.Min(1,float64(o.opacity)))
   previous:=label
   next:=fmt.Sprintf("[overlay%d]",i)
   filter+=fmt.Sprintf(";[%d:v]scale=%d:%d,format=rgba,colorchannelmixer=aa=%.3f[graphic%d];%s[graphic%d]overlay=x=%s:y=%s:shortest=1%s",inputIndex,o.width,o.height,alpha,i,previous,i,overlayX(o.x),overlayY(o.y),next)
   label=next
  }
- audioLabel:=fmt.Sprintf("%d:a:0",len(timeline.Scenes))
+ audioLabel:=fmt.Sprintf("%d:a:0",len(uniqueImages))
  if musicIndex>=0 {
   // Narration remains primary; music is limited and ducked whenever speech is present.
   musicFilter:=fmt.Sprintf("[%d:a:0]aresample=48000,volume=%.4f",musicIndex,overlays.MusicVolume)
@@ -105,6 +108,38 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
  if err!=nil || info.Size()==0 {return fmt.Errorf("rendered cinematic MP4 missing or empty: %v",err)}
  if duration,err:=utils.ProbeDurationSeconds(staged);err!=nil || duration<=0 {return fmt.Errorf("invalid cinematic output duration: %v",err)}
  return publish(staged,output)
+}
+
+// sharedSceneInputs opens each still image just once, splitting its decoded frames
+// into independent filter streams for scenes that reuse the same source.
+func sharedSceneInputs(t Timeline) ([]string,[]string,string) {
+ paths:=make([]string,0,len(t.Scenes))
+ indices:=make(map[string]int,len(t.Scenes))
+ groups:=make([][]int,0,len(t.Scenes))
+ for i,scene:=range t.Scenes {
+  path:=filepath.Clean(scene.Image)
+  idx,ok:=indices[path]
+  if !ok {
+   idx=len(paths)
+   indices[path]=idx
+   paths=append(paths,path)
+   groups=append(groups,nil)
+  }
+  groups[idx]=append(groups[idx],i)
+ }
+ refs:=make([]string,len(t.Scenes))
+ var splits []string
+ for input,scenes:=range groups {
+  if len(scenes)==1 {refs[scenes[0]]=fmt.Sprintf("[%d:v]",input);continue}
+  expr:=fmt.Sprintf("[%d:v]split=%d",input,len(scenes))
+  for _,sceneIdx:=range scenes {
+   label:=fmt.Sprintf("[shared_%d]",sceneIdx)
+   refs[sceneIdx]=label
+   expr+=label
+  }
+  splits=append(splits,expr)
+ }
+ return paths,refs,strings.Join(splits,";")
 }
 
 func overlayX(rightMargin int) string {return fmt.Sprintf("W-%d",rightMargin)}
