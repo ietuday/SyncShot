@@ -21,6 +21,10 @@ func RenderCinematicWithOverlays(ctx context.Context,log *utils.Logger,imagesDir
 // RenderCinematicAutoWithOverlays optionally splits long narration into scenes,
 // rotating the supplied images. A nonpositive target retains Phase 2 behavior.
 func RenderCinematicAutoWithOverlays(ctx context.Context,log *utils.Logger,imagesDir,audio,output string,fps int,fade float64,motion cinematic.Motion,targetSceneSeconds float64,overlays cinematic.Overlays) error {
+ return RenderCinematicProfileWithOverlays(ctx,log,imagesDir,audio,output,fps,fade,motion,targetSceneSeconds,1920,1080,overlays)
+}
+
+func RenderCinematicProfileWithOverlays(ctx context.Context,log *utils.Logger,imagesDir,audio,output string,fps int,fade float64,motion cinematic.Motion,targetSceneSeconds float64,width,height int,overlays cinematic.Overlays) error {
  images,err:=filepath.Glob(filepath.Join(imagesDir,"*.jpg"))
  if err!=nil {return err}
  sort.Strings(images)
@@ -29,9 +33,9 @@ func RenderCinematicAutoWithOverlays(ctx context.Context,log *utils.Logger,image
  if err!=nil {return fmt.Errorf("probe narration: %w",err)}
  var timeline cinematic.Timeline
  if targetSceneSeconds>0 {
-  timeline,err=cinematic.PlanScenes(images,duration,fps,1920,1080,fade,motion,targetSceneSeconds)
+  timeline,err=cinematic.PlanScenes(images,duration,fps,width,height,fade,motion,targetSceneSeconds)
  } else {
-  timeline,err=cinematic.FromImages(images,duration,fps,1920,1080,fade,motion)
+  timeline,err=cinematic.FromImages(images,duration,fps,width,height,fade,motion)
  }
  if err!=nil {return err}
  log.Info(fmt.Sprintf("Scene plan: %d scene(s) from %d image(s), narration %.2fs, planned %.2fs, fade %.2fs",len(timeline.Scenes),len(images),duration,timeline.Duration(),fade))
