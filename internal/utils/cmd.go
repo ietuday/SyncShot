@@ -55,14 +55,16 @@ func RunFFmpegWithProgressContext(ctx context.Context, log *Logger, totalSeconds
     us, parseErr := strconv.ParseInt(line[sep+1:], 10, 64)
     if parseErr != nil { continue }
     sec := float64(us) / 1000000
-    if time.Since(lastLog) < 700*time.Millisecond { continue }
-    lastLog = time.Now()
     if totalSeconds > 0 {
      pct := int(sec / float64(totalSeconds) * 100)
      if pct < 0 { pct = 0 }
      if pct > 100 { pct = 100 }
-     if pct != lastPct { lastPct = pct; log.Info(fmt.Sprintf("ffmpeg progress: %d%%", pct)) }
-    } else { log.Info(fmt.Sprintf("ffmpeg progress: %.1fs", sec)) }
+     if pct != lastPct && (lastPct < 0 || time.Since(lastLog) >= 700*time.Millisecond) {
+      lastPct = pct
+      lastLog = time.Now()
+      log.Info("Rendering video " + FormatProgressBar(pct))
+     }
+    } else if time.Since(lastLog) >= 700*time.Millisecond { lastLog = time.Now(); log.Info(fmt.Sprintf("ffmpeg progress: %.1fs", sec)) }
    }
   }
   scanErr = sc.Err()
@@ -75,6 +77,7 @@ func RunFFmpegWithProgressContext(ctx context.Context, log *Logger, totalSeconds
   return &FFmpegRunError{Cause: waitErr, Stderr: tail.String()}
  }
  if scanErr != nil { return fmt.Errorf("read ffmpeg progress: %w", scanErr) }
+ if totalSeconds > 0 { log.Info("Rendering video " + FormatProgressBar(100)) }
  return nil
 }
 
