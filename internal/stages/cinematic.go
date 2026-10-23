@@ -23,3 +23,12 @@ func RenderCinematic(ctx context.Context,log *utils.Logger,imagesDir,audio,outpu
  if err:=recoverPublishedPath(output);err!=nil {return err}
  return cinematic.Render(ctx,log,timeline,audio,output,promoteVideo)
 }
+
+ 
+// RenderCinematicTimeline renders a user-authored JSON timeline.
+func RenderCinematicTimeline(ctx context.Context, log *utils.Logger, configPath, audio, output string) error {
+ timeline, err := cinematic.LoadTimeline(configPath)
+ if err != nil { return err }
+ if err := recoverPublishedPath(output); err != nil { return err }
+ return cinematic.Render(ctx, log, timeline, audio, output, promoteVideo)
+}
