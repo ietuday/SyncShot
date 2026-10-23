@@ -33,7 +33,7 @@ func chunkVideoGraph(chunks []Timeline)(string,string,error){
  fps:=chunks[0].FPS
  fade:=chunks[0].CrossfadeSeconds
  var p []string
- for i:=range chunks {p=append(p,fmt.Sprintf("[%d:v]fps=%d,settb=AVTB,setpts=PTS-STARTPTS,format=yuv420p[part%d]",i,fps,i))}
+ for i:=range chunks {p=append(p,fmt.Sprintf("[%d:v]fps=%d,settb=1/%d,setpts=N,format=yuv420p[part%d]",i,fps,fps,i))}
  if len(chunks)==1{return strings.Join(p,";"),"[part0]",nil}
  if fade==0{
   var refs strings.Builder
