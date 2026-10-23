@@ -56,18 +56,15 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
  if err != nil { return err }
  defer func() { if unlockErr := release(); unlockErr != nil { log.Warn("Failed to remove run lock: "+unlockErr.Error()) } }()
 
-	workProcessed := filepath.Join(cfg.WorkDir, "processed_images")
-	workSubtitles := filepath.Join(cfg.WorkDir, "subtitles")
-
-	// Create required dirs
-	if err := utils.EnsureDirs(
-		workProcessed,
-		workSubtitles,
-		cfg.OutShortsDir,
-		filepath.Dir(cfg.OutVideoPath),
-	); err != nil {
-		return err
-	}
+ // A run-specific directory prevents stale images from past runs
+ // entering the new video and isolates previews/subtitles.
+ if err:=utils.EnsureDirs(cfg.WorkDir,cfg.OutShortsDir,filepath.Dir(cfg.OutVideoPath));err!=nil{return err}
+ runDir,err:=os.MkdirTemp(cfg.WorkDir,".run-*")
+ if err!=nil{return fmt.Errorf("create run workspace: %w",err)}
+ defer os.RemoveAll(runDir)
+ workProcessed := filepath.Join(runDir, "processed_images")
+ workSubtitles := filepath.Join(runDir, "subtitles")
+ if err:=utils.EnsureDirs(workProcessed,workSubtitles);err!=nil{return err}
 
 	// 1) Pick audio
 	log.Info("Picking audio")
@@ -79,7 +76,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
  if cfg.PreviewSeconds>0 {
   renderOutput=filepath.Join(filepath.Dir(cfg.OutVideoPath),"preview.mp4")
   if filepath.Clean(renderOutput)==filepath.Clean(cfg.OutVideoPath) {return fmt.Errorf("preview output must differ from final video")}
-  clipped:=filepath.Join(cfg.WorkDir,"preview-audio.wav")
+  clipped:=filepath.Join(runDir,"preview-audio.wav")
   if err:=stages.TrimPreviewAudio(ctx,audio,clipped,cfg.PreviewSeconds);err!=nil{return fmt.Errorf("prepare preview: %w",err)}
   defer os.Remove(clipped)
   audio=clipped
