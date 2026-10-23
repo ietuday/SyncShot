@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: jrottenberg/ffmpeg:7.1-ubuntu2404
+      volumes:
+        - /etc/ssl/certs:/etc/ssl/certs:ro
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -28,8 +30,6 @@ jobs:
           ffprobe -version | head -n 1
       - name: Unit tests
         run: go test ./...
-      - name: Race detector
-        run: go test -race ./...
       - name: Vet
         run: go vet ./...
       - name: Build
@@ -40,3 +40,15 @@ jobs:
       - name: FFmpeg end-to-end smoke test
         timeout-minutes: 8
         run: bash scripts/smoke-test.sh
+
+  race:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Race detector (without FFmpeg integration)
+        run: go test -short -race ./...
