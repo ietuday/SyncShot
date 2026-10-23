@@ -11,6 +11,12 @@ func (c Config) Validate() error {
  for name, val := range map[string]string{"audio directory": c.AudioDir, "images directory":c.ImagesDir, "output video":c.OutVideoPath, "work directory":c.WorkDir} {
   if val == "" { return fmt.Errorf("%s is required", name) }
  }
+ if c.CinematicChunkScenes<0 {return fmt.Errorf("cinematic chunk size must not be negative")}
+ if c.CinematicChunkScenes>0 {
+  if !c.CinematicEnabled||c.CinematicTimelinePath!="" {return fmt.Errorf("chunked rendering requires automatic cinematic mode")}
+  if c.CinematicCrossfade!=0 {return fmt.Errorf("chunked rendering currently requires zero crossfade")}
+  if c.MusicPath!=""||c.SubtitleMode!=""||c.SubtitleSRTPath!=""||c.AddSubscribeButton||c.AddNotificationBell {return fmt.Errorf("chunked rendering currently does not support music, subtitles or image overlays")}
+ }
  if c.MusicPath!="" {
   if !c.CinematicEnabled {return fmt.Errorf("background music requires cinematic mode")}
   if math.IsNaN(c.MusicVolume)||math.IsInf(c.MusicVolume,0)||c.MusicVolume<=0||c.MusicVolume>1 {return fmt.Errorf("music volume must be >0 and <=1")}
