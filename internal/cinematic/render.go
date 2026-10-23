@@ -60,7 +60,7 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   if _,err:=os.Stat(overlays.MusicPath);err!=nil{return fmt.Errorf("music file: %w",err)}
   if math.IsNaN(overlays.MusicVolume) || math.IsInf(overlays.MusicVolume,0) || overlays.MusicVolume<=0 || overlays.MusicVolume>1 {return fmt.Errorf("music volume must be >0 and <=1")}
   if math.IsNaN(overlays.MusicFadeSeconds) || math.IsInf(overlays.MusicFadeSeconds,0) || overlays.MusicFadeSeconds<0 || overlays.MusicFadeSeconds>timeline.Duration() {return fmt.Errorf("music fade must be between zero and video duration")}
-  musicIndex=len(timeline.Scenes)+1+len(overlaySteps)
+  musicIndex=len(uniqueImages)+1+len(overlaySteps)
   if subtitleIndex>=0 {musicIndex++}
   args=append(args,"-stream_loop","-1","-i",overlays.MusicPath)
  }
