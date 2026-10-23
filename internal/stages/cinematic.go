@@ -34,6 +34,7 @@ func RenderCinematicAutoWithOverlays(ctx context.Context,log *utils.Logger,image
   timeline,err=cinematic.FromImages(images,duration,fps,1920,1080,fade,motion)
  }
  if err!=nil {return err}
+ log.Info(fmt.Sprintf("Scene plan: %d scene(s) from %d image(s), narration %.2fs, planned %.2fs, fade %.2fs",len(timeline.Scenes),len(images),duration,timeline.Duration(),fade))
  if err:=recoverPublishedPath(output);err!=nil {return err}
  return cinematic.RenderWithOverlays(ctx,log,timeline,audio,output,overlays,promoteVideo)
 }
