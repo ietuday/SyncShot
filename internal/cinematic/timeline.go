@@ -81,6 +81,13 @@ func FromImages(images []string, narrationSeconds float64, fps,width,height int,
 // scene lengths to avoid timebase drift across still-image input streams.
 func (t Timeline) BuildFilter() (string,string,error) {
  if err:=t.Validate();err!=nil {return "","",err}
+ return t.buildFilterInputs(nil)
+}
+
+// buildFilterInputs replaces per-scene stream references with shared split pads.
+func (t Timeline) buildFilterInputs(refs []string) (string,string,error) {
+ if err:=t.Validate();err!=nil {return "","",err}
+ if refs!=nil && len(refs)!=len(t.Scenes) {return "","",fmt.Errorf("scene source count mismatch")}
  parts:=make([]string,0,len(t.Scenes)*2)
  accumulated:=0.0
  for i,s:=range t.Scenes {
@@ -89,9 +96,11 @@ func (t Timeline) BuildFilter() (string,string,error) {
   motion:=s.Motion
   if motion=="" {motion=Static}
   var filter string
+  input:=fmt.Sprintf("[%d:v]",i)
+  if refs!=nil {input=refs[i]}
   switch motion {
   case Static:
-   filter=fmt.Sprintf("[%d:v]fps=%d,scale=%d:%d:force_original_aspect_ratio=decrease,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1,trim=end_frame=%d,setpts=PTS-STARTPTS,fps=%d,settb=AVTB,format=yuv420p[s%d]",i,t.FPS,w,h,w,h,frames,t.FPS,i)
+   filter=fmt.Sprintf("%sfps=%d,scale=%d:%d:force_original_aspect_ratio=decrease,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1,trim=end_frame=%d,setpts=PTS-STARTPTS,fps=%d,settb=AVTB,format=yuv420p[s%d]",input,t.FPS,w,h,w,h,frames,t.FPS,i)
   default:
    // Crop from an oversized, letterboxed canvas. All expressions are generated
    // from known enum values and integer dimensions; no user-supplied filter text.
@@ -102,7 +111,7 @@ func (t Timeline) BuildFilter() (string,string,error) {
    case PanLeft: z="1.10";x="(iw-iw/zoom)*(1-min(on/"+fmt.Sprintf("%d",max(1,frames-1))+",1))"
    case PanRight: z="1.10";x="(iw-iw/zoom)*min(on/"+fmt.Sprintf("%d",max(1,frames-1))+",1)"
    }
-   filter=fmt.Sprintf("[%d:v]scale=%d:%d:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,zoompan=z='%s':x='%s':y='%s':d=1:s=%dx%d:fps=%d,trim=end_frame=%d,setpts=PTS-STARTPTS,fps=%d,settb=AVTB,format=yuv420p[s%d]",i,sw,sh,sw,sh,z,x,y,w,h,t.FPS,frames,t.FPS,i)
+   filter=fmt.Sprintf("%sscale=%d:%d:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=%d:%d:(ow-iw)/2:(oh-ih)/2,zoompan=z='%s':x='%s':y='%s':d=1:s=%dx%d:fps=%d,trim=end_frame=%d,setpts=PTS-STARTPTS,fps=%d,settb=AVTB,format=yuv420p[s%d]",input,sw,sh,sw,sh,z,x,y,w,h,t.FPS,frames,t.FPS,i)
   }
   parts=append(parts,filter)
   if i==0 {
