@@ -3,6 +3,7 @@ package pipeline
 import (
 	"context"
  "fmt"
+ "os"
 	"path/filepath"
 
 	"syncshotgo/internal/stages"
@@ -12,6 +13,8 @@ import (
 )
 
 type Config struct {
+ PreviewSeconds int
+ RenderProfile string
  SmartShortsEnabled bool
  SmartShortsCrop string
  MusicPath string
@@ -71,6 +74,16 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	if err != nil {
 		return err
 	}
+ renderOutput:=cfg.OutVideoPath
+ if cfg.PreviewSeconds>0 {
+  renderOutput=filepath.Join(filepath.Dir(cfg.OutVideoPath),"preview.mp4")
+  if filepath.Clean(renderOutput)==filepath.Clean(cfg.OutVideoPath) {return fmt.Errorf("preview output must differ from final video")}
+  clipped:=filepath.Join(cfg.WorkDir,"preview-audio.wav")
+  if err:=stages.TrimPreviewAudio(ctx,audio,clipped,cfg.PreviewSeconds);err!=nil{return fmt.Errorf("prepare preview: %w",err)}
+  defer os.Remove(clipped)
+  audio=clipped
+  log.Info(fmt.Sprintf("Preview: %ds to %s",cfg.PreviewSeconds,renderOutput))
+ }
 
 	// 2) Scan images
 	log.Info("Scanning images")
@@ -126,9 +139,11 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
   if cfg.AddNotificationBell { cinematicOverlays.NotificationPath=notificationPath }
   var cinematicErr error
   if cfg.CinematicTimelinePath != "" {
-   cinematicErr = stages.RenderCinematicTimelineWithOverlays(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath,cinematicOverlays)
+   cinematicErr = stages.RenderCinematicTimelineWithOverlays(ctx, log, cfg.CinematicTimelinePath, audio, renderOutput,cinematicOverlays)
   } else {
-   cinematicErr = stages.RenderCinematicAutoWithOverlays(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cfg.CinematicAutoSceneSeconds,cinematicOverlays)
+   width,height:=1920,1080
+   if cfg.RenderProfile=="720p" {width,height=1280,720}
+   cinematicErr = stages.RenderCinematicProfileWithOverlays(ctx, log, workProcessed, audio, renderOutput, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cfg.CinematicAutoSceneSeconds,width,height,cinematicOverlays)
   }
   if err := cinematicErr; err != nil {
    return fmt.Errorf("cinematic rendering: %w", err)
@@ -140,7 +155,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 		log,
 		workProcessed, // ✅ important: use processed_images folder
 		audio,
-		cfg.OutVideoPath,
+		renderOutput,
 		cfg.SecondsPerImage,
 		cfg.FPS,
 		subscribePath,
@@ -154,7 +169,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
  }
 
 	// 6) Create vertical Shorts only when requested.
- if cfg.ClipSeconds > 0 {
+ if cfg.ClipSeconds > 0 && cfg.PreviewSeconds == 0 {
   log.Info("Creating Shorts")
   cropMode:=cfg.SmartShortsCrop
   sceneSeconds:=0.0

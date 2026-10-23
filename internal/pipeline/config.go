@@ -21,6 +21,11 @@ func (c Config) Validate() error {
  if c.SubtitleMode=="whisper" && c.SubtitleSRTPath!="" {return fmt.Errorf("whisper mode cannot use SubtitleSRTPath")}
  if (c.SubtitleMode!="" || c.SubtitleSRTPath!="") && !c.CinematicEnabled {return fmt.Errorf("subtitles require cinematic rendering")}
  if c.SmartShortsCrop!="" && c.SmartShortsCrop!="center" && c.SmartShortsCrop!="left" && c.SmartShortsCrop!="right" && c.SmartShortsCrop!="pan" {return fmt.Errorf("invalid smart Shorts crop mode %q",c.SmartShortsCrop)}
+ if c.PreviewSeconds<0 {return fmt.Errorf("preview seconds must be nonnegative")}
+ if c.RenderProfile!="" && c.RenderProfile!="1080p" && c.RenderProfile!="720p" {return fmt.Errorf("render profile must be 720p or 1080p")}
+ if c.PreviewSeconds>0 && !c.CinematicEnabled {return fmt.Errorf("preview mode requires cinematic rendering")}
+ if (c.RenderProfile=="720p") && (!c.CinematicEnabled || c.CinematicTimelinePath!="") {return fmt.Errorf("720p profile requires automatic cinematic timeline")}
+ if c.PreviewSeconds>0 && c.CinematicTimelinePath!="" {return fmt.Errorf("preview mode does not support manual cinematic timelines")}
  if c.FPS <= 0 || c.FPS > 120 { return fmt.Errorf("FPS must be 1..120") }
  if math.IsNaN(c.SecondsPerImage) || math.IsInf(c.SecondsPerImage, 0) || c.SecondsPerImage <= 0 { return fmt.Errorf("seconds per image must be finite and positive") }
  if math.IsNaN(c.CinematicAutoSceneSeconds) || math.IsInf(c.CinematicAutoSceneSeconds, 0) || c.CinematicAutoSceneSeconds < 0 { return fmt.Errorf("cinematic auto scene seconds must be finite and nonnegative") }
