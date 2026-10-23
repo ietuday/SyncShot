@@ -11,6 +11,8 @@ on:
 jobs:
   cinematic:
     runs-on: ubuntu-24.04
+    container:
+      image: jrottenberg/ffmpeg:7.1-ubuntu2404
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -18,19 +20,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - name: Ensure FFmpeg
-        timeout-minutes: 12
+      - name: Verify bundled FFmpeg
         run: |
-          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
-            # GitHub hosted Ubuntu runners can use a very slow Azure mirror.
-            # Select the official mirror and refresh indexes before installing.
-            sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources
-            sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true
-            sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 update -qq
-            sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 install -y --no-install-recommends ffmpeg
-          fi
-          command -v ffmpeg
-          command -v ffprobe
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
       - name: Unit and rendering tests
