@@ -18,18 +18,14 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - name: Install FFmpeg from static release
-        timeout-minutes: 3
+      - name: Ensure FFmpeg
+        timeout-minutes: 5
         run: |
           if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
-            curl --fail --location --retry 2 --connect-timeout 10 --max-time 90 \
-              https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
-              -o /tmp/ffmpeg.tar.xz
-            mkdir -p /tmp/ffmpeg-static
-            tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-static --strip-components=1
-            echo "/tmp/ffmpeg-static" >> "$GITHUB_PATH"
-            export PATH="/tmp/ffmpeg-static:$PATH"
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ffmpeg
           fi
+          command -v ffmpeg
+          command -v ffprobe
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
       - name: Unit and rendering tests
