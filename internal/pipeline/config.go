@@ -11,6 +11,10 @@ func (c Config) Validate() error {
  for name, val := range map[string]string{"audio directory": c.AudioDir, "images directory":c.ImagesDir, "output video":c.OutVideoPath, "work directory":c.WorkDir} {
   if val == "" { return fmt.Errorf("%s is required", name) }
  }
+ if c.SubtitleMode!="" && c.SubtitleMode!="import" && c.SubtitleMode!="whisper" {return fmt.Errorf("invalid subtitle mode %q",c.SubtitleMode)}
+ if c.SubtitleMode=="import" && c.SubtitleSRTPath=="" {return fmt.Errorf("subtitle import requires SubtitleSRTPath")}
+ if c.SubtitleMode=="whisper" && c.SubtitleSRTPath!="" {return fmt.Errorf("whisper mode cannot use SubtitleSRTPath")}
+ if (c.SubtitleMode!="" || c.SubtitleSRTPath!="") && !c.CinematicEnabled {return fmt.Errorf("subtitles require cinematic rendering")}
  if c.FPS <= 0 || c.FPS > 120 { return fmt.Errorf("FPS must be 1..120") }
  if math.IsNaN(c.SecondsPerImage) || math.IsInf(c.SecondsPerImage, 0) || c.SecondsPerImage <= 0 { return fmt.Errorf("seconds per image must be finite and positive") }
  if math.IsNaN(c.CinematicAutoSceneSeconds) || math.IsInf(c.CinematicAutoSceneSeconds, 0) || c.CinematicAutoSceneSeconds < 0 { return fmt.Errorf("cinematic auto scene seconds must be finite and nonnegative") }
