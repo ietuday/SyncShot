@@ -15,6 +15,7 @@ type Config struct {
  CinematicTimelinePath string
  CinematicCrossfade float64
  CinematicMotion cinematic.Motion
+ CinematicAutoSceneSeconds float64
 	AudioDir        string
 	ImagesDir       string
 	OutVideoPath    string
@@ -118,7 +119,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
   if cfg.CinematicTimelinePath != "" {
    cinematicErr = stages.RenderCinematicTimelineWithOverlays(ctx, log, cfg.CinematicTimelinePath, audio, cfg.OutVideoPath,cinematicOverlays)
   } else {
-   cinematicErr = stages.RenderCinematicWithOverlays(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cinematicOverlays)
+   cinematicErr = stages.RenderCinematicAutoWithOverlays(ctx, log, workProcessed, audio, cfg.OutVideoPath, cfg.FPS, cfg.CinematicCrossfade, cfg.CinematicMotion,cfg.CinematicAutoSceneSeconds,cinematicOverlays)
   }
   if err := cinematicErr; err != nil {
    return fmt.Errorf("cinematic rendering: %w", err)
