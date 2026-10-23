@@ -12,6 +12,10 @@ import (
 )
 
 type Config struct {
+ MusicPath string
+ MusicVolume float64
+ MusicFadeSeconds float64
+ MusicDucking bool
  SubtitleMode string
  SubtitleSRTPath string
  CinematicEnabled bool
@@ -115,7 +119,7 @@ func RunContext(ctx context.Context, log *utils.Logger, cfg Config) error {
 	// 5) Render YouTube video using PROCESSED images directory (not original)
 	log.Info("Creating YouTube video")
  if cfg.CinematicEnabled {
-  cinematicOverlays := cinematic.Overlays{SubtitlePath:subtitlePath,SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
+  cinematicOverlays := cinematic.Overlays{MusicPath:cfg.MusicPath,MusicVolume:cfg.MusicVolume,MusicFadeSeconds:cfg.MusicFadeSeconds,MusicDucking:cfg.MusicDucking,SubtitlePath:subtitlePath,SubscribeOpacity:cfg.SubscribeOpacity,NotificationOpacity:cfg.NotificationOpacity}
   if cfg.AddSubscribeButton { cinematicOverlays.SubscribePath=subscribePath }
   if cfg.AddNotificationBell { cinematicOverlays.NotificationPath=notificationPath }
   var cinematicErr error
