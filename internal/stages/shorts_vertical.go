@@ -24,6 +24,11 @@ func CreateShortsVerticalWithPan(log *utils.Logger, video string, outDir string,
 }
 
 func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, video string, outDir string, clipSeconds int, maxWorkers int, enablePan bool) error {
+ return CreateSmartShortsContext(ctx,log,video,outDir,clipSeconds,maxWorkers,0,map[bool]string{true:"pan",false:"center"}[enablePan])
+}
+
+// CreateSmartShortsContext supports scene-aligned cuts and portrait framing.
+func CreateSmartShortsContext(ctx context.Context, log *utils.Logger, video,outDir string, clipSeconds,maxWorkers int, sceneSeconds float64, cropMode string) error {
  if err:=ctx.Err(); err!=nil { return err }
  if clipSeconds <= 0 {
 		clipSeconds = 57
@@ -48,13 +53,11 @@ func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, 
 		return err
 	}
 
-	clips := totalSec / clipSeconds
-	if totalSec%clipSeconds != 0 {
-		clips++
-	}
-	if clips < 1 {
-		clips = 1
-	}
+ segments,err:=PlanSmartShorts(float64(totalSec),clipSeconds,sceneSeconds)
+ if err!=nil{return err}
+ clips:=len(segments)
+ cropFilter,err:=SmartCropFilter(cropMode)
+ if err!=nil{return err}
 
 	// Progress bar for shorts creation
 	bar := progressbar.NewOptions64(
@@ -79,31 +82,15 @@ func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, 
 			defer func() { <-sem }()
 
 			if ctx.Err()!=nil { return }
-            start := idx * clipSeconds
-			out := filepath.Join(stageDir, fmt.Sprintf("short_%03d.mp4", idx))
-
-			// Smart crop: intelligently crop landscape to vertical format
-			// Scale to fill the entire 1080x1920 frame (with zoom)
-			// Then crop to center (can be adjusted for different framing)
-			var filterComplex string
-
-			if enablePan {
-				// With panning: subtle zoom effect that moves across the frame
-				zoomEnd := 1.1
-				filterComplex = fmt.Sprintf(
-					"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-1080)/2:(in_h-1920)/2,zoompan=z='min(zoom+0.0005,%.1f)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fps=24[v]",
-					zoomEnd,
-				)
-			} else {
-				// Static crop: no panning, just intelligent crop
-				filterComplex = "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-1080)/2:(in_h-1920)/2[v]"
-			}
+            segment:=segments[idx]
+            out := filepath.Join(stageDir, fmt.Sprintf("short_%03d.mp4", idx))
+            filterComplex:=cropFilter
 
 			args := []string{
 				"-y",
-				"-ss", fmt.Sprintf("%d", start),
+				"-ss", fmt.Sprintf("%.6f", segment.Start),
 				"-i", videoAbs,
-				"-t", fmt.Sprintf("%d", clipSeconds),
+				"-t", fmt.Sprintf("%.6f", segment.Duration),
 
 				"-filter_complex", filterComplex,
 
@@ -125,7 +112,7 @@ func CreateShortsVerticalWithPanContext(ctx context.Context, log *utils.Logger, 
 				out,
 			}
 
-			if err := utils.RunFFmpegWithRetryContext(ctx,log,clipSeconds,args...); err != nil {
+			if err := utils.RunFFmpegWithRetryContext(ctx,log,int(segment.Duration)+1,args...); err != nil {
 				errCh <- fmt.Errorf("short %d failed: %w", idx, err)
 				return
 			}
