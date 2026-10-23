@@ -77,10 +77,11 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
    musicFilter+=fmt.Sprintf(",afade=t=in:st=0:d=%.3f,afade=t=out:st=%.3f:d=%.3f",overlays.MusicFadeSeconds,math.Max(0,timeline.Duration()-overlays.MusicFadeSeconds),overlays.MusicFadeSeconds)
   }
   filter+=";"+musicFilter+"[musicbed]"
-  filter+=fmt.Sprintf(";[%s]aresample=48000,asplit=2[narrmix][narrkey]",audioLabel)
   if overlays.MusicDucking {
+   filter+=fmt.Sprintf(";[%s]aresample=48000,asplit=2[narrmix][narrkey]",audioLabel)
    filter+=";[musicbed][narrkey]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=300[ducked]"
   } else {
+   filter+=fmt.Sprintf(";[%s]aresample=48000[narrmix]",audioLabel)
    filter+=";[musicbed]anull[ducked]"
   }
   filter+=";[narrmix][ducked]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[aout]"
