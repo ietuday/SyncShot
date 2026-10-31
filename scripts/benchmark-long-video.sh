@@ -1,24 +1,61 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 OUT="${1:-./output/benchmarks}"
 mkdir -p "$OUT"
+OUT="$(cd "$OUT" && pwd)"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_DIR="$OUT/$STAMP"
 mkdir -p "$RUN_DIR"
 go build -o "$RUN_DIR/syncshot" ./cmd/syncshot
 ffmpeg -version | head -n 1 > "$RUN_DIR/environment.txt"
 go version >> "$RUN_DIR/environment.txt"
-printf "start_utc,elapsed_seconds,max_rss_kb,exit_code,output_bytes\n" > "$RUN_DIR/measurements.csv"
+printf 'timestamp_utc,active_processes,total_rss_kb,ffmpeg_rss_kb\n' > "$RUN_DIR/process-memory.csv"
+printf 'start_utc,elapsed_seconds,peak_process_tree_rss_kb,peak_ffmpeg_rss_kb,exit_code,output_bytes\n' > "$RUN_DIR/measurements.csv"
 start="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+started="$(date +%s)"
+"$RUN_DIR/syncshot" > "$RUN_DIR/run.log" 2>&1 &
+root_pid=$!
+
+# Enumerate descendants recursively; /proc/<pid>/status VmRSS is instantaneous.
+descendants() {
+  local parent="$1" child
+  for child in $(pgrep -P "$parent" 2>/dev/null || true); do
+    printf '%s\n' "$child"
+    descendants "$child"
+  done
+}
+peak_tree=0
+peak_ffmpeg=0
+while kill -0 "$root_pid" 2>/dev/null; do
+  tree_rss=0
+  ffmpeg_rss=0
+  count=0
+  for pid in "$root_pid" $(descendants "$root_pid"); do
+    [[ -r "/proc/$pid/status" ]] || continue
+    rss="$(awk '/^VmRSS:/ {print $2;exit}' "/proc/$pid/status")"
+    [[ "$rss" =~ ^[0-9]+$ ]] || continue
+    ((tree_rss+=rss)) || true
+    ((count+=1)) || true
+    command_name="$(cat "/proc/$pid/comm" 2>/dev/null || true)"
+    if [[ "$command_name" == ffmpeg ]]; then
+      ((ffmpeg_rss+=rss)) || true
+    fi
+  done
+  ((tree_rss>peak_tree)) && peak_tree="$tree_rss" || true
+  ((ffmpeg_rss>peak_ffmpeg)) && peak_ffmpeg="$ffmpeg_rss" || true
+  printf '%s,%s,%s,%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$count" "$tree_rss" "$ffmpeg_rss" >> "$RUN_DIR/process-memory.csv"
+  sleep 1
+done
 set +e
-/usr/bin/time -f "%e,%M,%x" -o "$RUN_DIR/resource.txt" "$RUN_DIR/syncshot" > "$RUN_DIR/run.log" 2>&1
+wait "$root_pid"
 status=$?
 set -e
-read -r numbers < "$RUN_DIR/resource.txt"
+elapsed="$(($(date +%s)-started))"
 size=0
 if [[ -f ./output/video/final.mp4 ]]; then size="$(stat -c %s ./output/video/final.mp4)"; fi
-printf "%s,%s,%s\n" "$start" "$numbers" "$size" >> "$RUN_DIR/measurements.csv"
-echo "Exit: $status; logs: $RUN_DIR"
+printf '%s,%s,%s,%s,%s,%s\n' "$start" "$elapsed" "$peak_tree" "$peak_ffmpeg" "$status" "$size" >> "$RUN_DIR/measurements.csv"
+echo "Exit: $status; peak tree RSS: $peak_tree KiB; peak FFmpeg RSS: $peak_ffmpeg KiB; logs: $RUN_DIR"
 exit "$status"
