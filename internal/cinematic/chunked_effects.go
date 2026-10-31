@@ -5,7 +5,6 @@ import (
  "fmt"
  "math"
  "os"
- "os/exec"
  "path/filepath"
  "strconv"
  "strings"
@@ -60,18 +59,11 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  dir,err:=os.MkdirTemp(filepath.Dir(output),".cinematic-effects-*");if err!=nil{return err}
  defer os.RemoveAll(dir)
  args:=[]string{"-hide_banner","-y"}
- offset:=0.0
  for i,chunk:=range chunks{
   if err:=ctx.Err();err!=nil{return err}
-  narration:=filepath.Join(dir,fmt.Sprintf("sample_%04d.wav",i))
-  cmd:=exec.CommandContext(ctx,"ffmpeg","-hide_banner","-loglevel","error","-y","-ss",strconv.FormatFloat(offset,'f',6,64),"-i",audio,"-t",strconv.FormatFloat(chunk.Duration(),'f',6,64),"-vn","-c:a","pcm_s16le",narration)
-  if msg,err:=cmd.CombinedOutput();err!=nil{return fmt.Errorf("chunk %d narration: %w %s",i,err,msg)}
   part:=filepath.Join(dir,fmt.Sprintf("part_%04d.mp4",i))
-  if err:=RenderWithOverlays(ctx,log,chunk,narration,part,Overlays{},os.Rename);err!=nil{return fmt.Errorf("render chunk %d: %w",i,err)}
-  if err:=os.Remove(narration);err!=nil{return err}
+  if err:=renderVisualChunk(ctx,log,chunk,part);err!=nil{return fmt.Errorf("render chunk %d: %w",i,err)}
   args=append(args,"-i",part)
-  offset+=chunk.Duration()
-  if i<len(chunks)-1{offset-=t.CrossfadeSeconds}
  }
  args=append(args,"-i",audio)
  filter,videoLabel,err:=chunkVideoGraph(chunks);if err!=nil{return err}
