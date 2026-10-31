@@ -4,12 +4,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 OUT="${1:-./output/benchmarks}"
+if (( $# > 0 )); then shift; fi
+CLI_ARGS=("$@")
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
 RUN_DIR="$(mktemp -d "$OUT/run-XXXXXXXX")"
 go build -o "$RUN_DIR/syncshot" ./cmd/syncshot
 ffmpeg -version | head -n 1 > "$RUN_DIR/environment.txt"
 go version >> "$RUN_DIR/environment.txt"
+printf "%q " "$RUN_DIR/syncshot" "${CLI_ARGS[@]}" > "$RUN_DIR/command.txt"
+printf "\\n" >> "$RUN_DIR/command.txt"
 printf 'timestamp_utc,active_processes,total_rss_kb,ffmpeg_rss_kb\n' > "$RUN_DIR/process-memory.csv"
 printf 'start_utc,elapsed_seconds,peak_process_tree_rss_kb,peak_ffmpeg_rss_kb,exit_code,output_bytes\n' > "$RUN_DIR/measurements.csv"
 start="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -22,7 +26,7 @@ if [[ -f "$OUTPUT_VIDEO" ]]; then
   original_present=1
   original_signature="$(stat -c '%d:%i:%s:%Y:%Z' "$OUTPUT_VIDEO")"
 fi
-"$RUN_DIR/syncshot" > "$RUN_DIR/run.log" 2>&1 &
+"$RUN_DIR/syncshot" "${CLI_ARGS[@]}" > "$RUN_DIR/run.log" 2>&1 &
 root_pid=$!
 cleanup() {
   if kill -0 "$root_pid" 2>/dev/null; then
