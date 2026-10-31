@@ -8,6 +8,7 @@ on:
       - 'go.sum'
       - 'scripts/**'
       - '.github/workflows/go-phase1.yml'
+      - '.github/workflows/release.yml'
   push:
     branches: [syncshot-go, feature/enhanced-video-pipeline]
 jobs:
