@@ -6,8 +6,8 @@ DURATION="${SYNC_SHOT_QUALIFICATION_SECONDS:-60}"
 case "$DURATION" in
   ''|*[!0-9]*) echo "duration must be an integer" >&2; exit 2;;
 esac
-if (( DURATION < 10 || DURATION > 900 )); then
- echo "qualification duration must be 10..900 seconds" >&2; exit 2
+if (( DURATION < 10 || DURATION > 1800 )); then
+ echo "qualification duration must be 10..1800 seconds" >&2; exit 2
 fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
