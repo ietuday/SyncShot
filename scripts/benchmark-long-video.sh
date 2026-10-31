@@ -69,22 +69,12 @@ status=$?
 set -e
 elapsed="$(($(date +%s)-started))"
 size=0
-# Validate the actual video output and flag runs which did not replace it.
 if [[ "$status" -eq 0 ]]; then
-  if [[ ! -s "$OUTPUT_VIDEO" ]]; then
-    echo "Benchmark failed: output is missing or empty: $OUTPUT_VIDEO" >&2
-    status=1
+  if size="$(bash "$ROOT/scripts/verify-benchmark-output.sh" "$OUTPUT_VIDEO" "$original_signature" "$RUN_DIR/output-duration.txt")"; then
+    :
   else
-    current_signature="$(stat -c '%d:%i:%s:%Y:%Z' "$OUTPUT_VIDEO")"
-    if [[ "$original_present" -eq 1 && "$original_signature" == "$current_signature" ]]; then
-      echo "Benchmark failed: output appears unchanged from previous run: $OUTPUT_VIDEO" >&2
-      status=1
-    elif ! ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 "$OUTPUT_VIDEO" > "$RUN_DIR/output-duration.txt"; then
-      echo "Benchmark failed: output could not be probed: $OUTPUT_VIDEO" >&2
-      status=1
-    else
-      size="$(stat -c %s "$OUTPUT_VIDEO")"
-    fi
+    status=1
+    size=0
   fi
 fi
 printf '%s,%s,%s,%s,%s,%s\n' "$start" "$elapsed" "$peak_tree" "$peak_ffmpeg" "$status" "$size" >> "$RUN_DIR/measurements.csv"
