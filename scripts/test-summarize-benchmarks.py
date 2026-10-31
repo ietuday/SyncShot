@@ -34,6 +34,7 @@ class BenchmarkSummaryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         item = json.loads(result.stdout)[0]
         self.assertEqual(item["realtime_factor"], 2)
+        self.assertEqual(item["workload_id"], "unlabeled")
         self.assertEqual(item["peak_ffmpeg_rss_kb"], 150000)
 
     def test_reject_failed_run(self):
