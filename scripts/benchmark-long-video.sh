@@ -12,6 +12,9 @@ RUN_DIR="$(mktemp -d "$OUT/run-XXXXXXXX")"
 go build -o "$RUN_DIR/syncshot" ./cmd/syncshot
 ffmpeg -version | head -n 1 > "$RUN_DIR/environment.txt"
 go version >> "$RUN_DIR/environment.txt"
+ffprobe -version | head -n 1 >> "$RUN_DIR/environment.txt"
+printf "%s\n" "$(git rev-parse HEAD 2>/dev/null || echo unknown)" > "$RUN_DIR/source-commit.txt"
+{ uname -srm; nproc 2>/dev/null || true; } > "$RUN_DIR/machine.txt"
 # Explicit workload ID must encode media, render settings and hardware for comparisons.
 printf "%s\n" "${SYNC_SHOT_BENCHMARK_WORKLOAD_ID:-unlabeled}" > "$RUN_DIR/workload-id.txt"
 printf "%q " "$RUN_DIR/syncshot" "${CLI_ARGS[@]}" > "$RUN_DIR/command.txt"

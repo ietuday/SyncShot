@@ -35,6 +35,9 @@ class BenchmarkSummaryTests(unittest.TestCase):
         item = json.loads(result.stdout)[0]
         self.assertEqual(item["realtime_factor"], 2)
         self.assertEqual(item["workload_id"], "unlabeled")
+        self.assertEqual(item["source_commit"], "unknown")
+        (self.run / "source-commit.txt").write_text("abc123", encoding="utf-8")
+        self.assertEqual(json.loads(self.execute().stdout)[0]["source_commit"], "abc123")
         self.assertEqual(item["peak_ffmpeg_rss_kb"], 150000)
 
     def test_reject_failed_run(self):

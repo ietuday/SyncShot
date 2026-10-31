@@ -31,7 +31,13 @@ def summarize(folder: Path):
         raise ValueError(f"{folder.name}: invalid duration")
     workload_file = folder / "workload-id.txt"
     workload_id = workload_file.read_text(encoding="utf-8").strip() if workload_file.exists() else "unlabeled"
-    return {"run": folder.name, "workload_id": workload_id, "duration_seconds": duration, "elapsed_seconds": elapsed,
+    def optional_metadata(name):
+        p = folder / name
+        return p.read_text(encoding="utf-8").strip() if p.exists() else "unknown"
+    return {"run": folder.name, "workload_id": workload_id,
+            "source_commit": optional_metadata("source-commit.txt"),
+            "machine": optional_metadata("machine.txt"),
+            "environment": optional_metadata("environment.txt"), "duration_seconds": duration, "elapsed_seconds": elapsed,
             "realtime_factor": round(elapsed / duration, 4),
             "peak_process_tree_rss_kb": int(row["peak_process_tree_rss_kb"]),
             "peak_ffmpeg_rss_kb": int(row["peak_ffmpeg_rss_kb"]),
