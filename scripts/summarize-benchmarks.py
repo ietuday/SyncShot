@@ -34,7 +34,10 @@ def summarize(folder: Path):
     def optional_metadata(name):
         p = folder / name
         return p.read_text(encoding="utf-8").strip() if p.exists() else "unknown"
+    fingerprint_file = folder / "inputs-fingerprint.json"
+    input_fingerprint = json.loads(fingerprint_file.read_text(encoding="utf-8"))["fingerprint"] if fingerprint_file.exists() else "unknown"
     return {"run": folder.name, "workload_id": workload_id,
+            "input_fingerprint": input_fingerprint,
             "source_commit": optional_metadata("source-commit.txt"),
             "machine": optional_metadata("machine.txt"),
             "environment": optional_metadata("environment.txt"), "duration_seconds": duration, "elapsed_seconds": elapsed,
