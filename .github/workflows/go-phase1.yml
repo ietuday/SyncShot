@@ -63,3 +63,18 @@ jobs:
         run: python3 scripts/test-fingerprint-inputs.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
+
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Validate benchmark smoke script syntax
+        run: bash -n scripts/test-benchmark-runner-e2e.sh
+      - name: Real FFmpeg benchmark runner integration test
+        timeout-minutes: 10
+        run: bash scripts/test-benchmark-runner-e2e.sh
