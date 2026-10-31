@@ -79,4 +79,14 @@ jobs:
         run: bash -n scripts/test-benchmark-runner-e2e.sh
       - name: Real FFmpeg benchmark runner integration test
         timeout-minutes: 10
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: benchmark-evidence
         run: bash scripts/test-benchmark-runner-e2e.sh
+      - name: Upload benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-evidence
+          path: benchmark-evidence/
+          if-no-files-found: warn
+          retention-days: 14
