@@ -17,6 +17,10 @@ printf "%s\n" "$(git rev-parse HEAD 2>/dev/null || echo unknown)" > "$RUN_DIR/so
 { uname -srm; nproc 2>/dev/null || true; } > "$RUN_DIR/machine.txt"
 # Explicit workload ID must encode media, render settings and hardware for comparisons.
 printf "%s\n" "${SYNC_SHOT_BENCHMARK_WORKLOAD_ID:-unlabeled}" > "$RUN_DIR/workload-id.txt"
+if [[ -n "${SYNC_SHOT_BENCHMARK_INPUTS:-}" ]]; then
+  IFS=":" read -r -a INPUT_PATHS <<< "$SYNC_SHOT_BENCHMARK_INPUTS"
+  python3 "$ROOT/scripts/fingerprint-inputs.py" --output "$RUN_DIR/inputs-fingerprint.json" "${INPUT_PATHS[@]}"
+fi
 printf "%q " "$RUN_DIR/syncshot" "${CLI_ARGS[@]}" > "$RUN_DIR/command.txt"
 printf "\\n" >> "$RUN_DIR/command.txt"
 printf 'timestamp_utc,active_processes,total_rss_kb,ffmpeg_rss_kb\n' > "$RUN_DIR/process-memory.csv"
