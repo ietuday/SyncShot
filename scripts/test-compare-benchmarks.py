@@ -14,7 +14,7 @@ spec.loader.exec_module(module)
 class CompareTests(unittest.TestCase):
     def setUp(self):
         self.baseline = {"realtime_factor": 2.0, "peak_process_tree_rss_kb": 200000,
-                         "peak_ffmpeg_rss_kb": 150000, "workload_id": "sample-workload"}
+                         "peak_ffmpeg_rss_kb": 150000, "workload_id": "sample-workload", "input_fingerprint": "a" * 64}
     def test_no_regression(self):
         rows, failed = module.compare(self.baseline, dict(self.baseline), 15)
         self.assertFalse(failed)
@@ -34,10 +34,14 @@ class CompareTests(unittest.TestCase):
             module.compare({**self.baseline, "workload_id": "unlabeled"}, self.baseline, 15)
 
     def test_reject_mismatched_input_fingerprints(self):
-        base = {**self.baseline, "input_fingerprint": "abc"}
-        candidate = {**self.baseline, "input_fingerprint": "def"}
+        base = {**self.baseline, "input_fingerprint": "b" * 64}
+        candidate = {**self.baseline, "input_fingerprint": "c" * 64}
         with self.assertRaises(ValueError):
             module.compare(base, candidate, 15)
+
+    def test_reject_missing_fingerprint(self):
+        with self.assertRaises(ValueError):
+            module.compare({**self.baseline, "input_fingerprint": "unknown"}, self.baseline, 15)
 
     def test_reject_invalid_metric(self):
         with tempfile.TemporaryDirectory() as temp:
