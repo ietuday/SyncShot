@@ -29,7 +29,9 @@ def summarize(folder: Path):
     duration = float(duration_file.read_text(encoding="utf-8").strip())
     if not 0 < duration < float("inf"):
         raise ValueError(f"{folder.name}: invalid duration")
-    return {"run": folder.name, "duration_seconds": duration, "elapsed_seconds": elapsed,
+    workload_file = folder / "workload-id.txt"
+    workload_id = workload_file.read_text(encoding="utf-8").strip() if workload_file.exists() else "unlabeled"
+    return {"run": folder.name, "workload_id": workload_id, "duration_seconds": duration, "elapsed_seconds": elapsed,
             "realtime_factor": round(elapsed / duration, 4),
             "peak_process_tree_rss_kb": int(row["peak_process_tree_rss_kb"]),
             "peak_ffmpeg_rss_kb": int(row["peak_ffmpeg_rss_kb"]),

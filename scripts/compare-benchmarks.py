@@ -18,6 +18,10 @@ def read_run(path):
     return run
 
 def compare(base, current, limit):
+    base_id = base.get("workload_id", "unlabeled")
+    current_id = current.get("workload_id", "unlabeled")
+    if not base_id or base_id == "unlabeled" or current_id != base_id:
+        raise ValueError("matching labeled workload_id is required for valid comparisons")
     rows = []
     failed = False
     for key in METRICS:
