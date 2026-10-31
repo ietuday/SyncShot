@@ -14,6 +14,14 @@ printf 'timestamp_utc,active_processes,total_rss_kb,ffmpeg_rss_kb\n' > "$RUN_DIR
 printf 'start_utc,elapsed_seconds,peak_process_tree_rss_kb,peak_ffmpeg_rss_kb,exit_code,output_bytes\n' > "$RUN_DIR/measurements.csv"
 start="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 started="$(date +%s)"
+# Output path may be overridden for benchmark runs.
+OUTPUT_VIDEO="${SYNC_SHOT_BENCHMARK_OUTPUT:-./output/video/final.mp4}"
+original_present=0
+original_signature=""
+if [[ -f "$OUTPUT_VIDEO" ]]; then
+  original_present=1
+  original_signature="$(stat -c '%d:%i:%s:%Y:%Z' "$OUTPUT_VIDEO")"
+fi
 "$RUN_DIR/syncshot" > "$RUN_DIR/run.log" 2>&1 &
 root_pid=$!
 cleanup() {
@@ -61,9 +69,23 @@ status=$?
 set -e
 elapsed="$(($(date +%s)-started))"
 size=0
-# Never credit a failed run with the previous run's final.mp4.
-if [[ "$status" -eq 0 && -f ./output/video/final.mp4 ]]; then
-  size="$(stat -c %s ./output/video/final.mp4)"
+# Validate the actual video output and flag runs which did not replace it.
+if [[ "$status" -eq 0 ]]; then
+  if [[ ! -s "$OUTPUT_VIDEO" ]]; then
+    echo "Benchmark failed: output is missing or empty: $OUTPUT_VIDEO" >&2
+    status=1
+  else
+    current_signature="$(stat -c '%d:%i:%s:%Y:%Z' "$OUTPUT_VIDEO")"
+    if [[ "$original_present" -eq 1 && "$original_signature" == "$current_signature" ]]; then
+      echo "Benchmark failed: output appears unchanged from previous run: $OUTPUT_VIDEO" >&2
+      status=1
+    elif ! ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 "$OUTPUT_VIDEO" > "$RUN_DIR/output-duration.txt"; then
+      echo "Benchmark failed: output could not be probed: $OUTPUT_VIDEO" >&2
+      status=1
+    else
+      size="$(stat -c %s "$OUTPUT_VIDEO")"
+    fi
+  fi
 fi
 printf '%s,%s,%s,%s,%s,%s\n' "$start" "$elapsed" "$peak_tree" "$peak_ffmpeg" "$status" "$size" >> "$RUN_DIR/measurements.csv"
 echo "Exit: $status; peak tree RSS: $peak_tree KiB; peak FFmpeg RSS: $peak_ffmpeg KiB; logs: $RUN_DIR"
