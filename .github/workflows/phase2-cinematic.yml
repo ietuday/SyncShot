@@ -1,7 +1,7 @@
 name: Phase 2 cinematic checks
 on:
   push:
-    branches: [feature/phase2-cinematic-rendering]
+    branches: [syncshot-go, feature/phase2-cinematic-rendering]
   pull_request:
     paths:
       - 'internal/cinematic/**'
