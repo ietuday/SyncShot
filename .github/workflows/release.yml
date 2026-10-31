@@ -1,5 +1,12 @@
 name: Release builds
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'cmd/**'
+      - 'internal/**'
+      - 'go.mod'
+      - 'go.sum'
   push:
     tags: ['v*']
   workflow_dispatch:
