@@ -62,7 +62,7 @@ while kill -0 "$root_pid" 2>/dev/null; do
   count=0
   for pid in "$root_pid" $(descendants "$root_pid"); do
     [[ -r "/proc/$pid/status" ]] || continue
-    rss="$(awk '/^VmRSS:/ {print $2;exit}' "/proc/$pid/status")"
+    rss="$(awk '/^VmRSS:/ {print $2;exit}' "/proc/$pid/status" 2>/dev/null || true)"
     [[ "$rss" =~ ^[0-9]+$ ]] || continue
     ((tree_rss+=rss)) || true
     ((count+=1)) || true
