@@ -6,9 +6,7 @@ cd "$ROOT"
 OUT="${1:-./output/benchmarks}"
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
-STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="$OUT/$STAMP"
-mkdir -p "$RUN_DIR"
+RUN_DIR="$(mktemp -d "$OUT/run-XXXXXXXX")"
 go build -o "$RUN_DIR/syncshot" ./cmd/syncshot
 ffmpeg -version | head -n 1 > "$RUN_DIR/environment.txt"
 go version >> "$RUN_DIR/environment.txt"
@@ -18,6 +16,14 @@ start="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 started="$(date +%s)"
 "$RUN_DIR/syncshot" > "$RUN_DIR/run.log" 2>&1 &
 root_pid=$!
+cleanup() {
+  if kill -0 "$root_pid" 2>/dev/null; then
+    pkill -TERM -P "$root_pid" 2>/dev/null || true
+    kill -TERM "$root_pid" 2>/dev/null || true
+    wait "$root_pid" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT INT TERM
 
 # Enumerate descendants recursively; /proc/<pid>/status VmRSS is instantaneous.
 descendants() {
@@ -55,7 +61,10 @@ status=$?
 set -e
 elapsed="$(($(date +%s)-started))"
 size=0
-if [[ -f ./output/video/final.mp4 ]]; then size="$(stat -c %s ./output/video/final.mp4)"; fi
+# Never credit a failed run with the previous run's final.mp4.
+if [[ "$status" -eq 0 && -f ./output/video/final.mp4 ]]; then
+  size="$(stat -c %s ./output/video/final.mp4)"
+fi
 printf '%s,%s,%s,%s,%s,%s\n' "$start" "$elapsed" "$peak_tree" "$peak_ffmpeg" "$status" "$size" >> "$RUN_DIR/measurements.csv"
 echo "Exit: $status; peak tree RSS: $peak_tree KiB; peak FFmpeg RSS: $peak_ffmpeg KiB; logs: $RUN_DIR"
 exit "$status"
