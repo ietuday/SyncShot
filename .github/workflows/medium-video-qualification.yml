@@ -1,5 +1,9 @@
 name: Medium video qualification
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/medium-video-qualification.yml'
+      - 'scripts/test-medium-video-qualification.sh'
   workflow_dispatch:
     inputs:
       duration_seconds:
@@ -25,7 +29,7 @@ jobs:
         run: bash -n scripts/test-medium-video-qualification.sh
       - name: Qualify real medium-length video
         env:
-          SYNC_SHOT_QUALIFICATION_SECONDS: ${{ inputs.duration_seconds }}
+          SYNC_SHOT_QUALIFICATION_SECONDS: ${{ inputs.duration_seconds || '60' }}
           SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: qualification-evidence
         run: bash scripts/test-medium-video-qualification.sh
       - name: Upload qualification evidence
