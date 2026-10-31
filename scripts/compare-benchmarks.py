@@ -24,7 +24,11 @@ def compare(base, current, limit):
         raise ValueError("matching labeled workload_id is required for valid comparisons")
     base_fp = base.get("input_fingerprint", "unknown")
     candidate_fp = current.get("input_fingerprint", "unknown")
-    if base_fp != "unknown" and candidate_fp != "unknown" and base_fp != candidate_fp:
+    if (not isinstance(base_fp, str) or not isinstance(candidate_fp, str)
+            or len(base_fp) != 64 or len(candidate_fp) != 64
+            or any(ch not in "0123456789abcdef" for ch in base_fp + candidate_fp)):
+        raise ValueError("both benchmarks require valid SHA-256 input fingerprints")
+    if base_fp != candidate_fp:
         raise ValueError("benchmark inputs differ; cannot compare mismatched media")
     rows = []
     failed = False
