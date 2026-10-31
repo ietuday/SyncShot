@@ -45,27 +45,14 @@ jobs:
           sha256sum "${NAME}.tar.gz" > "${NAME}.tar.gz.sha256"
       - name: Verify release archive and checksum
         shell: bash
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
         run: |
           set -euo pipefail
           cd dist
           sha256sum --check *.sha256
           archive="$(find . -maxdepth 1 -name '*.tar.gz' -print -quit)"
           test -n "$archive"
-          test "$(tar -tzf "$archive" | grep -Ec '(^|/)syncshot(\\.exe)?
-        with:
-          name: release-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/*.tar.gz*
-          if-no-files-found: error
-)" -eq 1
-          test "$(tar -tzf "$archive" | grep -Ec '(^|/)README\\.md
-        with:
-          name: release-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/*.tar.gz*
-          if-no-files-found: error
-)" -eq 1
+          tar -tzf "$archive" | grep -Eq '/syncshot(\.exe)?$'
+          tar -tzf "$archive" | grep -Eq '/README\.md$'
       - name: Smoke test packaged Linux amd64 executable
         if: matrix.goos == 'linux' && matrix.goarch == 'amd64'
         shell: bash
@@ -76,9 +63,8 @@ jobs:
           chmod +x dist/unpacked/syncshot
           mkdir -p dist/workspace/inputs/audio dist/workspace/inputs/images
           cd dist/workspace
-          # Runtime dependency discovery without pulling large media packages.
           mkdir fakebin
-          printf '#!/bin/sh\\nexit 0\\n' > fakebin/ffmpeg
+          printf '#!/bin/sh\nexit 0\n' > fakebin/ffmpeg
           cp fakebin/ffmpeg fakebin/ffprobe
           chmod +x fakebin/*
           PATH="$PWD/fakebin:$PATH" ../unpacked/syncshot --dry-run
