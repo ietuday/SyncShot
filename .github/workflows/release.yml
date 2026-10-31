@@ -1,0 +1,50 @@
+name: Release builds
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Verify Go packages
+        run: go test -short ./...
+      - name: Build release archive
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME}"
+          if [[ "$VERSION" != v* ]]; then VERSION="snapshot-${GITHUB_SHA::12}"; fi
+          NAME="syncshot-${VERSION}-${GOOS}-${GOARCH}"
+          mkdir -p dist/package
+          EXT=""
+          if [[ "$GOOS" == windows ]]; then EXT=".exe"; fi
+          CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "dist/package/syncshot${EXT}" ./cmd/syncshot
+          cp README.md dist/package/
+          tar -C dist/package -czf "dist/${NAME}.tar.gz" .
+          rm -rf dist/package
+          cd dist
+          sha256sum "${NAME}.tar.gz" > "${NAME}.tar.gz.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*.tar.gz*
+          if-no-files-found: error
