@@ -73,6 +73,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Validate benchmark smoke script syntax
         run: bash -n scripts/test-benchmark-runner-e2e.sh
       - name: Real FFmpeg benchmark runner integration test
