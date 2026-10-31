@@ -56,6 +56,6 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: Benchmark summary tests
-        run: python3 -m unittest discover -s scripts -p test-summarize-benchmarks.py -v
+        run: python3 scripts/test-summarize-benchmarks.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
