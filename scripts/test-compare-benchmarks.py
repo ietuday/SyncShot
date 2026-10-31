@@ -33,6 +33,12 @@ class CompareTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             module.compare({**self.baseline, "workload_id": "unlabeled"}, self.baseline, 15)
 
+    def test_reject_mismatched_input_fingerprints(self):
+        base = {**self.baseline, "input_fingerprint": "abc"}
+        candidate = {**self.baseline, "input_fingerprint": "def"}
+        with self.assertRaises(ValueError):
+            module.compare(base, candidate, 15)
+
     def test_reject_invalid_metric(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "report.json"

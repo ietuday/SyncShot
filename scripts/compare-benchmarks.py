@@ -22,6 +22,10 @@ def compare(base, current, limit):
     current_id = current.get("workload_id", "unlabeled")
     if not base_id or base_id == "unlabeled" or current_id != base_id:
         raise ValueError("matching labeled workload_id is required for valid comparisons")
+    base_fp = base.get("input_fingerprint", "unknown")
+    candidate_fp = current.get("input_fingerprint", "unknown")
+    if base_fp != "unknown" and candidate_fp != "unknown" and base_fp != candidate_fp:
+        raise ValueError("benchmark inputs differ; cannot compare mismatched media")
     rows = []
     failed = False
     for key in METRICS:

@@ -59,5 +59,7 @@ jobs:
         run: python3 scripts/test-summarize-benchmarks.py -v
       - name: Benchmark comparison tests
         run: python3 scripts/test-compare-benchmarks.py -v
+      - name: Input fingerprint regression tests
+        run: python3 scripts/test-fingerprint-inputs.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
