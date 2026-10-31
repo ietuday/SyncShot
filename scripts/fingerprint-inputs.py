@@ -7,7 +7,7 @@ from pathlib import Path
 
 def fingerprint(paths):
     entries = []
-    for raw in paths:
+    for source_index, raw in enumerate(paths):
         path = Path(raw)
         if not path.exists():
             raise FileNotFoundError(str(path))
@@ -17,7 +17,7 @@ def fingerprint(paths):
             with file.open("rb") as stream:
                 for block in iter(lambda: stream.read(1024 * 1024), b""):
                     digest.update(block)
-            entries.append({"source": str(path), "file": str(file.relative_to(path) if path.is_dir() else path.name),
+            entries.append({"source_index": source_index, "file": str(file.relative_to(path) if path.is_dir() else path.name),
                             "bytes": file.stat().st_size, "sha256": digest.hexdigest()})
     combined = hashlib.sha256(json.dumps(entries, sort_keys=True).encode("utf-8")).hexdigest()
     return {"fingerprint": combined, "files": len(entries), "bytes": sum(x["bytes"] for x in entries)}
