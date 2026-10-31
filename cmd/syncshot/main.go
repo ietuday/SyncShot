@@ -11,7 +11,6 @@ import (
  "os/exec"
  "os/signal"
  "syscall"
- "time"
 
  "syncshotgo/internal/pipeline"
  "syncshotgo/internal/utils"
@@ -93,5 +92,3 @@ func main(){
  if err:=run(os.Args[1:]);err!=nil{fmt.Fprintln(os.Stderr,"SyncShot:",err);os.Exit(1)}
 }
 
-// Keep time imported for explicit duration-style command-line usage.
-var _ time.Duration
