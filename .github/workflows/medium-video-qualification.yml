@@ -1,0 +1,38 @@
+name: Medium video qualification
+on:
+  workflow_dispatch:
+    inputs:
+      duration_seconds:
+        description: 'Synthetic narration duration, 10 to 600 seconds'
+        required: true
+        default: '60'
+        type: string
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Check shell syntax
+        run: bash -n scripts/test-medium-video-qualification.sh
+      - name: Qualify real medium-length video
+        env:
+          SYNC_SHOT_QUALIFICATION_SECONDS: ${{ inputs.duration_seconds }}
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: qualification-evidence
+        run: bash scripts/test-medium-video-qualification.sh
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: medium-video-qualification
+          path: qualification-evidence/
+          if-no-files-found: warn
+          retention-days: 14
