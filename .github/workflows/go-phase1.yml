@@ -9,7 +9,7 @@ on:
       - 'scripts/**'
       - '.github/workflows/go-phase1.yml'
   push:
-    branches: [feature/enhanced-video-pipeline]
+    branches: [syncshot-go, feature/enhanced-video-pipeline]
 jobs:
   go:
     runs-on: ubuntu-24.04
