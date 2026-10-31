@@ -37,3 +37,10 @@ assert len(run["input_fingerprint"])==64,run
 assert run["workload_id"]=="ci-2s-720p",run
 print("Benchmark end-to-end smoke test passed")
 PY
+# Persist selected evidence outside the automatically deleted temp workspace.
+if [[ -n "${SYNC_SHOT_BENCHMARK_EVIDENCE_DIR:-}" ]]; then
+  mkdir -p "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR"
+  cp "$TMP/summary.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/summary.json"
+  find "$TMP/reports" -name measurements.csv -exec cp {} "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/measurements.csv" \;
+  find "$TMP/reports" -name process-memory.csv -exec cp {} "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/process-memory.csv" \;
+fi
