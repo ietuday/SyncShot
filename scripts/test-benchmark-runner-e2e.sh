@@ -26,6 +26,7 @@ SYNC_SHOT_BENCHMARK_WORKLOAD_ID="ci-2s-720p" \
 SYNC_SHOT_BENCHMARK_INPUTS="$TMP/audio:$TMP/images:$TMP/config.json" \
 bash scripts/benchmark-long-video.sh "$TMP/reports" --config "$TMP/config.json" --timeout 5m
 python3 scripts/summarize-benchmarks.py "$TMP/reports" --json "$TMP/summary.json"
+python3 scripts/check-media-quality.py "$TMP/final.mp4" --width 1280 --height 720 --min-duration 1 --max-duration 5 > "$TMP/media-quality.json"
 python3 - "$TMP/summary.json" <<'PY'
 import json,sys
 data=json.load(open(sys.argv[1],encoding="utf-8"))
@@ -41,6 +42,7 @@ PY
 if [[ -n "${SYNC_SHOT_BENCHMARK_EVIDENCE_DIR:-}" ]]; then
   mkdir -p "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR"
   cp "$TMP/summary.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/summary.json"
+  cp "$TMP/media-quality.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/media-quality.json"
   find "$TMP/reports" -name measurements.csv -exec cp {} "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/measurements.csv" \;
   find "$TMP/reports" -name process-memory.csv -exec cp {} "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/process-memory.csv" \;
 fi
