@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       duration_seconds:
-        description: 'Synthetic narration duration, 10 to 600 seconds'
+        description: 'Synthetic narration duration, 10 to 900 seconds'
         required: true
         default: '60'
         type: string
