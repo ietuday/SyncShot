@@ -200,3 +200,15 @@ python3 scripts/generate-scene-images.py --plan scene-plan.json --output-dir out
 ```
 
 The `--execute` mode requires network access to OpenAI's Images API, an authorized API key, and appropriate billing. It requests one 1024x1024 PNG per scene with the `gpt-image-1` model. Images may not maintain character identity across independent calls; character consistency and real image-to-video animation are future phases. Run `python3 scripts/test-generate-scene-images.py` to test locally without network access or API charges.
+
+## Phase 9.4 — Runway image-to-video task submission (optional)
+
+Generate real animated video clips from scene images using the Runway API. This is **not local FFmpeg zoom/pan**: it submits image-to-video generation tasks to Runway's Gen-4 Turbo model. This first adapter submits tasks and stores task IDs; it does not yet poll, download, stitch or synchronize completed clips, or upload local PNGs. You must provide HTTPS-hosted images; avoid publishing private media publicly.
+
+Create `scene-image-urls.json` mapping scene numbers to approved HTTPS image URLs, e.g. `{"1":"https://example.com/scene1.png"}`. First preview one task without charges:
+
+```bash
+python3 scripts/animate-scene-images.py --plan scene-plan.json --image-urls scene-image-urls.json --output preview-animation.json --limit 1
+```
+
+To **explicitly submit paid generation tasks**, install `runwayml`, set `RUNWAYML_API_SECRET` securely, choose a **different** output filename, and add `--execute`. Verify provider pricing, credits and eligibility before doing so. The default clip duration is 5 seconds. Do not commit secrets or user media. The output contains task IDs only; a future stage must download results and align scenes to narration.
