@@ -130,3 +130,7 @@ Real-media preflight now requires each supported narration file to contain an ac
 ## Phase 8.28 — Preflight rejection regression coverage
 
 The dedicated real-media qualification CI's Python tests now additionally cover absent narration/images, unreadable ffprobe media and insufficient available disk. These checks fail before launching an expensive render. Run `python3 scripts/test-preflight-real-media.py`. The original 15-minute user workload on the 12 GiB Ubuntu laptop is still unverified.
+
+## Phase 8.29 — Host RAM and swap evidence for long rendering
+
+The benchmark now records `host-memory-before.txt` and `host-memory-after.txt` with `/proc/meminfo` values (MemTotal, MemAvailable, SwapTotal and SwapFree), where available. These snapshots help interpret FFmpeg process RSS relative to the machine's available memory and swap, but do not prove a kernel OOM event. To confirm an OOM SIGKILL, inspect `sudo journalctl -k` on the device. The original 15-minute render on the 12 GiB laptop remains outstanding.
