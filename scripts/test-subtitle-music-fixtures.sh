@@ -9,7 +9,7 @@ mkdir -p "$WORK/audio" "$WORK/images" "$WORK/reports"
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=1280x720:rate=1' -frames:v 1 "$WORK/images/001.png"
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'smptebars=size=1280x720:rate=1' -frames:v 1 "$WORK/images/002.png"
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'mandelbrot=size=1280x720:rate=1' -frames:v 1 "$WORK/images/003.png"
-ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'sine=frequency=330:duration=18' -af 'volume=0.6' -c:a libmp3lame "$WORK/audio/narration.mp3"
+ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'sine=frequency=330:duration=18' -af 'volume=0.6,volume=enable=between(t\\,6\\,11):volume=0' -c:a libmp3lame "$WORK/audio/narration.mp3"
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'sine=frequency=220:duration=18' -af 'volume=0.1' -c:a libmp3lame "$WORK/music.mp3"
 cat > "$WORK/captions.srt" <<'SRT'
 1
