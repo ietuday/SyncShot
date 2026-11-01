@@ -70,3 +70,7 @@ After pulling `syncshot-go`, run `bash scripts/qualify-real-media-low-memory.sh 
 ## Phase 8.13 — Isolated real-media qualification reports
 
 Each real-media qualification now creates a unique `output/real-media-qualification/qualification-*/` report root, so the memory gate reads the current benchmark rather than a potentially newer/older unrelated run. It rejects report directories nested inside the source audio or image directories to prevent the test from scanning its own outputs. Source media is still not modified. Run `bash scripts/test-real-media-qualification.sh` for basic harness wiring checks.
+
+## Phase 8.14 — Qualification preflight safety
+
+The manual real-media qualification runner now resolves and verifies audio/image source directories, rejects report directories nested inside them **before creating any files**, and checks for required Go/FFmpeg/ffprobe/Python commands before starting. Run `bash scripts/test-real-media-qualification.sh` to verify nested-path rejection creates no report directory. Real 15-minute rendering on the user's laptop remains unverified.
