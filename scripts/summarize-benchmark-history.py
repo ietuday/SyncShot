@@ -164,6 +164,8 @@ def main():
                         help="Reject evidence with other workload IDs")
     parser.add_argument("--min-repetitions", type=int, default=1,
                         help="Minimum qualification runs per side")
+    parser.add_argument("--require-matching-inputs", action="store_true",
+                        help="Require matching workload and input fingerprints across evidence")
     parser.add_argument("--require-matching-environment", action="store_true",
                         help="Require consistent runner/platform/config provenance for all records")
     args = parser.parse_args()
@@ -189,6 +191,30 @@ def main():
             env = record["environment"]
             if not isinstance(env, dict) or any(env.get(key) != first[key] for key in required):
                 parser.error("benchmark environment mismatch")
+    if args.require_matching_inputs:
+        fingerprints = []
+        for directory in args.evidence:
+            manifest = json.loads((directory / "run-manifest.json").read_text(encoding="utf-8"))
+            reports = manifest.get("baseline", []) + manifest.get("candidate", [])
+            if not reports:
+                parser.error("missing referenced qualification reports in " + str(directory))
+            found = set()
+            for name in reports:
+                path = directory / name
+                if not path.is_file() or path.parent != directory:
+                    parser.error("missing or invalid qualification report " + str(name))
+                raw = json.loads(path.read_text(encoding="utf-8"))
+                runs = raw if isinstance(raw, list) else [raw]
+                for item in runs:
+                    fingerprint = item.get("input_fingerprint") if isinstance(item, dict) else None
+                    if not isinstance(fingerprint, str) or not fingerprint:
+                        parser.error("input fingerprint missing in " + str(path))
+                    found.add(fingerprint)
+            if len(found) != 1:
+                parser.error("input fingerprint drift within " + str(directory))
+            fingerprints.append((records[len(fingerprints)]["workload_id"], found.pop()))
+        if len(set(fingerprints)) != 1:
+            parser.error("benchmark workload/input drift between evidence directories")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "history.json").write_text(
         json.dumps({"schema_version": 1, "records": records}, indent=2) + "\n",
