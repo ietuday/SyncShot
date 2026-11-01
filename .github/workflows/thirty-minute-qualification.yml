@@ -1,0 +1,33 @@
+name: Thirty minute qualification
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/thirty-minute-qualification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Real 30-minute synthetic 720p render
+        env:
+          SYNC_SHOT_QUALIFICATION_SECONDS: '1800'
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: qualification-evidence
+        run: bash scripts/test-medium-video-qualification.sh
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: thirty-minute-qualification
+          path: qualification-evidence/
+          retention-days: 14
+          if-no-files-found: warn
