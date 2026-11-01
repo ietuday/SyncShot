@@ -122,3 +122,7 @@ Before a potentially lengthy real-media qualification run, `scripts/preflight-re
 ## Phase 8.26 — Strict media preflight regression checks
 
 Preflight now rejects zero/malformed image dimensions, nonfinite narration durations and invalid free-disk thresholds. The dedicated qualification GitHub Actions workflow runs `python3 scripts/test-preflight-real-media.py` alongside its end-to-end smoke tests. The real 15-minute narration with 10 images on the 12 GiB Ubuntu laptop still requires a manual test.
+
+## Phase 8.27 — Narration audio-stream validation
+
+Real-media preflight now requires each supported narration file to contain an actual readable audio stream, not merely a positive container duration. This prevents a mislabeled silent video container from passing the input check. The qualification CI's Python preflight regression tests cover a missing audio stream. Run `python3 scripts/test-preflight-real-media.py` for focused tests. The original 15-minute render on the 12 GiB laptop remains unverified.
