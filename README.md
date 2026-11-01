@@ -90,3 +90,7 @@ If the real-media qualification fails after the benchmark report directory is cr
 ## Phase 8.18 — Actionable qualification summaries
 
 Real-media `summary.json` and `summary.md` now include suggested next steps based on recorded render status and peak FFmpeg RSS. A failed render points to logs and OOM confirmation; high measured RAM encourages workload reduction; a missing RSS sample triggers instrumentation review. These are evidence-based suggestions, not guarantees of rendering success, and the actual 15-minute media still needs a local test.
+
+## Phase 8.19 — Memory qualification evidence guardrails
+
+The RSS qualification check now requires exactly one benchmark `measurements.csv` under the chosen report directory and rejects missing or zero peak FFmpeg memory samples. Ambiguous report directories no longer silently use the most recently modified run. Nonfinite RSS limits are also rejected. Run `python3 scripts/test-check-low-memory-benchmark.py` for focused regression tests. This does not itself benchmark the original 15-minute media.
