@@ -9,7 +9,7 @@ import (
 
 func TestDefaultConfig(t *testing.T){
  c:=defaultConfig()
- if c.FPS!=24||c.ClipSeconds!=50||!c.CinematicEnabled {t.Fatalf("defaults changed: %+v",c)}
+ if c.FPS!=24||c.ClipSeconds!=50||!c.CinematicEnabled||c.CinematicChunkScenes!=2||c.MaxWorkers!=2 {t.Fatalf("defaults changed: %+v",c)}
 }
 func TestJSONConfigurationAndOverrides(t *testing.T){
  dir:=t.TempDir()
@@ -17,6 +17,12 @@ func TestJSONConfigurationAndOverrides(t *testing.T){
  if err:=os.WriteFile(path,[]byte("{\"FPS\":30,\"CinematicChunkScenes\":2,\"MaxWorkers\":3}"),0600);err!=nil{t.Fatal(err)}
  cfg,err:=loadConfig(path);if err!=nil{t.Fatal(err)}
  if cfg.FPS!=30||cfg.CinematicChunkScenes!=2||cfg.MaxWorkers!=3||cfg.AudioDir!="./inputs/audio"{t.Fatalf("unexpected config: %+v",cfg)}
+}
+func TestChunkingCanBeDisabledByConfig(t *testing.T){
+ path:=filepath.Join(t.TempDir(),"config.json")
+ if err:=os.WriteFile(path,[]byte("{\\"CinematicChunkScenes\\":0}"),0600);err!=nil{t.Fatal(err)}
+ cfg,err:=loadConfig(path);if err!=nil{t.Fatal(err)}
+ if cfg.CinematicChunkScenes!=0{t.Fatalf("explicit opt-out ignored: %+v",cfg)}
 }
 func TestRejectUnknownConfigField(t *testing.T){
  path:=filepath.Join(t.TempDir(),"config.json")
