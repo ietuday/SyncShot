@@ -7,8 +7,6 @@ import argparse
 import base64
 import json
 import os
-import re
-import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -76,8 +74,12 @@ def generate(scenes: list[dict], directory: Path, execute: bool,
             if not isinstance(content, bytes) or not content.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise ValueError("provider returned invalid PNG image")
             # Use exclusive creation so competing jobs cannot overwrite a scene.
-            with target.open("xb") as output:
-                output.write(content)
+            try:
+                with target.open("xb") as output:
+                    output.write(content)
+            except Exception:
+                target.unlink(missing_ok=True)
+                raise
         items.append(item)
     return items
 
