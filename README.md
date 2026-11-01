@@ -142,3 +142,7 @@ After the manual 15-minute qualification finishes (or fails), select the resulti
 ## Phase 8.31 — Diagnostic bundle publication safety
 
 Diagnostic archive exports now refuse to overwrite existing archives, create output via a temporary archive followed by an atomic no-replace link, reject symlinked run directories, and reject output paths inside the qualification folder. Run `python3 scripts/test-package-qualification-report.py` to exercise the safeguards. Reports can still reveal workload information; inspect before sharing. Original 15-minute render on the 12 GiB laptop remains unverified.
+
+## Phase 8.33 — Bounded qualification diagnostic bundles
+
+The diagnostic packager now rejects any whitelisted input over 16 MiB or a combined uncompressed input size over 32 MiB. This avoids unexpectedly large archives or memory/disk pressure from corrupted measurement and summary files. An oversize failure removes the temporary archive without publishing the destination. Empty regular diagnostic files remain supported. Run `python3 scripts/test-package-qualification-report.py` for regression coverage. These limits do not replace the manual 15-minute qualification on the 12 GiB laptop.
