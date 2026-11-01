@@ -48,5 +48,25 @@ class Tests(unittest.TestCase):
         with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("audio\n"),Result("320,180\n")]):
             with self.assertRaisesRegex(ValueError,"finite and nonnegative"):
                 mod.preflight(self.audio,self.images,self.report,float("nan"))
+    def test_missing_media(self):
+        (self.audio/"voice.wav").unlink()
+        with self.assertRaisesRegex(ValueError,"no supported narration"):
+            mod.preflight(self.audio,self.images,self.report,0)
+        (self.audio/"voice.wav").write_bytes(b"test")
+        (self.images/"image.png").unlink()
+        with self.assertRaisesRegex(ValueError,"no supported images"):
+            mod.preflight(self.audio,self.images,self.report,0)
+    def test_insufficient_disk_space(self):
+        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("audio\n"),Result("320,180\n")]):
+            with self.assertRaisesRegex(ValueError,"insufficient free disk"):
+                mod.preflight(self.audio,self.images,self.report,float("1e100"))
+    def test_unreadable_audio(self):
+        with patch.object(mod.subprocess,"run",return_value=Result("",code=1)):
+            with self.assertRaisesRegex(ValueError,"ffprobe cannot read"):
+                mod.preflight(self.audio,self.images,self.report,0)
+    def test_unreadable_image(self):
+        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("audio\n"),Result("",code=1)]):
+            with self.assertRaisesRegex(ValueError,"invalid image"):
+                mod.preflight(self.audio,self.images,self.report,0)
 if __name__=="__main__":
     unittest.main()
