@@ -1,0 +1,14 @@
+name: Animated video assembly checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/assemble-animated-video.py'
+      - 'scripts/test-assemble-animated-video.py'
+      - '.github/workflows/animation-assembly.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-assemble-animated-video.py
