@@ -112,11 +112,35 @@ def trend_svg(records):
     return "\n".join(parts) + "\n"
 
 
+
+def regressions(records, threshold):
+    """Flag comparisons above a configured limit; never compare unrelated runs."""
+    alerts = []
+    for record in records:
+        for metric in METRICS:
+            row = record["metrics"][metric]
+            if row["change_pct"] > threshold:
+                alerts.append({
+                    "evidence_directory": record["evidence_directory"],
+                    "workload_id": record["workload_id"],
+                    "baseline_commit": record["baseline_commit"],
+                    "candidate_commit": record["candidate_commit"],
+                    "metric": metric,
+                    "change_pct": row["change_pct"],
+                    "threshold_pct": threshold,
+                })
+    return alerts
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("evidence", type=Path, nargs="+", help="Unpacked evidence folders")
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--alert-threshold-percent", type=float, default=200,
+                        help="Positive regression percent triggering nonzero exit")
     args = parser.parse_args()
+    if not math.isfinite(args.alert_threshold_percent) or args.alert_threshold_percent < 0:
+        parser.error("alert threshold must be finite and nonnegative")
     records = [collect(path) for path in args.evidence]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "history.json").write_text(
@@ -125,6 +149,13 @@ def main():
     (args.output_dir / "history.md").write_text(markdown(records), encoding="utf-8")
     (args.output_dir / "trend.csv").write_text(trend_csv(records), encoding="utf-8")
     (args.output_dir / "trend.svg").write_text(trend_svg(records), encoding="utf-8")
+    alerts = regressions(records, args.alert_threshold_percent)
+    (args.output_dir / "regression-alerts.json").write_text(
+        json.dumps({"threshold_percent": args.alert_threshold_percent,
+                    "alerts": alerts}, indent=2) + "\\n", encoding="utf-8")
+    if alerts:
+        print(f"Found {len(alerts)} benchmark regressions", file=__import__("sys").stderr)
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
