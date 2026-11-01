@@ -79,6 +79,10 @@ jobs:
         run: python3 scripts/test-audit-qualification-inputs.py -v
       - name: Media decode preflight regression tests
         run: python3 scripts/test-qualification-media-decode.py -v
+      - name: Install FFmpeg for real decoder fixtures
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Real media decoder fixture tests
+        run: python3 scripts/test-real-media-decoder.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
 
