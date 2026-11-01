@@ -27,3 +27,9 @@ This is a bounded lookback, not a permanent archive or scheduled collection job.
 ## Phase 7.32 — Visual trend exports
 
 The history summarizer additionally emits `trend.csv` and a dependency-free `trend.svg`, plotting the three metric percentage changes across the **supplied evidence order**. Both are included automatically in the aggregated history artifact. The horizontal axis is a sequence number, **not** a measurement timestamp. This view is useful for spotting patterns only when the workload, runner characteristics, and baseline strategy are comparable across records. The chart is not a production performance certification and does not infer chronological ordering.
+
+## Phase 7.33 — Configurable regression alerts
+
+The historical summary CLI now accepts `--alert-threshold-percent` (default 200). It produces `regression-alerts.json`, listing any metric whose candidate-over-baseline percentage exceeds this limit, with workload and revision identifiers. A detected regression exits nonzero **after** saving evidence, so GitHub Actions fails visibly while retaining diagnostic artifacts. Manual aggregate workflow dispatch exposes `alert_threshold_percent`. For example, use 15 only with repeated, controlled and comparable benchmark runs.
+
+This is an **in-workflow alert**, not email, messaging, or issue creation. Different workloads or uncontrolled runners cannot be treated as reliable performance regressions; the default 200% CI allowance remains intentionally permissive.
