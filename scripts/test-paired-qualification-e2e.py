@@ -230,6 +230,17 @@ def main():
                     "runner_image": os.environ.get("ImageOS", "unknown"),
                     "runner_arch": os.environ.get("RUNNER_ARCH", "unknown"),
                     "config_sha256": hashlib.sha256(config.read_bytes()).hexdigest(),
+                    "ffmpeg_version": subprocess.check_output(
+                        ["ffmpeg", "-version"], text=True).splitlines()[0],
+                    "go_version": subprocess.check_output(
+                        ["go", "version"], text=True).strip(),
+                    "cpu_model": next(
+                        (line.split(":", 1)[1].strip() for line in
+                         Path("/proc/cpuinfo").read_text(encoding="utf-8").splitlines()
+                         if line.startswith("model name") and ":" in line),
+                        platform.processor() or "unknown")
+                    if Path("/proc/cpuinfo").is_file() else platform.processor() or "unknown",
+
                 },
                 "repetitions_per_side": repetitions,
                 "baseline_commit": baseline_sha or candidate_sha,
