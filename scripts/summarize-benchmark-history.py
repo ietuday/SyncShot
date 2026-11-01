@@ -207,8 +207,11 @@ def main():
                 runs = raw if isinstance(raw, list) else [raw]
                 for item in runs:
                     fingerprint = item.get("input_fingerprint") if isinstance(item, dict) else None
-                    if not isinstance(fingerprint, str) or not fingerprint:
-                        parser.error("input fingerprint missing in " + str(path))
+                    if (not isinstance(fingerprint, str) or len(fingerprint) != 64
+                            or any(char not in "0123456789abcdef" for char in fingerprint)):
+                        parser.error("invalid input fingerprint in " + str(path))
+                    if item.get("workload_id") != records[len(fingerprints)]["workload_id"]:
+                        parser.error("workload drift within " + str(directory))
                     found.add(fingerprint)
             if len(found) != 1:
                 parser.error("input fingerprint drift within " + str(directory))
