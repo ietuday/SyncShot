@@ -19,6 +19,12 @@ class HistoryTests(unittest.TestCase):
             data = root / "sample"
             data.mkdir()
             manifest = {
+                "schema_version": 2,
+                "generated_at_utc": "2026-11-01T00:00:00+00:00",
+                "github_run_id": "12345",
+                "github_run_attempt": "1",
+                "github_repository": "ietuday/SyncShot",
+                "github_workflow": "Paired production qualification comparison",
                 "baseline_commit": "a" * 40,
                 "candidate_commit": "b" * 40,
                 "workload_id": "synthetic",
@@ -110,6 +116,15 @@ class HistoryTests(unittest.TestCase):
             corrupt = subprocess.run(integrity_cmd, capture_output=True, text=True)
             self.assertNotEqual(corrupt.returncode, 0)
             self.assertIn("checksum mismatch", corrupt.stderr)
+            audit_cmd = cmd + ["--require-audit-metadata"]
+            self.assertEqual(subprocess.run(audit_cmd, capture_output=True).returncode, 0)
+            manifest["generated_at_utc"] = "not-a-timestamp"
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            invalid_audit = subprocess.run(audit_cmd, capture_output=True, text=True)
+            self.assertNotEqual(invalid_audit.returncode, 0)
+            self.assertIn("audit UTC timestamp", invalid_audit.stderr)
+            manifest["generated_at_utc"] = "2026-11-01T00:00:00+00:00"
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
             alert_cmd = cmd + ["--alert-threshold-percent", "15"]
