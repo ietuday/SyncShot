@@ -33,7 +33,7 @@ class FailureRecovery(unittest.TestCase):
                         "SYNC_SHOT_BENCHMARK_INPUTS": f"{media}:{image}",
                         "SYNC_SHOT_BENCHMARK_WORKLOAD_ID": "recovery-fixture"})
             # This test uses a shell-local function to intercept just the benchmark call.
-            command = 'function bash() { if [[ "$1" == "scripts/benchmark-long-video.sh" ]]; then return 23; else command bash "$@"; fi; }; export -f bash; command bash "$1" "$2" "$3" "$4"'
+            command = 'function python3() { if [[ "$1" == "scripts/check-qualification-media-decode.py" ]]; then return 0; else command python3 "$@"; fi; }; export -f python3; function bash() { if [[ "$1" == "scripts/benchmark-long-video.sh" ]]; then return 23; else command bash "$@"; fi; }; export -f bash; command bash "$1" "$2" "$3" "$4"'
             def run():
                 return subprocess.run(["bash", "-c", command, "bash", str(ENTRY),
                                        str(config), str(output), str(reports)],
