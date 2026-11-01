@@ -1,0 +1,14 @@
+name: Provider demo assembly checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/build-provider-demo.py'
+      - 'scripts/test-build-provider-demo.py'
+      - '.github/workflows/provider-demo.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-build-provider-demo.py
