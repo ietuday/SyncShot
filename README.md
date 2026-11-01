@@ -358,3 +358,13 @@ python3 scripts/check-provider-pilot.py --plan output/animation-workflow/provide
 ```
 
 The report identifies missing audio, mismatched scene lengths, missing prompts, or invalid HTTPS image URLs. This check **makes no network calls or paid generations**; it does not verify that a hosted image URL is reachable, that the media is licensed, or that the account has Runway credits. A successful readiness verdict is **not** proof that real AI video generation works. To continue, manually review provider costs, configure credentials and explicitly invoke the existing Runway adapter with `--execute`.
+
+## Phase 9.20 — Verify a downloaded animation clip
+
+After an explicitly authorized Runway animation task completes and you download its MP4, validate the actual file offline before assembly:
+
+```bash
+python3 scripts/verify-provider-clip.py --plan output/animation-workflow/provider-scene-plan.json --clip output/animated-scenes/scene-0001.mp4 --report output/animation-workflow/verified-provider-clip.json
+```
+
+The checker requires a one-scene plan and a local, regular MP4 file, uses ffprobe to confirm video stream presence and positive runtime, and reports whether the clip will be **looped** or **trimmed** to fit the narration scene's duration. It does not use a paid API, alter existing media, validate visual accuracy or lip sync, or automatically assemble a video. The existing `scripts/assemble-animated-video.py` performs the actual final assembly. This check does not prove the clip came from Runway.
