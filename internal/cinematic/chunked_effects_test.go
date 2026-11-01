@@ -128,3 +128,10 @@ func TestPruneChunkCacheOnlyOldUnreferencedFiles(t *testing.T){
  }
  if _,err:=os.Lstat(filepath.Join(dir,strings.Repeat("d",64)+".mp4"));err!=nil{t.Fatal("symlink removed")}
 }
+
+func TestStitchFFmpegArgsBoundFilterThreads(t *testing.T){
+ args:=strings.Join(stitchFFmpegArgs()," ")
+ for _,flag:=range []string{"-filter_complex_threads 1","-filter_threads 1"}{
+  if !strings.Contains(args,flag){t.Fatalf("missing memory bound %q: %s",flag,args)}
+ }
+}
