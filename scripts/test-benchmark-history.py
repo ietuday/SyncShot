@@ -25,7 +25,10 @@ class HistoryTests(unittest.TestCase):
                 "repetitions_per_side": 3,
                 "environment": {"system": "Linux", "machine": "x86_64",
                                 "python": "3.12", "runner_image": "ubuntu24",
-                                "runner_arch": "X64", "config_sha256": "a" * 64},
+                                "runner_arch": "X64", "config_sha256": "a" * 64,
+                                "ffmpeg_version": "ffmpeg version 7.0",
+                                "go_version": "go version go1.25 linux/amd64",
+                                "cpu_model": "Test CPU"},
             }
             (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             metrics = ["realtime_factor", "peak_process_tree_rss_kb", "peak_ffmpeg_rss_kb"]
@@ -70,6 +73,14 @@ class HistoryTests(unittest.TestCase):
             self.assertNotEqual(unmatched.returncode, 0)
             self.assertIn("provenance", unmatched.stderr)
             manifest["environment"]["config_sha256"] = "a" * 64
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            manifest["environment"]["ffmpeg_version"] = ""
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            missing_tool = subprocess.run(
+                cmd + ["--require-matching-environment"],
+                capture_output=True, text=True)
+            self.assertNotEqual(missing_tool.returncode, 0)
+            manifest["environment"]["ffmpeg_version"] = "ffmpeg version 7.0"
             (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
