@@ -1,0 +1,16 @@
+name: Provider demo FFmpeg integration
+on:
+  pull_request:
+    paths:
+      - 'scripts/test-provider-demo-ffmpeg.py'
+      - 'scripts/build-provider-demo.py'
+      - '.github/workflows/provider-demo-ffmpeg.yml'
+  workflow_dispatch:
+jobs:
+  ffmpeg:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python3 scripts/test-provider-demo-ffmpeg.py
