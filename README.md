@@ -138,3 +138,7 @@ The benchmark now records `host-memory-before.txt` and `host-memory-after.txt` w
 ## Phase 8.30 — Share a compact qualification diagnostic bundle
 
 After the manual 15-minute qualification finishes (or fails), select the resulting `output/real-media-qualification/qualification-XXXXXXXX` directory and run `python3 scripts/package-qualification-report.py output/real-media-qualification/qualification-XXXXXXXX --output output/real-media-diagnostics.tar.gz`. The resulting archive contains only summary/status JSON, Markdown, measurement CSV and selected system-memory/failure diagnostics, **not** your narration, images, rendered video, binaries or raw run logs. Review the archive before sharing: summaries and measurements may still expose workload details. This provides inspectable evidence from the real laptop without uploading private media. Run `python3 scripts/test-package-qualification-report.py` for regression checks.
+
+## Phase 8.31 — Diagnostic bundle publication safety
+
+Diagnostic archive exports now refuse to overwrite existing archives, create output via a temporary archive followed by an atomic no-replace link, reject symlinked run directories, and reject output paths inside the qualification folder. Run `python3 scripts/test-package-qualification-report.py` to exercise the safeguards. Reports can still reveal workload information; inspect before sharing. Original 15-minute render on the 12 GiB laptop remains unverified.
