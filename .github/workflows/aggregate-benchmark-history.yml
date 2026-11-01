@@ -1,5 +1,10 @@
 name: Aggregate benchmark history
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/aggregate-benchmark-history.yml'
+      - 'scripts/summarize-benchmark-history.py'
+      - 'scripts/test-benchmark-history.py'
   workflow_dispatch:
     inputs:
       run_ids:
@@ -10,7 +15,16 @@ permissions:
   contents: read
   actions: read
 jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate history summarizer
+        run: python3 scripts/test-benchmark-history.py
   history:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
