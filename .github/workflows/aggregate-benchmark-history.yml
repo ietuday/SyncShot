@@ -1,0 +1,47 @@
+name: Aggregate benchmark history
+on:
+  workflow_dispatch:
+    inputs:
+      run_ids:
+        description: 'Comma-separated completed paired qualification workflow run IDs'
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  history:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download selected benchmark evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_IDS: ${{ inputs.run_ids }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p history-input
+          IFS=',' read -ra IDS <<< "$RUN_IDS"
+          (( ${#IDS[@]} > 0 && ${#IDS[@]} <= 20 )) || { echo 'Select 1-20 runs'; exit 1; }
+          for raw_id in "${IDS[@]}"; do
+            id="$(echo "$raw_id" | xargs)"
+            [[ "$id" =~ ^[0-9]+$ ]] || { echo "Invalid workflow run ID"; exit 1; }
+            mkdir -p "history-input/run-$id"
+            gh run download "$id" --repo "$GH_REPO" --name paired-qualification-evidence --dir "history-input/run-$id"
+            test -f "history-input/run-$id/run-manifest.json"
+            test -f "history-input/run-$id/paired-performance-comparison.json"
+          done
+      - name: Generate historical comparison summary
+        run: python3 scripts/summarize-benchmark-history.py history-input/run-* --output-dir benchmark-history
+      - name: Show history summary
+        run: cat benchmark-history/history.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload history results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aggregated-benchmark-history
+          path: benchmark-history/
+          if-no-files-found: warn
+          retention-days: 14
