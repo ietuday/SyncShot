@@ -88,6 +88,23 @@ jobs:
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: paired-qualification-evidence.tar.gz
+      - name: Verify signed archive and reject modified bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          original=paired-qualification-evidence.tar.gz
+          gh attestation verify "$original" --repo "$GH_REPO" \
+            --signer-workflow "$GH_REPO/.github/workflows/paired-qualification-comparison.yml"
+          cp "$original" tampered-evidence.tar.gz
+          printf 'tampered-after-signing' >> tampered-evidence.tar.gz
+          if gh attestation verify tampered-evidence.tar.gz --repo "$GH_REPO" \
+               --signer-workflow "$GH_REPO/.github/workflows/paired-qualification-comparison.yml"; then
+            echo "::error::Modified archive unexpectedly passed provenance verification"
+            exit 1
+          fi
+          echo "Attestation verified for original archive; modified archive rejected." >> "$GITHUB_STEP_SUMMARY"
       - name: Upload attested archive
         uses: actions/upload-artifact@v4
         with:
