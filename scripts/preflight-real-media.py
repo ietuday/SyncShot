@@ -21,6 +21,12 @@ def probe(path):
         raise ValueError(f"invalid duration for {path.name}") from None
     if not math.isfinite(duration) or duration<=0:
         raise ValueError(f"nonpositive duration for {path.name}")
+    stream=subprocess.run(["ffprobe","-v","error","-select_streams","a:0",
+                           "-show_entries","stream=codec_type",
+                           "-of","default=noprint_wrappers=1:nokey=1",str(path)],
+                          stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    if stream.returncode or stream.stdout.strip()!="audio":
+        raise ValueError(f"no readable audio stream in {path.name}")
     return duration
 
 def preflight(audio_dir, image_dir, report_dir, minimum_free_gib):
