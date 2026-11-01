@@ -21,8 +21,9 @@ python3 scripts/summarize-benchmarks.py "$WORK/reports" --json "$WORK/summary.js
 python3 scripts/check-media-quality.py "$WORK/final.mp4" --width 1280 --height 720 --min-duration 15 --max-duration 21 > "$WORK/media-quality.json"
 python3 scripts/check-audio-integrity.py "$WORK/final.mp4" > "$WORK/audio-integrity.json"
 python3 scripts/check-shorts-quality.py "$WORK/shorts" --max-duration 8 --evidence "$WORK/shorts-quality.json"
+python3 scripts/check-shorts-visual-content.py "$WORK/shorts" --output "$WORK/shorts-visual-content.json"
 if [[ -n "${SYNC_SHOT_BENCHMARK_EVIDENCE_DIR:-}" ]]; then
   mkdir -p "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR"
-  cp "$WORK/summary.json" "$WORK/media-quality.json" "$WORK/audio-integrity.json" "$WORK/shorts-quality.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/"
+  cp "$WORK/summary.json" "$WORK/media-quality.json" "$WORK/audio-integrity.json" "$WORK/shorts-quality.json" "$WORK/shorts-visual-content.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/"
 fi
 echo "Varied-fixture video qualification passed"
