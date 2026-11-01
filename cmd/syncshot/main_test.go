@@ -59,3 +59,12 @@ func TestClarifyRenderFailure(t *testing.T){
  if clarifyRenderFailure(other)!=other{t.Fatal("misleading hint on ordinary exit")}
  if clarifyRenderFailure(nil)!=nil{t.Fatal("unexpected nil handling")}
 }
+
+func TestMemoryModeValidation(t *testing.T){
+ err:=run([]string{"--memory-mode","invalid"})
+ if err==nil||!strings.Contains(err.Error(),"invalid memory mode"){t.Fatalf("unexpected error: %v",err)}
+}
+func TestLowMemoryHostDoesNotPanic(t *testing.T){
+ // /proc/meminfo may be unavailable on non-Linux runners.
+ _=lowMemoryHost()
+}
