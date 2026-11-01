@@ -282,3 +282,14 @@ The checker does not delete or redownload files, regenerate paid tasks, or modif
 Run `python3 scripts/test-animation-e2e-smoke.py` to exercise the **real FFmpeg/ffprobe binaries** through the Phase 9.9 clip readiness checker and Phase 9.6 assembly pipeline. The test generates two 1-second synthetic animated-source clips and 4 seconds of narration audio in a temporary directory, loops each visual scene to its 2-second timeline slot, and checks the final MP4 includes audio/video with reasonable duration alignment. It also covers a missing-scene assembly failure, corrupt clips, and the refusal to overwrite a final output. The test requires ffmpeg/ffprobe and no model/API credits.
 
 This smoke does **not** test real AI clips, transcription accuracy, provider communication, lip sync, or a 925-second narration on the user's laptop. Real media performance and end-to-end quality remain separate qualifications.
+
+## Phase 9.13 — Preview a prepared animation pilot without API charges
+
+After Phase 9.11 (pilot plan) and Phase 9.12 (trimmed narration) produce a `pilot-ready.json`, inspect the next few planned image and animation requests without executing paid generation:
+
+```bash
+mkdir -p output/animation-workflow
+python3 scripts/preview-animation-pilot.py --pilot output/animation-workflow/pilot-ready.json --workdir output/animation-workflow --limit 3
+```
+
+If already hosting approved scene illustrations as HTTPS URLs, add `--image-urls scene-image-urls.json` to preview Runway animation tasks. The command **never** passes `--execute` or `--download`. It does not itself generate PNGs or videos, host media, or submit paid tasks. This is a safety-first preview workflow; later development is needed for a fully automatic end-to-end pipeline.
