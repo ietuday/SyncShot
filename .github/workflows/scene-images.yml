@@ -1,0 +1,15 @@
+name: AI scene image adapter unit checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/generate-scene-images.py'
+      - 'scripts/test-generate-scene-images.py'
+      - '.github/workflows/scene-images.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Offline scene image adapter tests
+        run: python3 scripts/test-generate-scene-images.py
