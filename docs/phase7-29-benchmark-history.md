@@ -17,3 +17,9 @@ These entries represent comparisons performed in individual runs. They are **not
 The manual **Aggregate benchmark history** GitHub Actions workflow accepts 1–20 comma-separated GitHub Actions run IDs from completed *Paired production qualification comparison* runs. It downloads each run's `paired-qualification-evidence` artifact with `gh run download`, requires the manifest and comparison JSON, and passes the unpacked directories to the Phase 7.29 history summarizer. It uploads `history.json` and `history.md` together and publishes Markdown in the job summary.
 
 To use it: Actions → Aggregate benchmark history → Run workflow → enter run IDs, e.g. `123456789,123456790`. Older runs whose artifacts have expired (14-day retention) fail explicitly. This workflow does not store a permanent trend database, discover historical runs automatically, or infer chronological measurement timestamps. Only compare entries with compatible workloads and testing environments.
+
+## Phase 7.31 — Automatic recent-run discovery
+
+On manual **Aggregate benchmark history** dispatch, leave `run_ids` blank to discover the latest successful `paired-qualification-comparison.yml` workflow runs. Choose `latest_count` (1, 3, 5, 10, or 20). The collector examines up to the latest 100 successful workflow runs and selects those with a non-expired `paired-qualification-evidence` artifact. Explicit comma-separated `run_ids` still take precedence.
+
+This is a bounded lookback, not a permanent archive or scheduled collection job. Missing/expired artifacts remain unavailable. No automatic cron trigger is introduced; discovery is performed only when manually dispatched. Historic comparisons are only meaningful for compatible workloads and CI environments.
