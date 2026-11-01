@@ -3,6 +3,8 @@
 import argparse
 import importlib.util
 import json
+import os
+import tempfile
 import subprocess
 from pathlib import Path
 
@@ -28,16 +30,23 @@ def build_demo(plan, clips_dir, output, report, verifier=verify.verify,
         raise ValueError("narration audio is missing or a symlink")
     if output == report:
         raise ValueError("report and video paths cannot match")
-    # Verify the report destination before a potentially expensive render.
-    assembler(plan, clips_dir, output)
+    # Reserve the report before rendering so an unavailable report destination
+    # cannot leave an unreported published video. Publish report atomically.
+    with tempfile.TemporaryDirectory(prefix=".provider-report-",dir=report.parent) as tmp:
+        stage = Path(tmp) / "report.json"
+        with stage.open("x", encoding="utf-8") as file:
+            json.dump({**info,"video_output":str(output)}, file,ensure_ascii=False,indent=2)
+            file.write("\\n")
+            file.flush()
+            os.fsync(file.fileno())
+        assembler(plan, clips_dir, output)
+        try:
+            os.link(stage,report)
+        except Exception:
+            # Never destroy a finished video if the report cannot publish;
+            # explicit recovery can reconstruct the report later.
+            raise
     info["video_output"] = str(output)
-    try:
-        with report.open("x", encoding="utf-8") as file:
-            json.dump(info, file, ensure_ascii=False, indent=2)
-            file.write("\n")
-    except Exception:
-        # Assembly is already successful: keep the video for recovery.
-        raise
     return info
 
 def main(argv=None):
