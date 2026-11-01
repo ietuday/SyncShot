@@ -37,13 +37,9 @@ PY
 export SYNC_SHOT_BENCHMARK_WORKLOAD_ID="real-media-720p-24fps-1chunk-$(date -u +%Y%m%d)"
 export SYNC_SHOT_BENCHMARK_INPUTS="$WORK/config.json:$AUDIO_DIR:$IMAGE_DIR"
 export SYNC_SHOT_BENCHMARK_OUTPUT="$OUTPUT"
-RUNS_BEFORE="$(find "$REPORT_DIR" -mindepth 1 -maxdepth 1 -type d -name "run-*" -printf "%f\\n" | sort)"
-bash scripts/benchmark-long-video.sh "$REPORT_DIR" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
-RUNS_AFTER="$(find "$REPORT_DIR" -mindepth 1 -maxdepth 1 -type d -name "run-*" -printf "%f\\n" | sort)"
-RUN_NAME="$(comm -13 <(printf "%s\\n" "$RUNS_BEFORE") <(printf "%s\\n" "$RUNS_AFTER") | head -n 1)"
-if [[ -z "$RUN_NAME" ]]; then echo "Benchmark did not create a new report directory" >&2; exit 1; fi
-RUN_REPORT="$REPORT_DIR/$RUN_NAME"
-python3 scripts/check-low-memory-benchmark.py "$RUN_REPORT/.." --max-ffmpeg-rss-mib "${SYNC_SHOT_MAX_FFMPEG_RSS_MIB:-8192}"
+RUN_REPORT="$(mktemp -d "$REPORT_DIR/qualification-XXXXXXXX")"
+bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
+python3 scripts/check-low-memory-benchmark.py "$RUN_REPORT" --max-ffmpeg-rss-mib "${SYNC_SHOT_MAX_FFMPEG_RSS_MIB:-8192}"
 python3 scripts/check-av-sync.py "$OUTPUT" --max-drift-seconds 0.5
 ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$OUTPUT" | grep -qx "1280x720"
-echo "Real-media qualification passed. Measurements and logs: $RUN_REPORT"
+echo "Real-media qualification passed. Measurements and logs: $RUN_REPORT/run-*"
