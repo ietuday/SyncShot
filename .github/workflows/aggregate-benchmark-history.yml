@@ -79,7 +79,7 @@ jobs:
         if: always()
         run: |
           if [ -f benchmark-history/history.md ]; then cat benchmark-history/history.md >> "$GITHUB_STEP_SUMMARY"; fi
-          if [ -f benchmark-history/regression-alerts.json ]; then cat benchmark-history/regression-alerts.json >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ -f benchmark-history/regression-alerts.md ]; then cat benchmark-history/regression-alerts.md >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload history results
         if: always()
         uses: actions/upload-artifact@v4
