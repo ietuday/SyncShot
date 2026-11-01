@@ -254,3 +254,14 @@ python3 scripts/animation-workflow.py --stage assemble --clips-dir output/animat
 ```
 
 Review the result of every stage. The orchestration does not provide transcript accuracy guarantees, image hosting, paid-service authorization, polling, retries, automatic downloading or character lip-sync. Run `python3 scripts/test-animation-workflow.py` for offline checks.
+
+## Phase 9.8 — Monitor existing animation generation jobs
+
+To poll **existing** Runway image-to-video tasks without submitting new jobs or downloading media, use `scripts/monitor-animation-jobs.py`. The command checks task IDs from a Phase 9.4 submitted manifest, with bounded polling (`--interval` seconds, `--max-checks`) and a new no-overwrite status JSON report. It never calls video generation endpoints. Successful terminal statuses return exit code 0; any failed or still-running tasks after the check limit return exit code 2; setup/API errors return exit code 1.
+
+```bash
+python3 scripts/monitor-animation-jobs.py --tasks submitted-animation.json --report animation-poll-01.json --interval 30 --max-checks 10
+python3 scripts/test-monitor-animation-jobs.py
+```
+
+Requires `runwayml`, `RUNWAYML_API_SECRET` and network access. Polling may have API rate limits. To check again, supply a **new** report name. It does not cancel or retry generation, download clips, or recover failed tasks automatically. Scene-to-video assembly remains a separate stage.
