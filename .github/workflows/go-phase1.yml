@@ -77,6 +77,8 @@ jobs:
         run: python3 scripts/test-qualification-paths.py -v
       - name: Production media input audit tests
         run: python3 scripts/test-audit-qualification-inputs.py -v
+      - name: Media decode preflight regression tests
+        run: python3 scripts/test-qualification-media-decode.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
 
