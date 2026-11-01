@@ -26,4 +26,21 @@ class Tests(unittest.TestCase):
             (root/"run-a").mkdir();(root/"run-b").mkdir()
             with self.assertRaisesRegex(ValueError,"exactly one"):
                 mod.package(root,Path(temp)/"out.tar.gz")
+    def test_does_not_overwrite_existing_archive(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)/"qualification";root.mkdir()
+            run=root/"run-test";run.mkdir()
+            (root/"summary.json").write_text("{}")
+            dest=Path(temp)/"diagnostics.tar.gz"
+            dest.write_bytes(b"existing")
+            with self.assertRaisesRegex(ValueError,"overwrite"):
+                mod.package(root,dest)
+            self.assertEqual(dest.read_bytes(),b"existing")
+    def test_rejects_symlinked_run_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)/"qualification";root.mkdir()
+            external=Path(temp)/"run-external";external.mkdir()
+            (root/"run-link").symlink_to(external,target_is_directory=True)
+            with self.assertRaisesRegex(ValueError,"exactly one"):
+                mod.package(root,Path(temp)/"bundle.tar.gz")
 if __name__=="__main__":unittest.main()
