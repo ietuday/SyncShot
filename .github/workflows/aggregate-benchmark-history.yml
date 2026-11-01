@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated completed paired qualification workflow run IDs'
         required: false
         type: string
+      require_attestation:
+        description: 'Require verified GitHub provenance for every archived benchmark run'
+        required: false
+        type: boolean
+        default: false
       require_audit_metadata:
         description: 'Require versioned audit metadata and GitHub run identity'
         required: false
@@ -76,6 +81,7 @@ jobs:
           RUN_IDS: ${{ inputs.run_ids }}
           LATEST_COUNT: ${{ inputs.latest_count || '5' }}
           GH_REPO: ${{ github.repository }}
+          REQUIRE_ATTESTATION: ${{ inputs.require_attestation || 'false' }}
         run: |
           set -euo pipefail
           mkdir -p history-input
@@ -86,6 +92,7 @@ jobs:
             mapfile -t ALL_IDS < <(gh api "repos/$GH_REPO/actions/workflows/paired-qualification-comparison.yml/runs?status=success&per_page=100" --jq '.workflow_runs[].id')
             IDS=()
             for id in "${ALL_IDS[@]}"; do
+              if [ "$REQUIRE_ATTESTATION" = "true" ]; then artifact_name="attested-paired-qualification-evidence"; else artifact_name="paired-qualification-evidence"; fi
               available="$(gh api "repos/$GH_REPO/actions/runs/$id/artifacts" --jq '[.artifacts[] | select(.name == "paired-qualification-evidence" and .expired == false)] | length')"
               if [[ "$available" -gt 0 ]]; then IDS+=("$id"); fi
               if (( ${#IDS[@]} >= LATEST_COUNT )); then break; fi
@@ -97,7 +104,19 @@ jobs:
             id="$(echo "$raw_id" | xargs)"
             [[ "$id" =~ ^[0-9]+$ ]] || { echo "Invalid workflow run ID"; exit 1; }
             mkdir -p "history-input/run-$id"
-            gh run download "$id" --repo "$GH_REPO" --name paired-qualification-evidence --dir "history-input/run-$id"
+            if [ "$REQUIRE_ATTESTATION" = "true" ]; then
+              mkdir -p "attested-download/run-$id"
+              gh run download "$id" --repo "$GH_REPO" --name attested-paired-qualification-evidence --dir "attested-download/run-$id"
+              archive="attested-download/run-$id/paired-qualification-evidence.tar.gz"
+              test -f "$archive"
+              gh attestation verify "$archive" --repo "$GH_REPO" --signer-workflow "$GH_REPO/.github/workflows/paired-qualification-comparison.yml"
+              tar -tzf "$archive" | while IFS= read -r entry; do
+                [[ "$entry" =~ ^paired-qualification-evidence/([A-Za-z0-9_.-]+)?$ ]] || exit 1
+              done
+              tar -xzf "$archive" -C "history-input/run-$id" --strip-components=1
+            else
+              gh run download "$id" --repo "$GH_REPO" --name paired-qualification-evidence --dir "history-input/run-$id"
+            fi
             test -f "history-input/run-$id/run-manifest.json"
             test -f "history-input/run-$id/paired-performance-comparison.json"
           done
