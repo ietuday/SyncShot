@@ -110,3 +110,7 @@ After qualification exits, `qualification-status.json` records `status`, `exit_c
 ## Phase 8.23 — Qualification failure-path CI regression
 
 The real-media qualification GitHub Actions smoke workflow now also runs `bash scripts/smoke-qualification-failure.sh`, which deliberately sets an unrealistically low FFmpeg RSS budget on a short synthetic render. It asserts the validation fails with a nonzero exit, preserves `summary.json`, records `qualification-status.json` with a failed memory stage, writes `failure-analysis.json`, and does not retain an unqualified video. This tests report correctness on failure; the original 15-minute laptop render remains unverified.
+
+## Phase 8.24 — Invalid-media qualification regression
+
+The qualification failure-path smoke now also supplies a corrupt narration file alongside an otherwise valid image. It asserts the wrapper fails rather than reporting success or retaining a `qualified.mp4`. This is in addition to the existing post-render memory-budget failure test. Run `bash scripts/smoke-qualification-failure.sh`. The original 15-minute workload on a 12 GiB Ubuntu laptop remains unverified.
