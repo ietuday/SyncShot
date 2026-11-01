@@ -196,7 +196,7 @@ def main():
             dest = Path(evidence).resolve()
             dest.mkdir(parents=True, exist_ok=True)
             (dest / "paired-performance-comparison.json").write_text(
-                json.dumps(rows, indent=2) + "\\n", encoding="utf-8")
+                json.dumps(rows, indent=2) + "\n", encoding="utf-8")
             (dest / "run-manifest.json").write_text(json.dumps({
                 "repetitions_per_side": repetitions,
                 "baseline_commit": baseline_sha or candidate_sha,
@@ -209,7 +209,7 @@ def main():
                               for i in range(repetitions)],
                 "comparison": "paired-performance-comparison.json",
                 "max_regression_percent": 200,
-            }, indent=2) + "\\n", encoding="utf-8")
+            }, indent=2) + "\n", encoding="utf-8")
             for side, paths in reports.items():
                 for index, path in enumerate(paths, start=1):
                     (dest / f"{side}-{index:02d}-qualification-summary.json").write_bytes(
