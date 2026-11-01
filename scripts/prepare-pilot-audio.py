@@ -44,7 +44,8 @@ def prepare(plan, out_audio, out_plan, runner=subprocess.run, probe=duration_of)
             raise ValueError(f"pilot audio duration mismatch: expected {target:.3f}, got {actual:.3f}")
         updated=dict(plan)
         updated["audio"]=str(out_audio)
-        updated["duration_seconds"]=actual
+        updated["duration_seconds"]=target
+        updated["pilot_audio_measured_seconds"]=actual
         updated["pilot_audio_prepared"]=True
         # Exclusive links publish complete outputs; if publishing the manifest fails,
         # remove only the audio created by this process.
