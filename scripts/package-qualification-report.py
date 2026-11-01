@@ -1,60 +1,86 @@
 #!/usr/bin/env python3
-"""Create a compact review bundle from one qualification run (never include source media)."""
+"""Create a compact diagnostic archive without including source media or raw logs."""
 import argparse
-import tarfile
 import os
+import stat
+import tarfile
 import tempfile
 from pathlib import Path
 
-FILES = (
-    "qualification-status.json", "summary.json", "summary.md",
-    "failure-analysis.json",
-)
-RUN_FILES = (
-    "measurements.csv", "process-memory.csv",
-    "host-memory-before.txt", "host-memory-after.txt",
-    "failure-diagnostics.json",
-)
+FILES = ("qualification-status.json", "summary.json", "summary.md", "failure-analysis.json")
+RUN_FILES = ("measurements.csv", "process-memory.csv", "host-memory-before.txt",
+             "host-memory-after.txt", "failure-diagnostics.json")
+
+
+def _add_regular_file(archive: tarfile.TarFile, path: Path, name: str) -> bool:
+    """Read a regular file through a no-follow descriptor, not a checked pathname."""
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    try:
+        fd = os.open(path, flags)
+    except FileNotFoundError:
+        return False
+    except OSError as exc:
+        if path.is_symlink():
+            raise ValueError(f"refusing symlinked diagnostic input: {path.name}") from exc
+        raise
+    with os.fdopen(fd, "rb") as source:
+        info = os.fstat(source.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            raise ValueError(f"diagnostic input is not a regular file: {path.name}")
+        member = tarfile.TarInfo(name)
+        member.size = info.st_size
+        member.mode = 0o600
+        member.mtime = 0
+        archive.addfile(member, source)
+    return True
+
+
 def package(report: Path, destination: Path) -> int:
+    if report.is_symlink():
+        raise ValueError("symlinked qualification directory is not allowed")
     if not report.is_dir():
         raise ValueError("qualification directory not found")
-    runs = [p for p in report.glob("run-*") if p.is_dir() and not p.is_symlink()]
+    report_root = report.resolve(strict=True)
+    candidate_runs = list(report.glob("run-*"))
+    if any(path.is_symlink() for path in candidate_runs):
+        raise ValueError("symlinked benchmark run directory is not allowed")
+    runs = [path for path in candidate_runs if path.is_dir()]
     if len(runs) != 1:
         raise ValueError(f"expected exactly one benchmark run, found {len(runs)}")
-    dest = destination.absolute()
-    if dest.exists():
-        raise ValueError("refusing to overwrite an existing diagnostic archive")
-    if dest.is_relative_to(report.resolve()):
+
+    destination = destination.absolute()
+    dest_parent = destination.parent.resolve(strict=True)
+    dest = dest_parent / destination.name
+    if dest == report_root or report_root in dest.parents:
         raise ValueError("archive destination must be outside the qualification report")
+    if dest.exists() or dest.is_symlink():
+        raise ValueError("refusing to overwrite an existing diagnostic archive")
+
     count = 0
-    with tempfile.NamedTemporaryFile(prefix=".qualification-",suffix=".tar.gz",dir=dest.parent,delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(prefix=".qualification-", suffix=".tar.gz",
+                                     dir=dest_parent, delete=False) as tmp:
         staging = Path(tmp.name)
     try:
         with tarfile.open(staging, "w:gz") as archive:
             for name in FILES:
-                file = report/name
-                if file.is_file() and not file.is_symlink():
-                    archive.add(file, arcname=name, recursive=False)
-                    count += 1
+                count += _add_regular_file(archive, report / name, name)
             for name in RUN_FILES:
-                file = runs[0]/name
-                if file.is_file() and not file.is_symlink():
-                    archive.add(file, arcname="benchmark/"+name, recursive=False)
-                    count += 1
+                count += _add_regular_file(archive, runs[0] / name, "benchmark/" + name)
         if not count:
             raise ValueError("no diagnostic files available")
-        os.link(staging,dest)  # atomic creation, fails if destination appeared concurrently
+        os.link(staging, dest, follow_symlinks=False)
         return count
     finally:
         staging.unlink(missing_ok=True)
 
+
 if __name__ == "__main__":
-    parser=argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("qualification_directory", type=Path)
     parser.add_argument("--output", type=Path, required=True)
-    args=parser.parse_args()
+    args = parser.parse_args()
     try:
-        n=package(args.qualification_directory, args.output)
+        n = package(args.qualification_directory, args.output)
     except (OSError, ValueError) as error:
         parser.exit(1, f"Diagnostic bundle failed: {error}\n")
     print(f"Created {args.output} with {n} diagnostic files (no media or raw logs).")
