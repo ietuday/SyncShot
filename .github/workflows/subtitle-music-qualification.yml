@@ -1,0 +1,35 @@
+name: Subtitle music qualification
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/subtitle-music-qualification.yml'
+      - 'scripts/test-subtitle-music-fixtures.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Validate shell syntax
+        run: bash -n scripts/test-subtitle-music-fixtures.sh
+      - name: Render subtitles and ducked background music
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: subtitle-music-evidence
+        run: bash scripts/test-subtitle-music-fixtures.sh
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: subtitle-music-evidence
+          path: subtitle-music-evidence/
+          if-no-files-found: warn
+          retention-days: 14
