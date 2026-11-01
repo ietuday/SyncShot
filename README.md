@@ -307,3 +307,14 @@ python3 scripts/test-pilot-integration.py
 ```
 
 The prepared plan preserves scene timing while separately recording the measured AAC audio duration. The smoke uses real FFmpeg to ensure short narration trimming, timeline consistency and no-overwrite output safety. Paid AI generation, image hosting, downloading clips, and real media final assembly still require separate explicit steps.
+
+## Phase 9.15 — Real-provider single-scene pilot preparation
+
+Before attempting AI animation for the full narration, prepare a **single scene** and review the generation request. This tool does not call paid APIs, upload personal media, download results, or produce an animation.
+
+```bash
+python3 scripts/prepare-provider-pilot.py --pilot output/animation-workflow/pilot-ready.json --image-url https://example.com/your-approved-scene.png --plan-output output/animation-workflow/provider-scene-plan.json --urls-output output/animation-workflow/provider-image-urls.json
+python3 scripts/animate-scene-images.py --plan output/animation-workflow/provider-scene-plan.json --image-urls output/animation-workflow/provider-image-urls.json --output output/animation-workflow/provider-preview.json --limit 1
+```
+
+To **actually submit a paid generation** after independently reviewing pricing and authorizing the request, you must separately run `scripts/animate-scene-images.py` with `--execute` and a configured `RUNWAYML_API_SECRET`. The provider adapter currently requests a five-second clip. Preparing a one-scene plan does not trim the narration to that scene's endpoint; the existing full pilot audio is still referenced and **must be separately trimmed** before assembling this one-scene output. The URL should point to an image you are authorized to share with the animation provider. No real Runway job, downloaded video or final media quality has yet been tested.
