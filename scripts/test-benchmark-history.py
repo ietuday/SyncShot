@@ -36,6 +36,12 @@ class HistoryTests(unittest.TestCase):
             result = json.loads((output / "history.json").read_text(encoding="utf-8"))
             self.assertEqual(len(result["records"]), 1)
             self.assertIn("synthetic", (output / "history.md").read_text(encoding="utf-8"))
+            csv_text = (output / "trend.csv").read_text(encoding="utf-8")
+            self.assertEqual(len(csv_text.strip().splitlines()), 4)
+            self.assertIn("realtime_factor", csv_text)
+            svg = (output / "trend.svg").read_text(encoding="utf-8")
+            self.assertIn("<svg", svg)
+            self.assertIn("polyline", svg)
             rows[0]["change_pct"] = "nan"
             compare.write_text(json.dumps(rows), encoding="utf-8")
             bad = subprocess.run(cmd, capture_output=True, text=True)
