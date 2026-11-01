@@ -4,6 +4,7 @@ on:
     paths:
       - 'scripts/qualify-real-media-low-memory.sh'
       - 'scripts/preflight-real-media.py'
+      - 'scripts/test-preflight-real-media.py'
       - 'scripts/smoke-qualify-real-media.sh'
       - 'scripts/smoke-qualification-failure.sh'
       - 'scripts/check-low-memory-benchmark.py'
@@ -22,6 +23,8 @@ jobs:
           go-version-file: go.mod
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Real-media preflight regression tests
+        run: python3 scripts/test-preflight-real-media.py
       - name: Qualification wrapper end-to-end smoke
         run: bash scripts/smoke-qualify-real-media.sh
       - name: Qualification failed-memory-gate regression
