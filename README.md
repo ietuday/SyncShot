@@ -98,3 +98,7 @@ The RSS qualification check now requires exactly one benchmark `measurements.csv
 ## Phase 8.20 — End-to-end qualification smoke in CI
 
 `bash scripts/smoke-qualify-real-media.sh` builds short synthetic input media and invokes the **same** manual real-media qualification wrapper used for the 15-minute laptop workload. It asserts successful rendering/qualification, a nonzero FFmpeg RSS sample, a single summary and unmodified source media. The dedicated GitHub Actions workflow runs this short smoke test on relevant pull request changes. It is not a substitute for rendering actual 15-minute media on the user's 12 GiB Ubuntu laptop.
+
+## Phase 8.21 — Keep qualified video for manual inspection
+
+By default the real-media qualification deletes its temporary rendered video after checks complete. Set `SYNC_SHOT_KEEP_QUALIFIED_VIDEO=1 bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images` to retain a successfully qualified `qualified.mp4` in that run's `qualification-*/` report folder for visual and audio review. Source narration and images remain untouched. Retaining long video consumes additional disk space; failed or unvalidated outputs are not retained. The end-to-end qualification smoke test exercises this opt-in mode.
