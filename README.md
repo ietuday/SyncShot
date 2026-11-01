@@ -118,3 +118,7 @@ The qualification failure-path smoke now also supplies a corrupt narration file 
 ## Phase 8.25 — Original-media readiness preflight
 
 Before a potentially lengthy real-media qualification run, `scripts/preflight-real-media.py` checks that supported narration and image files exist and are readable by ffprobe, lists narration durations, and requires at least 2 GiB of free space in the chosen report directory. Run `bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images` as usual; the preflight runs automatically. It does not guarantee memory safety or replace the manual 15-minute test on the 12 GiB laptop.
+
+## Phase 8.26 — Strict media preflight regression checks
+
+Preflight now rejects zero/malformed image dimensions, nonfinite narration durations and invalid free-disk thresholds. The dedicated qualification GitHub Actions workflow runs `python3 scripts/test-preflight-real-media.py` alongside its end-to-end smoke tests. The real 15-minute narration with 10 images on the 12 GiB Ubuntu laptop still requires a manual test.
