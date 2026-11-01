@@ -29,3 +29,17 @@ assert (root/"summary.json").exists()
 assert not (root/"qualified.mp4").exists()
 PY
 echo "Qualification post-render failure recovery verified"
+
+# Invalid input media must not result in a qualified output.
+mkdir -p "$TEMP/bad-audio" "$TEMP/bad-images"
+printf 'not-an-audio-file' > "$TEMP/bad-audio/voice.wav"
+cp "$TEMP/images/a.png" "$TEMP/bad-images/a.png"
+set +e
+bash scripts/qualify-real-media-low-memory.sh "$TEMP/bad-audio" "$TEMP/bad-images" "$TEMP/bad-reports" >"$TEMP/bad-stdout" 2>"$TEMP/bad-stderr"
+bad_status=$?
+set -e
+if (( bad_status == 0 )); then echo "Corrupt input media unexpectedly passed" >&2; exit 1; fi
+if find "$TEMP/bad-reports" -name qualified.mp4 -print -quit | grep -q .; then
+  echo "Invalid-media qualification retained video" >&2; exit 1
+fi
+echo "Qualification invalid-media failure checks passed"
