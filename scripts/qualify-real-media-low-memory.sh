@@ -61,9 +61,19 @@ on_qualification_exit() {
       echo "Qualified video retained at: $RUN_REPORT/qualified.mp4"
     else
       echo "Could not retain qualified video" >&2
+      QUALIFICATION_STAGE="retention"
       status=1
     fi
   fi
+  if [[ "$status" -ne 0 ]]; then
+    python3 scripts/analyze-qualification-failure.py "$RUN_REPORT" "${QUALIFICATION_STAGE:-retention}" "$status" || true
+  fi
+  python3 - "$RUN_REPORT/qualification-status.json" "$status" "$QUALIFICATION_STAGE" <<'PY'
+import json,sys
+from pathlib import Path
+path,code,stage=sys.argv[1:]
+Path(path).write_text(json.dumps({"status":"passed" if int(code)==0 else "failed","exit_code":int(code),"last_stage":stage},indent=2)+"\n")
+PY
   rm -rf -- "$WORK"
   return "$status"
 }
