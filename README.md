@@ -383,3 +383,20 @@ The required clip is `output/animated-scenes/scene-0001.mp4`. Both output paths 
 ## Phase 9.22 — Verified demo FFmpeg regression
 
 Run `python3 scripts/test-provider-demo-ffmpeg.py` to test the Phase 9.21 demo builder with actual local, synthetic audio/video. The test checks clip verification, looping a short input clip to fit three seconds of narration, the generated MP4's audio/video streams and duration, and protection from overwriting an existing output. No external API access, hosted imagery, Runway tasks, or paid generation is involved. This confirms local orchestration, **not** realistic animation quality.
+
+## Phase 9.23 — Complete an already-submitted provider pilot
+
+Once a **previously authorized** single-scene Runway task has finished, inspect its status, optionally download the resulting clip, verify it, and assemble a narrated demo:
+
+```bash
+mkdir -p output/animated-scenes output/video
+python3 scripts/complete-provider-pilot.py \
+  --tasks output/animation-workflow/submitted-one-scene.json \
+  --plan output/animation-workflow/provider-scene-plan.json \
+  --clips-dir output/animated-scenes \
+  --output output/video/provider-demo.mp4 \
+  --report output/animation-workflow/provider-demo-report.json \
+  --download
+```
+
+This requires `RUNWAYML_API_SECRET` and the `runwayml` package to query an existing provider task. The `--download` flag explicitly permits fetching a completed clip; omit it when `scene-0001.mp4` is already present. **No new paid animation generation jobs are ever submitted by this completion script**. The output/report must not already exist. Download behavior inherits the existing provider clip fetcher's strict HTTPS and size checks. Provider completion may fail, media may be unavailable, or the provider URL may be blocked by its downloader; this is not a guarantee of successful real-provider rendering.
