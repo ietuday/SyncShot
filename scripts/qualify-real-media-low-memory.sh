@@ -43,6 +43,7 @@ export SYNC_SHOT_BENCHMARK_INPUTS="$WORK/config.json:$AUDIO_DIR:$IMAGE_DIR"
 export SYNC_SHOT_BENCHMARK_OUTPUT="$OUTPUT"
 RUN_REPORT="$(mktemp -d "$REPORT_DIR/qualification-XXXXXXXX")"
 bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
+python3 scripts/summarize-real-media-qualification.py "$RUN_REPORT"
 python3 scripts/check-low-memory-benchmark.py "$RUN_REPORT" --max-ffmpeg-rss-mib "${SYNC_SHOT_MAX_FFMPEG_RSS_MIB:-8192}"
 python3 scripts/check-av-sync.py "$OUTPUT" --max-drift-seconds 0.5
 ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$OUTPUT" | grep -qx "1280x720"
