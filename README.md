@@ -212,3 +212,14 @@ python3 scripts/animate-scene-images.py --plan scene-plan.json --image-urls scen
 ```
 
 To **explicitly submit paid generation tasks**, install `runwayml`, set `RUNWAYML_API_SECRET` securely, choose a **different** output filename, and add `--execute`. Verify provider pricing, credits and eligibility before doing so. The default clip duration is 5 seconds. Do not commit secrets or user media. The output contains task IDs only; a future stage must download results and align scenes to narration.
+
+## Phase 9.5 — Check and download completed animation tasks
+
+Use the Phase 9.4 `--execute` task manifest to inspect Runway generation status. This step does not create new paid generations. Running it requires `RUNWAYML_API_SECRET`, the optional `runwayml` Python package and network access. By default it **only checks task status** and writes a new JSON report; add `--download` to save successful MP4 clips.
+
+```bash
+python3 scripts/retrieve-animation-clips.py --tasks submitted-animation.json --output-dir output/animated-scenes --report animation-status.json
+python3 scripts/retrieve-animation-clips.py --tasks submitted-animation.json --output-dir output/animated-scenes --report animation-download-status.json --download
+```
+
+Downloads refuse to replace existing files and use temporary files before publication. The adapter checks that URLs use HTTPS/public addresses, rejects redirects, limits each clip to 256 MiB and performs a basic MP4 signature check. For stronger security, run against trusted task outputs only; task URLs are obtained from the Runway SDK. **This is not yet a synchronized final video.** Generated 5-second animations may require further timing adaptation for narration scenes. Test without API access using `python3 scripts/test-retrieve-animation-clips.py`.
