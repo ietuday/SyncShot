@@ -11,7 +11,7 @@ ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=blue:s=320x180' -fra
 # The wrapper must generate and check output without modifying original media.
 before_audio="$(sha256sum "$TEMP/audio/voice.wav" | cut -d' ' -f1)"
 before_image="$(sha256sum "$TEMP/images/a.png" | cut -d' ' -f1)"
-SYNC_SHOT_MAX_FFMPEG_RSS_MIB=8192 bash scripts/qualify-real-media-low-memory.sh "$TEMP/audio" "$TEMP/images" "$TEMP/reports"
+SYNC_SHOT_KEEP_QUALIFIED_VIDEO=1 SYNC_SHOT_MAX_FFMPEG_RSS_MIB=8192 bash scripts/qualify-real-media-low-memory.sh "$TEMP/audio" "$TEMP/images" "$TEMP/reports"
 test "$before_audio" = "$(sha256sum "$TEMP/audio/voice.wav" | cut -d' ' -f1)"
 test "$before_image" = "$(sha256sum "$TEMP/images/a.png" | cut -d' ' -f1)"
 count="$(find "$TEMP/reports" -maxdepth 1 -type d -name 'qualification-*' | wc -l)"
@@ -25,6 +25,7 @@ assert summary["status"]=="passed", summary
 assert summary["output_bytes"]>0, summary
 assert summary["peak_ffmpeg_rss_mib"]>0, summary
 assert (root/"summary.md").exists()
+assert (root/"qualified.mp4").stat().st_size > 0
 assert len(list(root.glob("run-*/measurements.csv")))==1
 PY
 echo "Real-media qualification end-to-end smoke passed"
