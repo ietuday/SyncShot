@@ -62,3 +62,35 @@ jobs:
           path: paired-qualification-evidence/
           if-no-files-found: warn
           retention-days: 14
+
+  attest:
+    name: Attest benchmark evidence archive
+    if: github.event_name == 'workflow_dispatch'
+    needs: compare
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download benchmark evidence from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: paired-qualification-evidence
+          path: paired-qualification-evidence
+      - name: Create deterministic evidence archive
+        run: |
+          test -f paired-qualification-evidence/run-manifest.json
+          test -f paired-qualification-evidence/paired-performance-comparison.json
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -czf paired-qualification-evidence.tar.gz paired-qualification-evidence
+      - name: Attest archive provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: paired-qualification-evidence.tar.gz
+      - name: Upload attested archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: attested-paired-qualification-evidence
+          path: paired-qualification-evidence.tar.gz
+          retention-days: 14
