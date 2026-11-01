@@ -1,0 +1,38 @@
+name: Complete qualification E2E
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/complete-qualification-e2e.yml'
+      - 'scripts/test-complete-qualification-e2e.sh'
+      - 'scripts/qualify-production-media.sh'
+      - 'scripts/check-qualification-media-decode.py'
+      - 'scripts/summarize-qualification-preflight.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Validate script syntax
+        run: bash -n scripts/test-complete-qualification-e2e.sh
+      - name: Run complete qualification
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: complete-qualification-evidence
+        run: bash scripts/test-complete-qualification-e2e.sh
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-qualification-evidence
+          path: complete-qualification-evidence/
+          if-no-files-found: warn
+          retention-days: 14
