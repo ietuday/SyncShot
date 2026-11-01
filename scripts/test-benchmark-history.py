@@ -42,6 +42,14 @@ class HistoryTests(unittest.TestCase):
             svg = (output / "trend.svg").read_text(encoding="utf-8")
             self.assertIn("<svg", svg)
             self.assertIn("polyline", svg)
+            rows[0]["change_pct"] = 18
+            compare.write_text(json.dumps(rows), encoding="utf-8")
+            alert_cmd = cmd + ["--alert-threshold-percent", "15"]
+            alert_result = subprocess.run(alert_cmd, capture_output=True, text=True)
+            self.assertEqual(alert_result.returncode, 1)
+            alerts = json.loads((output / "regression-alerts.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(alerts["alerts"]), 1)
+            self.assertEqual(alerts["alerts"][0]["metric"], "realtime_factor")
             rows[0]["change_pct"] = "nan"
             compare.write_text(json.dumps(rows), encoding="utf-8")
             bad = subprocess.run(cmd, capture_output=True, text=True)
