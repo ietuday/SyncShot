@@ -6,12 +6,19 @@ on:
       - 'scripts/test-paired-qualification-e2e.py'
       - 'scripts/compare-benchmarks.py'
   workflow_dispatch:
+    inputs:
+      repetitions:
+        description: 'Runs per side (1-3; default keeps CI fast)'
+        required: false
+        type: choice
+        options: ['1', '2', '3']
+        default: '1'
 permissions:
   contents: read
 jobs:
   compare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -25,6 +32,7 @@ jobs:
       - name: Run paired complete qualification and comparison
         env:
           SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: paired-qualification-evidence
+          SYNC_SHOT_QUALIFICATION_REPETITIONS: ${{ inputs.repetitions || '1' }}
         run: python3 scripts/test-paired-qualification-e2e.py
       - name: Upload comparison evidence
         if: always()

@@ -2,6 +2,7 @@
 """Run paired complete qualification on the same synthetic inputs and compare evidence."""
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -94,7 +95,19 @@ def check_median_contract():
             raise AssertionError("aggregation accepted different input media")
     print("Median comparator contract checks passed")
 
+def repetitions_from_env():
+    raw = os.environ.get("SYNC_SHOT_QUALIFICATION_REPETITIONS", "1")
+    try:
+        count = int(raw)
+    except ValueError as exc:
+        raise ValueError("SYNC_SHOT_QUALIFICATION_REPETITIONS must be 1, 2, or 3") from exc
+    if count not in (1, 2, 3):
+        raise ValueError("SYNC_SHOT_QUALIFICATION_REPETITIONS must be 1, 2, or 3")
+    return count
+
+
 def main():
+    repetitions = repetitions_from_env()
     check_comparator_contract()
     check_median_contract()
     with tempfile.TemporaryDirectory() as directory:
@@ -129,19 +142,33 @@ def main():
             "SYNC_SHOT_MAX_DURATION": "9",
             "SYNC_SHOT_QUALIFICATION_TIMEOUT": "8m"
         })
-        reports = []
-        for suffix in ("baseline", "candidate"):
-            report_root = work / suffix
-            run("bash", "scripts/qualify-production-media.sh", str(config),
-                str(work / (suffix + ".mp4")), str(report_root), env=env)
-            matches = list(report_root.glob("qualification-*/qualification-summary.json"))
-            if len(matches) != 1:
-                raise RuntimeError(f"{suffix}: missing or duplicate qualification report")
-            reports.append(matches[0])
-        comparison = subprocess.run(
-            [sys.executable, "scripts/compare-benchmarks.py", str(reports[0]),
-             str(reports[1]), "--max-regression-percent", "200"],
-            cwd=ROOT, capture_output=True, text=True, check=True)
+        reports = {"baseline": [], "candidate": []}
+        # Alternate sides, so CI runner load drift affects both similarly.
+        for iteration in range(repetitions):
+            for side in ("baseline", "candidate"):
+                label = f"{side}-{iteration + 1:02d}"
+                report_root = work / label
+                # Keep the config and fingerprints fixed while discarding stale render state.
+                for directory in (work / "work", work / "shorts"):
+                    if directory.exists():
+                        shutil.rmtree(directory)
+                run("bash", "scripts/qualify-production-media.sh", str(config),
+                    str(work / (label + ".mp4")), str(report_root), env=env)
+                matches = list(report_root.glob("qualification-*/qualification-summary.json"))
+                if len(matches) != 1:
+                    raise RuntimeError(f"{label}: missing or duplicate qualification report")
+                reports[side].append(matches[0])
+        baseline = reports["baseline"]
+        candidate = reports["candidate"]
+        command = [sys.executable, "scripts/compare-benchmarks.py",
+                   str(baseline[0]), str(candidate[0]),
+                   "--max-regression-percent", "200"]
+        for path in baseline[1:]:
+            command.extend(("--baseline-extra", str(path)))
+        for path in candidate[1:]:
+            command.extend(("--candidate-extra", str(path)))
+        comparison = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
+                                    check=True)
         rows = json.loads(comparison.stdout)
         if len(rows) != 3 or any(row["regression"] for row in rows):
             raise RuntimeError("incomplete or failing comparison")
@@ -150,10 +177,22 @@ def main():
             dest = Path(evidence).resolve()
             dest.mkdir(parents=True, exist_ok=True)
             (dest / "paired-performance-comparison.json").write_text(
-                json.dumps(rows, indent=2) + "\n", encoding="utf-8")
-            for name, path in zip(("baseline", "candidate"), reports):
-                (dest / (name + "-qualification-summary.json")).write_bytes(path.read_bytes())
-        print("Paired qualification comparison passed (wide 200% CI noise allowance)")
+                json.dumps(rows, indent=2) + "\\n", encoding="utf-8")
+            (dest / "run-manifest.json").write_text(json.dumps({
+                "repetitions_per_side": repetitions,
+                "workload_id": env["SYNC_SHOT_BENCHMARK_WORKLOAD_ID"],
+                "baseline": [f"baseline-{i+1:02d}-qualification-summary.json"
+                             for i in range(repetitions)],
+                "candidate": [f"candidate-{i+1:02d}-qualification-summary.json"
+                              for i in range(repetitions)],
+                "comparison": "paired-performance-comparison.json",
+                "max_regression_percent": 200,
+            }, indent=2) + "\\n", encoding="utf-8")
+            for side, paths in reports.items():
+                for index, path in enumerate(paths, start=1):
+                    (dest / f"{side}-{index:02d}-qualification-summary.json").write_bytes(
+                        path.read_bytes())
+        print(f"Paired qualification passed ({repetitions} runs per side, 200% CI allowance)")
 
 if __name__ == "__main__":
     main()

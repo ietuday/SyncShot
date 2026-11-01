@@ -15,3 +15,9 @@ The benchmark comparator accepts repeatable `--baseline-extra` and `--candidate-
 Example: `python3 scripts/compare-benchmarks.py base1.json candidate1.json --baseline-extra base2.json --baseline-extra base3.json --candidate-extra candidate2.json --candidate-extra candidate3.json --max-regression-percent 15`.
 
 Use the **same number of independent runs per group** as a benchmarking convention, and execute on comparable hardware under controlled load. The CI paired workflow continues to run just one baseline and one candidate, so this feature does not yet provide a repeated-run production performance certification.
+
+## Phase 7.26 — Repeatable paired qualification workflow
+
+Set `SYNC_SHOT_QUALIFICATION_REPETITIONS` to 1, 2 or 3 when running `scripts/test-paired-qualification-e2e.py`. GitHub Actions manual workflow dispatch offers the same choices; pull-request CI defaults to one run per side. The script alternates baseline/candidate passes on the same runner, removes intermediate render state between passes, and compares per-metric medians using Phase 7.25's comparator.
+
+The uploaded evidence now includes `run-manifest.json`, every numbered baseline and candidate qualification summary, and `paired-performance-comparison.json`. Qualification preflight is still performed on every run. A 200% regression allowance remains deliberately permissive, and comparing two executions of the *same commit* is a consistency smoke test, not a real candidate-vs-prior-version performance assessment. Longer production-certified comparisons need genuinely distinct revisions and controlled, representative media/hardware.
