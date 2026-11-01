@@ -29,12 +29,30 @@ fi
 # Preflight: validate source paths and CLI settings before starting an expensive render.
 IFS=":" read -r -a INPUT_PATHS <<< "$SYNC_SHOT_BENCHMARK_INPUTS"
 python3 scripts/check-qualification-paths.py "$OUTPUT" "$CONFIG" "$REPORT" "${INPUT_PATHS[@]}"
-python3 scripts/audit-qualification-inputs.py "${INPUT_PATHS[@]}"
-python3 scripts/check-qualification-media-decode.py "${INPUT_PATHS[@]}" --timeout-per-file "${SYNC_SHOT_DECODE_TIMEOUT_PER_FILE:-120}"
-python3 scripts/fingerprint-inputs.py --output /dev/null "${INPUT_PATHS[@]}"
-go run ./cmd/syncshot --config "$CONFIG" --output "$OUTPUT" --dry-run
 RUN_REPORT="$(mktemp -d "$REPORT/qualification-XXXXXXXX")"
 echo "Qualification evidence directory: $RUN_REPORT"
+STAGE="media_audit"
+write_status() {
+  python3 scripts/write-qualification-status.py "$RUN_REPORT/status.json" "$STAGE" "$1"
+}
+on_exit() {
+  local code="$1"
+  trap - EXIT
+  write_status "$code" || true
+  if (( code != 0 )); then
+    echo "Qualification failed at '$STAGE' (exit $code). Evidence: $RUN_REPORT" >&2
+  fi
+}
+trap 'on_exit "$?"' EXIT
+python3 scripts/audit-qualification-inputs.py "${INPUT_PATHS[@]}" --output "$RUN_REPORT/input-audit.json"
+STAGE="media_decode"
+python3 scripts/check-qualification-media-decode.py "${INPUT_PATHS[@]}" --timeout-per-file "${SYNC_SHOT_DECODE_TIMEOUT_PER_FILE:-120}" --output "$RUN_REPORT/media-decode.json"
+STAGE="input_fingerprint"
+python3 scripts/fingerprint-inputs.py --output "$RUN_REPORT/inputs-fingerprint.json" "${INPUT_PATHS[@]}"
+STAGE="config_dry_run"
+go run ./cmd/syncshot --config "$CONFIG" --output "$OUTPUT" --dry-run
+STAGE="preflight_summary"
+python3 scripts/summarize-qualification-preflight.py "$RUN_REPORT/input-audit.json" "$RUN_REPORT/media-decode.json" "$RUN_REPORT/inputs-fingerprint.json" --output "$RUN_REPORT/preflight-summary.json"
 
 STAGE="benchmark"
 write_status() {
