@@ -1,0 +1,24 @@
+name: Real media qualification smoke
+on:
+  pull_request:
+    paths:
+      - 'scripts/qualify-real-media-low-memory.sh'
+      - 'scripts/smoke-qualify-real-media.sh'
+      - 'scripts/check-low-memory-benchmark.py'
+      - 'scripts/check-av-sync.py'
+      - 'scripts/summarize-real-media-qualification.py'
+      - '.github/workflows/real-media-qualification.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Qualification wrapper end-to-end smoke
+        run: bash scripts/smoke-qualify-real-media.sh
