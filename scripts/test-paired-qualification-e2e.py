@@ -107,6 +107,26 @@ def repetitions_from_env():
     return count
 
 
+def format_performance_summary(rows, baseline_sha, candidate_sha, repetitions):
+    """Present validated comparison metrics without treating CI as certification."""
+    labels = {"realtime_factor": "Realtime factor",
+              "peak_process_tree_rss_kb": "Process tree RSS (KiB)",
+              "peak_ffmpeg_rss_kb": "FFmpeg RSS (KiB)"}
+    if len(rows) != 3 or {row["metric"] for row in rows} != set(labels):
+        raise ValueError("Unexpected comparison metrics")
+    lines = ["# SyncShot benchmark comparison", "",
+             f"Baseline: {baseline_sha}", f"Candidate: {candidate_sha}",
+             f"Runs per side: {repetitions}",
+             "Threshold: 200% (CI smoke-test only)", "",
+             "| Metric | Baseline median | Candidate median | Change | Status |",
+             "| --- | ---: | ---: | ---: | --- |"]
+    for row in rows:
+        status = "REGRESSION" if row["regression"] else "Within threshold"
+        lines.append(f'| {labels[row["metric"]]} | {row["baseline"]:.3f} | '
+                     f'{row["candidate"]:.3f} | {row["change_pct"]:+.2f}% | {status} |')
+    lines.extend(["", "CI qualification evidence is not production certification.", ""])
+    return "\n".join(lines)
+
 def main():
     repetitions = repetitions_from_env()
     baseline_sha = os.environ.get("SYNC_SHOT_BASELINE_SHA", "").strip()
@@ -187,14 +207,17 @@ def main():
         for path in candidate[1:]:
             command.extend(("--candidate-extra", str(path)))
         comparison = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
-                                    check=True)
+                                    check=False)
         rows = json.loads(comparison.stdout)
-        if len(rows) != 3 or any(row["regression"] for row in rows):
-            raise RuntimeError("incomplete or failing comparison")
+        if len(rows) != 3:
+            raise RuntimeError("incomplete comparison")
         evidence = os.environ.get("SYNC_SHOT_BENCHMARK_EVIDENCE_DIR")
         if evidence:
             dest = Path(evidence).resolve()
             dest.mkdir(parents=True, exist_ok=True)
+            (dest / "performance-summary.md").write_text(
+                format_performance_summary(rows, baseline_sha or candidate_sha,
+                                           candidate_sha, repetitions), encoding="utf-8")
             (dest / "paired-performance-comparison.json").write_text(
                 json.dumps(rows, indent=2) + "\n", encoding="utf-8")
             (dest / "run-manifest.json").write_text(json.dumps({
@@ -214,6 +237,8 @@ def main():
                 for index, path in enumerate(paths, start=1):
                     (dest / f"{side}-{index:02d}-qualification-summary.json").write_bytes(
                         path.read_bytes())
+        if comparison.returncode != 0 or any(row["regression"] for row in rows):
+            raise RuntimeError("Performance comparison failed; review saved evidence")
         print(f"Paired qualification passed ({repetitions} runs per side, 200% CI allowance)")
 
 if __name__ == "__main__":
