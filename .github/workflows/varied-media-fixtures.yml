@@ -1,0 +1,35 @@
+name: Varied media fixture qualification
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/varied-media-fixtures.yml'
+      - 'scripts/test-varied-media-fixtures.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Validate script
+        run: bash -n scripts/test-varied-media-fixtures.sh
+      - name: Render varied image fixture video
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: varied-media-evidence
+        run: bash scripts/test-varied-media-fixtures.sh
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: varied-media-evidence
+          path: varied-media-evidence/
+          if-no-files-found: warn
+          retention-days: 14
