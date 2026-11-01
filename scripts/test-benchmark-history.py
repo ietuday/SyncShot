@@ -42,6 +42,19 @@ class HistoryTests(unittest.TestCase):
             svg = (output / "trend.svg").read_text(encoding="utf-8")
             self.assertIn("<svg", svg)
             self.assertIn("polyline", svg)
+            incompatible = subprocess.run(
+                cmd + ["--require-workload-id", "other-workload"],
+                capture_output=True, text=True)
+            self.assertNotEqual(incompatible.returncode, 0)
+            self.assertIn("workload mismatch", incompatible.stderr)
+            insufficient = subprocess.run(
+                cmd + ["--min-repetitions", "4"], capture_output=True, text=True)
+            self.assertNotEqual(insufficient.returncode, 0)
+            self.assertIn("insufficient repetitions", insufficient.stderr)
+            compatible = subprocess.run(
+                cmd + ["--require-workload-id", "synthetic", "--min-repetitions", "3"],
+                capture_output=True, text=True)
+            self.assertEqual(compatible.returncode, 0)
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
             alert_cmd = cmd + ["--alert-threshold-percent", "15"]
