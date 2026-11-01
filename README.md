@@ -333,3 +333,13 @@ python3 scripts/prepare-provider-pilot.py \
 ```
 
 The hosted image URL above is a placeholder. The command **does not** call a paid AI provider. Animated video generation remains a separate, explicitly authorized action. Run `python3 scripts/test-prepare-provider-pilot.py` to exercise the offline and FFmpeg integration tests.
+
+## Phase 9.18 — Offline real-provider pilot readiness gate
+
+Before authorizing a paid Runway image-to-video pilot, validate the prepared single-scene plan, local narration and approved hosted image reference:
+
+```bash
+python3 scripts/check-provider-pilot.py --plan output/animation-workflow/provider-scene-plan.json --image-urls output/animation-workflow/provider-image-urls.json --report output/animation-workflow/provider-readiness.json
+```
+
+The report identifies missing audio, mismatched scene lengths, missing prompts, or invalid HTTPS image URLs. This check **makes no network calls or paid generations**; it does not verify that a hosted image URL is reachable, that the media is licensed, or that the account has Runway credits. A successful readiness verdict is **not** proof that real AI video generation works. To continue, manually review provider costs, configure credentials and explicitly invoke the existing Runway adapter with `--execute`.
