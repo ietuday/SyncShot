@@ -42,6 +42,19 @@ export SYNC_SHOT_BENCHMARK_WORKLOAD_ID="real-media-720p-24fps-1chunk-$(date -u +
 export SYNC_SHOT_BENCHMARK_INPUTS="$WORK/config.json:$AUDIO_DIR:$IMAGE_DIR"
 export SYNC_SHOT_BENCHMARK_OUTPUT="$OUTPUT"
 RUN_REPORT="$(mktemp -d "$REPORT_DIR/qualification-XXXXXXXX")"
+# Preserve benchmark evidence even if rendering or a later quality gate fails.
+on_qualification_exit() {
+  status="$1"
+  trap - EXIT
+  if [[ -d "$RUN_REPORT" ]]; then
+    python3 scripts/summarize-real-media-qualification.py "$RUN_REPORT" || true
+    if (( status != 0 )); then
+      echo "Qualification failed (exit $status). Reports and logs: $RUN_REPORT" >&2
+    fi
+  fi
+  rm -rf -- "$WORK"
+}
+trap 'on_qualification_exit "$?"' EXIT
 bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
 python3 scripts/summarize-real-media-qualification.py "$RUN_REPORT"
 python3 scripts/check-low-memory-benchmark.py "$RUN_REPORT" --max-ffmpeg-rss-mib "${SYNC_SHOT_MAX_FFMPEG_RSS_MIB:-8192}"

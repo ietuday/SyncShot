@@ -25,4 +25,5 @@ if [[ -e "$TMP/audio/reports" ]]; then
   exit 1
 fi
 grep -q "Report directory cannot be inside an input directory" "$TMP/output.log"
+grep -q 'on_qualification_exit' scripts/qualify-real-media-low-memory.sh
 echo "Real-media qualification input-safety tests passed."

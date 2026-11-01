@@ -78,3 +78,7 @@ The manual real-media qualification runner now resolves and verifies audio/image
 ## Phase 8.15 — Consolidated real-media qualification summary
 
 The manual real-media qualification generates `summary.json` and `summary.md` inside the current `qualification-*` report directory, reporting benchmark exit status, elapsed time, peak FFmpeg/process-tree RSS and output size. Run `python3 scripts/test-summarize-real-media-qualification.py` for summary regression checks. The summary records rendering benchmark metrics; passing memory, audio/video alignment and output dimensions are checked separately by the qualification command. No actual user-laptop render has been performed by this change.
+
+## Phase 8.16 — Keep diagnostic reports for failed qualification
+
+The real-media qualification runner now attempts to write `summary.json` and `summary.md` when it exits unsuccessfully after the benchmark starts, without concealing the original exit status. It prints the specific qualification report directory to stderr on failure and still removes temporary rendered media. If the underlying benchmark did not produce `measurements.csv` (for example failure before recording began), its summary may not be available, but existing logs are preserved. The original 15-minute media still requires a manual Ubuntu qualification run.
