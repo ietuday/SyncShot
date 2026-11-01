@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated completed paired qualification workflow run IDs'
         required: false
         type: string
+      verify_evidence_sha256:
+        description: 'Verify archived qualification reports against SHA-256 checksums'
+        required: false
+        type: boolean
+        default: false
       require_matching_inputs:
         description: 'Reject differing qualification media input fingerprints'
         required: false
@@ -98,11 +103,13 @@ jobs:
           MIN_REPETITIONS: ${{ inputs.min_repetitions || '1' }}
           REQUIRE_ENVIRONMENT: ${{ inputs.require_matching_environment || 'false' }}
           REQUIRE_INPUTS: ${{ inputs.require_matching_inputs || 'false' }}
+          VERIFY_CHECKSUMS: ${{ inputs.verify_evidence_sha256 || 'false' }}
         run: |
           args=(--output-dir benchmark-history --alert-threshold-percent "$ALERT_THRESHOLD" --min-repetitions "$MIN_REPETITIONS")
           if [ -n "$REQUIRED_WORKLOAD" ]; then args+=(--require-workload-id "$REQUIRED_WORKLOAD"); fi
           if [ "$REQUIRE_ENVIRONMENT" = "true" ]; then args+=(--require-matching-environment); fi
           if [ "$REQUIRE_INPUTS" = "true" ]; then args+=(--require-matching-inputs); fi
+          if [ "$VERIFY_CHECKSUMS" = "true" ]; then args+=(--verify-evidence-sha256); fi
           python3 scripts/summarize-benchmark-history.py history-input/run-* "${args[@]}"
       - name: Show history summary
         if: always()
