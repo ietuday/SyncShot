@@ -74,3 +74,7 @@ Each real-media qualification now creates a unique `output/real-media-qualificat
 ## Phase 8.14 — Qualification preflight safety
 
 The manual real-media qualification runner now resolves and verifies audio/image source directories, rejects report directories nested inside them **before creating any files**, and checks for required Go/FFmpeg/ffprobe/Python commands before starting. Run `bash scripts/test-real-media-qualification.sh` to verify nested-path rejection creates no report directory. Real 15-minute rendering on the user's laptop remains unverified.
+
+## Phase 8.15 — Consolidated real-media qualification summary
+
+The manual real-media qualification generates `summary.json` and `summary.md` inside the current `qualification-*` report directory, reporting benchmark exit status, elapsed time, peak FFmpeg/process-tree RSS and output size. Run `python3 scripts/test-summarize-real-media-qualification.py` for summary regression checks. The summary records rendering benchmark metrics; passing memory, audio/video alignment and output dimensions are checked separately by the qualification command. No actual user-laptop render has been performed by this change.
