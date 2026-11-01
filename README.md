@@ -42,3 +42,7 @@ After **successful** cinematic final-video publication, SyncShot removes cache f
 ## Phase 8.6 — Disk-space preflight
 
 Before rendering starts, SyncShot checks free filesystem space in both the work directory and final-video output directory on Linux. When either has less than **2 GiB free**, rendering stops early with an actionable error rather than consuming more storage and failing halfway through. On non-Linux platforms this check is currently skipped. This is a conservative minimum, not a forecast of total disk consumption for an unusually long render; check available storage before multi-hour jobs. The normal audio + images command is unchanged.
+
+## Phase 8.7 — Bounded final-stitch filter threading
+
+The automatic chunked-effects final FFmpeg stitching pass now sets `-filter_complex_threads 1` and `-filter_threads 1` to reduce concurrency and potential peak RAM use for multi-chunk crossfades. Rendering may be slower on high-core hosts. This change does not guarantee OOM-free rendering; benchmark its impact using `bash scripts/qualify-low-memory-15m.sh` and inspect peak FFmpeg RSS in `measurements.csv`.
