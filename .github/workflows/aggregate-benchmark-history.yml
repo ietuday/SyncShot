@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated completed paired qualification workflow run IDs'
         required: false
         type: string
+      require_audit_metadata:
+        description: 'Require versioned audit metadata and GitHub run identity'
+        required: false
+        type: boolean
+        default: false
       verify_evidence_sha256:
         description: 'Verify archived qualification reports against SHA-256 checksums'
         required: false
@@ -104,12 +109,14 @@ jobs:
           REQUIRE_ENVIRONMENT: ${{ inputs.require_matching_environment || 'false' }}
           REQUIRE_INPUTS: ${{ inputs.require_matching_inputs || 'false' }}
           VERIFY_CHECKSUMS: ${{ inputs.verify_evidence_sha256 || 'false' }}
+          REQUIRE_AUDIT: ${{ inputs.require_audit_metadata || 'false' }}
         run: |
           args=(--output-dir benchmark-history --alert-threshold-percent "$ALERT_THRESHOLD" --min-repetitions "$MIN_REPETITIONS")
           if [ -n "$REQUIRED_WORKLOAD" ]; then args+=(--require-workload-id "$REQUIRED_WORKLOAD"); fi
           if [ "$REQUIRE_ENVIRONMENT" = "true" ]; then args+=(--require-matching-environment); fi
           if [ "$REQUIRE_INPUTS" = "true" ]; then args+=(--require-matching-inputs); fi
           if [ "$VERIFY_CHECKSUMS" = "true" ]; then args+=(--verify-evidence-sha256); fi
+          if [ "$REQUIRE_AUDIT" = "true" ]; then args+=(--require-audit-metadata); fi
           python3 scripts/summarize-benchmark-history.py history-input/run-* "${args[@]}"
       - name: Show history summary
         if: always()
