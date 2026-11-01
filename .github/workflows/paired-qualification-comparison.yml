@@ -1,0 +1,36 @@
+name: Paired production qualification comparison
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/paired-qualification-comparison.yml'
+      - 'scripts/test-paired-qualification-e2e.py'
+      - 'scripts/compare-benchmarks.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Check Python syntax
+        run: python3 -m py_compile scripts/test-paired-qualification-e2e.py
+      - name: Run paired complete qualification and comparison
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: paired-qualification-evidence
+        run: python3 scripts/test-paired-qualification-e2e.py
+      - name: Upload comparison evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paired-qualification-evidence
+          path: paired-qualification-evidence/
+          if-no-files-found: warn
+          retention-days: 14
