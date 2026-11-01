@@ -1,0 +1,14 @@
+name: Animation workflow orchestrator checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/animation-workflow.py'
+      - 'scripts/test-animation-workflow.py'
+      - '.github/workflows/animation-orchestrator.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-animation-workflow.py
