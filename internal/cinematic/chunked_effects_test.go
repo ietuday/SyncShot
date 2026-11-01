@@ -160,7 +160,7 @@ func TestInterruptedPublishPreservesCacheForRetry(t *testing.T){
  if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,audio,output,1,Overlays{},publishFail);!errors.Is(err,injected){t.Fatalf("expected publication failure, got %v",err)}
  if _,err:=os.Stat(output);!os.IsNotExist(err){t.Fatalf("failed publication unexpectedly replaced output: %v",err)}
  cache,err:=filepath.Glob(filepath.Join(dir,".syncshot-chunk-cache","*.mp4"))
- if err!=nil||len(cache)!=2{t.Fatalf("expected two retained chunks, got %v: %v",cache,err)}
+ if err!=nil||len(cache)!=1{t.Fatalf("expected one content-addressed chunk for two identical scenes, got %v: %v",cache,err)}
  stamps:=make(map[string]int64,len(cache))
  for _,part:=range cache{
   info,err:=os.Stat(part);if err!=nil{t.Fatal(err)}
