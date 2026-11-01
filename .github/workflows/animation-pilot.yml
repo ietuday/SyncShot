@@ -1,0 +1,14 @@
+name: Animation pilot preparation checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare-animation-pilot.py'
+      - 'scripts/test-prepare-animation-pilot.py'
+      - '.github/workflows/animation-pilot.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-prepare-animation-pilot.py
