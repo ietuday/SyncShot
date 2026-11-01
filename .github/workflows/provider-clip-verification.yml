@@ -1,0 +1,14 @@
+name: Provider clip verification checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify-provider-clip.py'
+      - 'scripts/test-verify-provider-clip.py'
+      - '.github/workflows/provider-clip-verification.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-verify-provider-clip.py
