@@ -85,3 +85,7 @@ This is opt-in to preserve compatibility with older benchmark artifacts. Attesta
 ## Phase 7.43 — Safe archive extraction
 
 Strict attestation mode now extracts only validated, root-level regular files from the verified evidence archive using `scripts/extract-benchmark-evidence.py`, instead of invoking `tar -xzf` directly. The extractor rejects path traversal, symbolic/hard links, unexpected entry types, duplicate file names, excessive file count, and archives whose declared extracted total exceeds 50 MiB. It requires the run manifest and comparison JSON. Pull-request CI tests valid evidence, traversal, symlink, and duplicate entry cases. This reduces extraction risk but does not establish the accuracy of the benchmark measurements or replace attestation verification.
+
+## Phase 7.44 — Negative-case archive security regression tests
+
+The archive extractor test suite additionally covers hardlinks, nested paths, missing required manifests, and corrupted gzip streams. These cases must fail without accepting unsafe evidence. The pull-request aggregate-history validation runs the negative-case tests. This validates archive extraction behavior only: a real GitHub attestation signing and verification run still requires workflow dispatch using available repository permissions.
