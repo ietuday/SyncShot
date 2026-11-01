@@ -82,6 +82,22 @@ class HistoryTests(unittest.TestCase):
             self.assertNotEqual(missing_tool.returncode, 0)
             manifest["environment"]["ffmpeg_version"] = "ffmpeg version 7.0"
             (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            fp = "b" * 64
+            manifest["baseline"] = ["baseline-01.json"]
+            manifest["candidate"] = ["candidate-01.json"]
+            for name in manifest["baseline"] + manifest["candidate"]:
+                (data / name).write_text(json.dumps([{
+                    "input_fingerprint": fp, "workload_id": "synthetic"
+                }]), encoding="utf-8")
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            strict_cmd = cmd + ["--require-matching-inputs"]
+            self.assertEqual(subprocess.run(strict_cmd, capture_output=True).returncode, 0)
+            (data / "candidate-01.json").write_text(json.dumps([{
+                "input_fingerprint": "c" * 64, "workload_id": "synthetic"
+            }]), encoding="utf-8")
+            drift = subprocess.run(strict_cmd, capture_output=True, text=True)
+            self.assertNotEqual(drift.returncode, 0)
+            self.assertIn("drift", drift.stderr)
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
             alert_cmd = cmd + ["--alert-threshold-percent", "15"]
