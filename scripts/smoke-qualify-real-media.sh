@@ -26,6 +26,9 @@ assert summary["output_bytes"]>0, summary
 assert summary["peak_ffmpeg_rss_mib"]>0, summary
 assert (root/"summary.md").exists()
 assert (root/"qualified.mp4").stat().st_size > 0
+final_status=json.loads((root/"qualification-status.json").read_text())
+assert final_status["status"]=="passed", final_status
+assert final_status["exit_code"]==0, final_status
 assert len(list(root.glob("run-*/measurements.csv")))==1
 PY
 echo "Real-media qualification end-to-end smoke passed"

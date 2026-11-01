@@ -102,3 +102,7 @@ The RSS qualification check now requires exactly one benchmark `measurements.csv
 ## Phase 8.21 — Keep qualified video for manual inspection
 
 By default the real-media qualification deletes its temporary rendered video after checks complete. Set `SYNC_SHOT_KEEP_QUALIFIED_VIDEO=1 bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images` to retain a successfully qualified `qualified.mp4` in that run's `qualification-*/` report folder for visual and audio review. Source narration and images remain untouched. Retaining long video consumes additional disk space; failed or unvalidated outputs are not retained. The end-to-end qualification smoke test exercises this opt-in mode.
+
+## Phase 8.22 — Final real-media qualification verdict
+
+After qualification exits, `qualification-status.json` records `status`, `exit_code`, and `last_stage`, including whether optional video retention failed after rendering passed. This final verdict is distinct from `summary.json`, which records the rendering benchmark alone. The end-to-end smoke test checks the final verdict after retaining its synthetic video. The original 15-minute media has not yet been tested on the 12 GiB Ubuntu laptop.
