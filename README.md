@@ -293,3 +293,15 @@ python3 scripts/test-prepare-animation-pilot.py
 ```
 
 This prepares **up to 30 seconds and five scenes**, never invokes an AI provider, and does not change the source transcript or audio. It clips the final visual scene at the time limit. The resulting pilot scene plan still references the original full narration; **trim the narration into a separate audio file and update the pilot JSON's `audio` field before final assembly**. For example: `ffmpeg -i inputs/audio/narration.m4a -t 30 -c:a aac pilot-narration.m4a`, adjusting `-t` to the actual reported pilot duration. The full paid-generation workflow, image hosting and real-provider validation remain outside this safe planning stage.
+
+## Phase 9.12 — Create matching pilot narration audio
+
+After preparing a short scene plan in Phase 9.11, create a **separate trimmed narration file** and output plan referencing that audio. The script uses FFmpeg AAC encoding, checks output duration via ffprobe, and refuses to overwrite existing outputs. It does not call AI providers or spend credits.
+
+```bash
+mkdir -p output/animation-workflow
+python3 scripts/prepare-pilot-audio.py --plan output/animation-workflow/pilot-plan.json --audio-output output/animation-workflow/pilot-narration.m4a --plan-output output/animation-workflow/pilot-ready.json
+python3 scripts/test-prepare-pilot-audio.py
+```
+
+The generated `pilot-ready.json` is for downstream pilot image/animation generation and final assembly. It requires a Phase 9.11 pilot plan, which may be on a separate PR until merged. A small AAC duration discrepancy of at most 0.15 seconds is accepted; this is not lip-sync validation. Real provider requests and full-length renders remain untested.
