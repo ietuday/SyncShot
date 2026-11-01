@@ -26,6 +26,10 @@ if [[ -e "$OUTPUT" ]]; then
   echo "Refusing to overwrite an existing qualification output: $OUTPUT" >&2
   exit 2
 fi
+# Preflight: validate source paths and CLI settings before starting an expensive render.
+IFS=":" read -r -a INPUT_PATHS <<< "$SYNC_SHOT_BENCHMARK_INPUTS"
+python3 scripts/fingerprint-inputs.py --output /dev/null "${INPUT_PATHS[@]}"
+go run ./cmd/syncshot --config "$CONFIG" --output "$OUTPUT" --dry-run
 SYNC_SHOT_BENCHMARK_OUTPUT="$OUTPUT" \
   bash scripts/benchmark-long-video.sh "$REPORT" --config "$CONFIG" --output "$OUTPUT" --timeout "${SYNC_SHOT_QUALIFICATION_TIMEOUT:-3h}"
 python3 scripts/summarize-benchmarks.py "$REPORT" --json "$REPORT/qualification-summary.json"
