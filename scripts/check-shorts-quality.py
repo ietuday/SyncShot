@@ -48,7 +48,9 @@ def inspect(folder, maximum):
                         "-i", str(clip), "-map", "0:a:0", "-vn", "-f", "null", "-"],
                        capture_output=True, check=True)
         results.append({"name": clip.name, "duration_seconds": duration,
-                        "width": 1080, "height": 1920, "audio_decodable": True,\n                        "av_start_delta_seconds": round(start_delta, 3),\n                        "av_end_delta_seconds": round(end_delta, 3)})
+                        "width": 1080, "height": 1920, "audio_decodable": True,
+                        "av_start_delta_seconds": round(start_delta, 3),
+                        "av_end_delta_seconds": round(end_delta, 3)})
     return {"clip_count": len(results), "clips": results}
 
 def main():
