@@ -1,0 +1,19 @@
+name: Single-scene animation E2E smoke
+on:
+  pull_request:
+    paths:
+      - 'scripts/test-single-scene-animation-e2e.py'
+      - 'scripts/prepare-provider-pilot.py'
+      - 'scripts/assemble-animated-video.py'
+      - '.github/workflows/single-scene-e2e.yml'
+  workflow_dispatch:
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Test single-scene workflow with synthetic local animation
+        run: python3 scripts/test-single-scene-animation-e2e.py
