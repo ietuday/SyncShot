@@ -23,3 +23,7 @@ To use it: Actions → Aggregate benchmark history → Run workflow → enter ru
 On manual **Aggregate benchmark history** dispatch, leave `run_ids` blank to discover the latest successful `paired-qualification-comparison.yml` workflow runs. Choose `latest_count` (1, 3, 5, 10, or 20). The collector examines up to the latest 100 successful workflow runs and selects those with a non-expired `paired-qualification-evidence` artifact. Explicit comma-separated `run_ids` still take precedence.
 
 This is a bounded lookback, not a permanent archive or scheduled collection job. Missing/expired artifacts remain unavailable. No automatic cron trigger is introduced; discovery is performed only when manually dispatched. Historic comparisons are only meaningful for compatible workloads and CI environments.
+
+## Phase 7.32 — Visual trend exports
+
+The history summarizer additionally emits `trend.csv` and a dependency-free `trend.svg`, plotting the three metric percentage changes across the **supplied evidence order**. Both are included automatically in the aggregated history artifact. The horizontal axis is a sequence number, **not** a measurement timestamp. This view is useful for spotting patterns only when the workload, runner characteristics, and baseline strategy are comparable across records. The chart is not a production performance certification and does not infer chronological ordering.
