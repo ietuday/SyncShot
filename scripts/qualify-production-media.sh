@@ -35,15 +35,7 @@ echo "Qualification evidence directory: $RUN_REPORT"
 
 STAGE="benchmark"
 write_status() {
-  local code="$1"
-  python3 - "$RUN_REPORT/status.json" "$STAGE" "$code" <<'PY'
-import json,sys
-from datetime import datetime,timezone
-out,stage,code=sys.argv[1],sys.argv[2],int(sys.argv[3])
-with open(out,"w",encoding="utf-8") as file:
-    json.dump({"stage":stage,"exit_code":code,"status":"success" if code==0 else "failure","recorded_utc":datetime.now(timezone.utc).isoformat()},file,indent=2)
-    file.write("\n")
-PY
+  python3 scripts/write-qualification-status.py "$RUN_REPORT/status.json" "$STAGE" "$1"
 }
 on_exit() {
   local code="$1"
