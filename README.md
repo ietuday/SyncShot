@@ -94,3 +94,7 @@ Real-media `summary.json` and `summary.md` now include suggested next steps base
 ## Phase 8.19 — Memory qualification evidence guardrails
 
 The RSS qualification check now requires exactly one benchmark `measurements.csv` under the chosen report directory and rejects missing or zero peak FFmpeg memory samples. Ambiguous report directories no longer silently use the most recently modified run. Nonfinite RSS limits are also rejected. Run `python3 scripts/test-check-low-memory-benchmark.py` for focused regression tests. This does not itself benchmark the original 15-minute media.
+
+## Phase 8.20 — End-to-end qualification smoke in CI
+
+`bash scripts/smoke-qualify-real-media.sh` builds short synthetic input media and invokes the **same** manual real-media qualification wrapper used for the 15-minute laptop workload. It asserts successful rendering/qualification, a nonzero FFmpeg RSS sample, a single summary and unmodified source media. The dedicated GitHub Actions workflow runs this short smoke test on relevant pull request changes. It is not a substitute for rendering actual 15-minute media on the user's 12 GiB Ubuntu laptop.
