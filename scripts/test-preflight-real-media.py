@@ -37,7 +37,7 @@ class Tests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError,"invalid image"):
                         mod.preflight(self.audio,self.images,self.report,0)
     def test_audio_file_without_audio_stream(self):
-        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\\n"),Result("")]):
+        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("")]):
             with self.assertRaisesRegex(ValueError,"no readable audio stream"):
                 mod.preflight(self.audio,self.images,self.report,0)
     def test_nan_audio_duration(self):
