@@ -276,3 +276,9 @@ python3 scripts/test-check-animation-clips.py
 ```
 
 The checker does not delete or redownload files, regenerate paid tasks, or modify final videos. Supply a new report filename for another pass. Video stream presence and a positive reported duration do not guarantee visual quality or perfect narration synchronization.
+
+## Phase 9.10 — Synthetic end-to-end animated video integration smoke
+
+Run `python3 scripts/test-animation-e2e-smoke.py` to exercise the **real FFmpeg/ffprobe binaries** through the Phase 9.9 clip readiness checker and Phase 9.6 assembly pipeline. The test generates two 1-second synthetic animated-source clips and 4 seconds of narration audio in a temporary directory, loops each visual scene to its 2-second timeline slot, and checks the final MP4 includes audio/video with reasonable duration alignment. It also covers a missing-scene assembly failure, corrupt clips, and the refusal to overwrite a final output. The test requires ffmpeg/ffprobe and no model/API credits.
+
+This smoke does **not** test real AI clips, transcription accuracy, provider communication, lip sync, or a 925-second narration on the user's laptop. Real media performance and end-to-end quality remain separate qualifications.
