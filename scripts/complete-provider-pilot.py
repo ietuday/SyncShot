@@ -29,7 +29,11 @@ def finish(tasks, plan, client, clips_dir, output, report, download=False,
         raise ValueError("expected one-scene plan")
     if output.exists() or report.exists() or output.is_symlink() or report.is_symlink():
         raise FileExistsError("demo output/report already exists")
-    if download:
+    existing_clip = clips_dir / "scene-0001.mp4"
+    # A previous invocation may have downloaded the clip before assembly failed.
+    # Never overwrite a recovered clip; recheck provider status and reuse it.
+    should_download = download and not (existing_clip.exists() or existing_clip.is_symlink())
+    if should_download:
         result = collector(tasks, client, clips_dir, True)
         if len(result["clips"]) != 1 or result["clips"][0]["status"] != "SUCCEEDED":
             raise ValueError("provider task has not succeeded")
@@ -37,7 +41,7 @@ def finish(tasks, plan, client, clips_dir, output, report, download=False,
         result = collector(tasks, client, clips_dir, False)
         if len(result["clips"]) != 1 or result["clips"][0]["status"] != "SUCCEEDED":
             raise ValueError("provider task has not succeeded")
-        if not (clips_dir / "scene-0001.mp4").is_file():
+        if not existing_clip.is_file() or existing_clip.is_symlink():
             raise ValueError("clip absent; explicitly use --download or supply a downloaded clip")
     return builder(plan, clips_dir, output, report)
 

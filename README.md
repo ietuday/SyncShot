@@ -400,3 +400,7 @@ python3 scripts/complete-provider-pilot.py \
 ```
 
 This requires `RUNWAYML_API_SECRET` and the `runwayml` package to query an existing provider task. The `--download` flag explicitly permits fetching a completed clip; omit it when `scene-0001.mp4` is already present. **No new paid animation generation jobs are ever submitted by this completion script**. The output/report must not already exist. Download behavior inherits the existing provider clip fetcher's strict HTTPS and size checks. Provider completion may fail, media may be unavailable, or the provider URL may be blocked by its downloader; this is not a guarantee of successful real-provider rendering.
+
+## Phase 9.24 — Safely resume a partially completed provider pilot
+
+If `complete-provider-pilot.py --download` previously downloaded `scene-0001.mp4` but rendering failed, run the same completion command again with **new output/report paths**. The tool rechecks the previously submitted task status but reuses the existing local clip rather than downloading over it. Local clip verification and narration assembly still run, and an invalid recovered clip fails validation rather than being silently trusted. No paid generation tasks are submitted by this recovery path.
