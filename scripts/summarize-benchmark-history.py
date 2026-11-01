@@ -181,7 +181,8 @@ def main():
     if args.require_matching_environment:
         first = records[0]["environment"]
         required = ("system", "machine", "python", "runner_image",
-                    "runner_arch", "config_sha256")
+                    "runner_arch", "config_sha256", "ffmpeg_version",
+                    "go_version", "cpu_model")
         if not isinstance(first, dict) or any(not first.get(key) or first[key] == "unknown" for key in required):
             parser.error("environment provenance missing or incomplete")
         for record in records[1:]:
