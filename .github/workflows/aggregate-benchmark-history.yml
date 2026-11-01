@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated completed paired qualification workflow run IDs'
         required: false
         type: string
+      alert_threshold_percent:
+        description: 'Regression alert threshold percentage (0-10000)'
+        required: false
+        default: '200'
+        type: string
       latest_count:
         description: 'When run_ids is empty, collect latest successful runs'
         required: false
@@ -67,9 +72,14 @@ jobs:
             test -f "history-input/run-$id/paired-performance-comparison.json"
           done
       - name: Generate historical comparison summary
-        run: python3 scripts/summarize-benchmark-history.py history-input/run-* --output-dir benchmark-history
+        env:
+          ALERT_THRESHOLD: ${{ inputs.alert_threshold_percent || '200' }}
+        run: python3 scripts/summarize-benchmark-history.py history-input/run-* --output-dir benchmark-history --alert-threshold-percent "$ALERT_THRESHOLD"
       - name: Show history summary
-        run: cat benchmark-history/history.md >> "$GITHUB_STEP_SUMMARY"
+        if: always()
+        run: |
+          if [ -f benchmark-history/history.md ]; then cat benchmark-history/history.md >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ -f benchmark-history/regression-alerts.json ]; then cat benchmark-history/regression-alerts.json >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload history results
         if: always()
         uses: actions/upload-artifact@v4
