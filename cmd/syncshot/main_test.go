@@ -20,7 +20,7 @@ func TestJSONConfigurationAndOverrides(t *testing.T){
 }
 func TestChunkingCanBeDisabledByConfig(t *testing.T){
  path:=filepath.Join(t.TempDir(),"config.json")
- if err:=os.WriteFile(path,[]byte("{\\"CinematicChunkScenes\\":0}"),0600);err!=nil{t.Fatal(err)}
+ if err:=os.WriteFile(path,[]byte(`{"CinematicChunkScenes":0}`),0600);err!=nil{t.Fatal(err)}
  cfg,err:=loadConfig(path);if err!=nil{t.Fatal(err)}
  if cfg.CinematicChunkScenes!=0{t.Fatalf("explicit opt-out ignored: %+v",cfg)}
 }
