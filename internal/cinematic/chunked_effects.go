@@ -2,6 +2,10 @@ package cinematic
 
 import (
  "context"
+ "crypto/sha256"
+ "encoding/hex"
+ "encoding/json"
+ "io"
  "fmt"
  "math"
  "os"
@@ -50,6 +54,37 @@ func chunkVideoGraph(chunks []Timeline)(string,string,error){
  return strings.Join(p,";"),fmt.Sprintf("[joined%d]",len(chunks)-1),nil
 }
 
+// chunkCacheKey ties resumed visual chunks to exact processed image bytes and
+// render settings. Temporary processed-image paths are deliberately excluded.
+func chunkCacheKey(chunk Timeline)(string,error){
+ h:=sha256.New()
+ settings:=struct{
+  Version int
+  FPS,Width,Height int
+  Fade float64
+  Scenes []struct{Duration float64;Motion Motion;ImageSHA256 string}
+ }{Version:1,FPS:chunk.FPS,Width:chunk.Width,Height:chunk.Height,Fade:chunk.CrossfadeSeconds}
+ for _,scene:=range chunk.Scenes{
+  input,err:=os.Open(scene.Image);if err!=nil{return "",err}
+  hash:=sha256.New()
+  _,copyErr:=io.Copy(hash,input)
+  closeErr:=input.Close()
+  if copyErr!=nil{return "",copyErr};if closeErr!=nil{return "",closeErr}
+  settings.Scenes=append(settings.Scenes,struct{Duration float64;Motion Motion;ImageSHA256 string}{
+   scene.Duration,scene.Motion,hex.EncodeToString(hash.Sum(nil)),
+  })
+ }
+ if err:=json.NewEncoder(h).Encode(settings);err!=nil{return "",err}
+ return hex.EncodeToString(h.Sum(nil)),nil
+}
+
+func validCachedChunk(ctx context.Context,path string,want float64)bool{
+ info,err:=os.Stat(path)
+ if err!=nil||!info.Mode().IsRegular()||info.Size()==0{return false}
+ duration,err:=utils.ProbeDurationPrecise(ctx,path)
+ return err==nil && math.Abs(duration-want)<=0.35
+}
+
 // RenderChunkedEffects processes bounded scene groups and adds narration, music,
 // ducking, subtitles and graphics in a single final, full-duration mux pass.
 func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio,output string,maxScenes int,overlays Overlays,publish func(string,string)error) error{
@@ -61,8 +96,24 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  args:=[]string{"-hide_banner","-y"}
  for i,chunk:=range chunks{
   if err:=ctx.Err();err!=nil{return err}
-  part:=filepath.Join(dir,fmt.Sprintf("part_%04d.mp4",i))
-  if err:=renderVisualChunk(ctx,log,chunk,part);err!=nil{return fmt.Errorf("render chunk %d: %w",i,err)}
+  key,err:=chunkCacheKey(chunk)
+  if err!=nil{return fmt.Errorf("fingerprint chunk %d: %w",i,err)}
+  cacheDir:=filepath.Join(filepath.Dir(output),".syncshot-chunk-cache")
+  if err:=os.MkdirAll(cacheDir,0700);err!=nil{return err}
+  part:=filepath.Join(cacheDir,key+".mp4")
+  if validCachedChunk(ctx,part,chunk.Duration()){
+   log.Info(fmt.Sprintf("Reusing validated cinematic chunk %d/%d",i+1,len(chunks)))
+  }else{
+   // A failed render cannot overwrite the last known good cache entry.
+   tmp,err:=os.CreateTemp(cacheDir,".chunk-*.mp4")
+   if err!=nil{return err}
+   staging:=tmp.Name()
+   if err:=tmp.Close();err!=nil{os.Remove(staging);return err}
+   os.Remove(staging)
+   if err:=renderVisualChunk(ctx,log,chunk,staging);err!=nil{os.Remove(staging);return fmt.Errorf("render chunk %d: %w",i,err)}
+   if !validCachedChunk(ctx,staging,chunk.Duration()){os.Remove(staging);return fmt.Errorf("invalid rendered chunk %d",i)}
+   if err:=os.Rename(staging,part);err!=nil{os.Remove(staging);return err}
+  }
   args=append(args,"-i",part)
  }
  args=append(args,"-i",audio)
