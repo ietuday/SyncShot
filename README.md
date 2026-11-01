@@ -54,3 +54,7 @@ The manual `bash scripts/qualify-low-memory-15m.sh` now rejects a render whose r
 ## Phase 8.9 — Failed-render diagnostics
 
 The long-video benchmark harness writes `failure-diagnostics.json` beside `run.log` and `measurements.csv` after an unsuccessful run. The JSON distinguishes an FFmpeg `signal: killed` from an actual kernel OOM confirmation: the latter requires kernel logs (for example `sudo journalctl -k`) and is **not** inferred from SIGKILL alone. The summary provides the exact low-memory retry suggestion. Run unit checks with `python3 scripts/test-summarize-render-failure.py`.
+
+## Phase 8.10 — Interrupted publication recovery validation
+
+The cinematic integration suite now injects a final-publication failure after visual chunks have rendered, verifies no final output is published, and retries the same render. The second attempt must reuse unchanged cached chunks and produce a playable video of the expected duration. Run `go test ./internal/cinematic -run TestInterruptedPublishPreservesCacheForRetry -count=1` (requires FFmpeg and ffprobe). This simulates a publisher failure, not a real OOM or a forcibly terminated OS process. The original 15-minute narration still needs validation on the 12 GiB laptop.
