@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated completed paired qualification workflow run IDs'
         required: false
         type: string
+      require_matching_environment:
+        description: 'Reject missing or mismatched runner/config provenance'
+        required: false
+        type: boolean
+        default: false
       require_workload_id:
         description: 'Optional workload ID required for every comparison'
         required: false
@@ -86,9 +91,11 @@ jobs:
           ALERT_THRESHOLD: ${{ inputs.alert_threshold_percent || '200' }}
           REQUIRED_WORKLOAD: ${{ inputs.require_workload_id || '' }}
           MIN_REPETITIONS: ${{ inputs.min_repetitions || '1' }}
+          REQUIRE_ENVIRONMENT: ${{ inputs.require_matching_environment || 'false' }}
         run: |
           args=(--output-dir benchmark-history --alert-threshold-percent "$ALERT_THRESHOLD" --min-repetitions "$MIN_REPETITIONS")
           if [ -n "$REQUIRED_WORKLOAD" ]; then args+=(--require-workload-id "$REQUIRED_WORKLOAD"); fi
+          if [ "$REQUIRE_ENVIRONMENT" = "true" ]; then args+=(--require-matching-environment); fi
           python3 scripts/summarize-benchmark-history.py history-input/run-* "${args[@]}"
       - name: Show history summary
         if: always()
