@@ -9,6 +9,7 @@ import (
  "path/filepath"
  "strings"
  "testing"
+ "time"
 
  "syncshotgo/internal/utils"
 )
@@ -103,4 +104,27 @@ func TestInvalidCachedChunkIsRejected(t *testing.T){
  if validCachedChunk(context.Background(),p,1){t.Fatal("missing cache accepted")}
  if err:=os.WriteFile(p,[]byte("not mp4"),0600);err!=nil{t.Fatal(err)}
  if validCachedChunk(context.Background(),p,1){t.Fatal("corrupt cache accepted")}
+}
+
+func TestPruneChunkCacheOnlyOldUnreferencedFiles(t *testing.T){
+ dir:=t.TempDir()
+ old:="a"+strings.Repeat("0",63)+".mp4"
+ keep:="b"+strings.Repeat("0",63)+".mp4"
+ recent:="c"+strings.Repeat("0",63)+".mp4"
+ other:="notes.txt"
+ for _,name:=range []string{old,keep,recent,other}{
+  if err:=os.WriteFile(filepath.Join(dir,name),[]byte("x"),0600);err!=nil{t.Fatal(err)}
+ }
+ now:=time.Now()
+ for _,name:=range []string{old,keep,other}{
+  if err:=os.Chtimes(filepath.Join(dir,name),now.Add(-8*24*time.Hour),now.Add(-8*24*time.Hour));err!=nil{t.Fatal(err)}
+ }
+ if err:=os.Symlink(filepath.Join(dir,old),filepath.Join(dir,strings.Repeat("d",64)+".mp4"));err!=nil{t.Fatal(err)}
+ removed,err:=pruneChunkCache(dir,map[string]bool{keep:true},now)
+ if err!=nil||removed!=1{t.Fatalf("removed=%d err=%v",removed,err)}
+ if _,err:=os.Stat(filepath.Join(dir,old));!os.IsNotExist(err){t.Fatalf("stale cache remains: %v",err)}
+ for _,name:=range []string{keep,recent,other}{
+  if _,err:=os.Stat(filepath.Join(dir,name));err!=nil{t.Fatalf("unexpected deletion of %s: %v",name,err)}
+ }
+ if _,err:=os.Lstat(filepath.Join(dir,strings.Repeat("d",64)+".mp4"));err!=nil{t.Fatal("symlink removed")}
 }
