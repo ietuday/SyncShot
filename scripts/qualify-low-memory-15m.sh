@@ -38,8 +38,10 @@ export SYNC_SHOT_BENCHMARK_WORKLOAD_ID="synthetic-10-images-925s-720p-1scene"
 export SYNC_SHOT_BENCHMARK_INPUTS="$WORK/config.json:$WORK/inputs/audio/narration.m4a:$WORK/inputs/images"
 export SYNC_SHOT_BENCHMARK_OUTPUT="$WORK/final.mp4"
 bash scripts/benchmark-long-video.sh "$REPORT_ROOT" --config "$WORK/config.json" --memory-mode low --output "$WORK/final.mp4"
+python3 scripts/check-low-memory-benchmark.py "$REPORT_ROOT" --max-ffmpeg-rss-mib "${SYNC_SHOT_MAX_FFMPEG_RSS_MIB:-8192}"
 ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$WORK/final.mp4" | grep -qx '1280x720'
 duration="$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 "$WORK/final.mp4")"
 awk -v value="$duration" 'BEGIN { exit !(value > 924 && value < 927) }'
 ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 "$WORK/final.mp4" | grep -qx aac
+python3 scripts/check-av-sync.py "$WORK/final.mp4" --max-drift-seconds 0.5
 echo "15-minute low-memory video qualification passed. Inspect measured peak RAM and elapsed time in $REPORT_ROOT/run-*/measurements.csv"

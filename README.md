@@ -46,3 +46,7 @@ Before rendering starts, SyncShot checks free filesystem space in both the work 
 ## Phase 8.7 — Bounded final-stitch filter threading
 
 The automatic chunked-effects final FFmpeg stitching pass now sets `-filter_complex_threads 1` and `-filter_threads 1` to reduce concurrency and potential peak RAM use for multi-chunk crossfades. Rendering may be slower on high-core hosts. This change does not guarantee OOM-free rendering; benchmark its impact using `bash scripts/qualify-low-memory-15m.sh` and inspect peak FFmpeg RSS in `measurements.csv`.
+
+## Phase 8.8 — Low-memory regression and A/V endpoint validation
+
+The manual `bash scripts/qualify-low-memory-15m.sh` now rejects a render whose recorded peak FFmpeg RSS exceeds `SYNC_SHOT_MAX_FFMPEG_RSS_MIB` (default 8192 MiB). It also checks decoded audio/video stream start and end timestamps are within 0.5 seconds using ffprobe; this **does not** validate word-level lip sync or perceptual synchronization. The limit is a test threshold, not a runtime memory cap, and can be adjusted for differently sized test machines. The actual 15-minute user media still needs a separate manual test on the 12 GiB Ubuntu host.
