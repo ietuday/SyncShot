@@ -1,0 +1,19 @@
+name: Animation E2E assembly smoke
+on:
+  pull_request:
+    paths:
+      - 'scripts/test-animation-e2e-smoke.py'
+      - 'scripts/assemble-animated-video.py'
+      - 'scripts/check-animation-clips.py'
+      - '.github/workflows/animation-e2e-smoke.yml'
+  workflow_dispatch:
+jobs:
+  ffmpeg-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Test production clip validation and video assembly using real FFmpeg
+        run: python3 scripts/test-animation-e2e-smoke.py
