@@ -91,5 +91,8 @@ if [[ "$status" -eq 0 ]]; then
   fi
 fi
 printf '%s,%s,%s,%s,%s,%s\n' "$start" "$elapsed" "$peak_tree" "$peak_ffmpeg" "$status" "$size" >> "$RUN_DIR/measurements.csv"
+if [[ "$status" -ne 0 ]]; then
+  python3 "$ROOT/scripts/summarize-render-failure.py" "$RUN_DIR" "$status" || true
+fi
 echo "Exit: $status; peak tree RSS: $peak_tree KiB; peak FFmpeg RSS: $peak_ffmpeg KiB; logs: $RUN_DIR"
 exit "$status"
