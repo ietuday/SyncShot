@@ -75,6 +75,8 @@ jobs:
         run: python3 scripts/test-qualification-failure-recovery.py -v
       - name: Qualification output path safety tests
         run: python3 scripts/test-qualification-paths.py -v
+      - name: Production media input audit tests
+        run: python3 scripts/test-audit-qualification-inputs.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
 
