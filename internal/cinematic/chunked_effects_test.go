@@ -2,6 +2,8 @@ package cinematic
 
 import (
  "context"
+ "errors"
+ "fmt"
  "encoding/json"
  "math"
  "os"
@@ -134,4 +136,42 @@ func TestStitchFFmpegArgsBoundFilterThreads(t *testing.T){
  for _,flag:=range []string{"-filter_complex_threads 1","-filter_threads 1"}{
   if !strings.Contains(args,flag){t.Fatalf("missing memory bound %q: %s",flag,args)}
  }
+}
+
+func TestInterruptedPublishPreservesCacheForRetry(t *testing.T){
+ if testing.Short(){t.Skip("FFmpeg integration")}
+ for _,bin:=range []string{"ffmpeg","ffprobe"}{if _,err:=exec.LookPath(bin);err!=nil{t.Skip(bin+" unavailable")}}
+ dir:=t.TempDir()
+ image:=filepath.Join(dir,"image.png")
+ audio:=filepath.Join(dir,"narration.wav")
+ for _,item:=range []struct{path string;args []string}{
+  {image,[]string{"-f","lavfi","-i","color=c=blue:s=320x180","-frames:v","1"}},
+  {audio,[]string{"-f","lavfi","-i","sine=frequency=440:duration=2.4","-c:a","pcm_s16le"}},
+ }{
+  args:=append([]string{"-hide_banner","-loglevel","error","-y"},item.args...)
+  if out,err:=exec.Command("ffmpeg",append(args,item.path)...).CombinedOutput();err!=nil{t.Fatalf("make input: %v %s",err,out)}
+ }
+ tl:=Timeline{FPS:12,Width:320,Height:180,CrossfadeSeconds:0.2,Scenes:[]Scene{
+  {Image:image,Duration:1.3,Motion:Static},{Image:image,Duration:1.3,Motion:Static},
+ }}
+ output:=filepath.Join(dir,"final.mp4")
+ injected:=fmt.Errorf("injected publication failure")
+ publishFail:=func(staged,dest string)error{return injected}
+ if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,audio,output,1,Overlays{},publishFail);!errors.Is(err,injected){t.Fatalf("expected publication failure, got %v",err)}
+ if _,err:=os.Stat(output);!os.IsNotExist(err){t.Fatalf("failed publication unexpectedly replaced output: %v",err)}
+ cache,err:=filepath.Glob(filepath.Join(dir,".syncshot-chunk-cache","*.mp4"))
+ if err!=nil||len(cache)!=2{t.Fatalf("expected two retained chunks, got %v: %v",cache,err)}
+ stamps:=make(map[string]int64,len(cache))
+ for _,part:=range cache{
+  info,err:=os.Stat(part);if err!=nil{t.Fatal(err)}
+  stamps[part]=info.ModTime().UnixNano()
+ }
+ if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,audio,output,1,Overlays{},os.Rename);err!=nil{t.Fatalf("retry failed: %v",err)}
+ if info,err:=os.Stat(output);err!=nil||info.Size()==0{t.Fatalf("missing recovered output: %v",err)}
+ for part,stamp:=range stamps{
+  info,err:=os.Stat(part);if err!=nil{t.Fatal(err)}
+  if info.ModTime().UnixNano()!=stamp{t.Fatalf("cache chunk re-rendered: %s",part)}
+ }
+ duration,err:=utils.ProbeDurationPrecise(context.Background(),output)
+ if err!=nil||math.Abs(duration-tl.Duration())>.35{t.Fatalf("recovered video duration %.3f expected %.3f: %v",duration,tl.Duration(),err)}
 }
