@@ -368,3 +368,14 @@ python3 scripts/verify-provider-clip.py --plan output/animation-workflow/provide
 ```
 
 The checker requires a one-scene plan and a local, regular MP4 file, uses ffprobe to confirm video stream presence and positive runtime, and reports whether the clip will be **looped** or **trimmed** to fit the narration scene's duration. It does not use a paid API, alter existing media, validate visual accuracy or lip sync, or automatically assemble a video. The existing `scripts/assemble-animated-video.py` performs the actual final assembly. This check does not prove the clip came from Runway.
+
+## Phase 9.21 — Build a playable verified-provider demo
+
+Given a completed, downloaded single-scene animation MP4, use the Phase 9.20 verifier and Phase 9.6 FFmpeg assembler together:
+
+```bash
+mkdir -p output/video
+python3 scripts/build-provider-demo.py --plan output/animation-workflow/provider-scene-plan.json --clips-dir output/animated-scenes --output output/video/provider-demo.mp4 --report output/animation-workflow/provider-demo-report.json
+```
+
+The required clip is `output/animated-scenes/scene-0001.mp4`. Both output paths must not exist, and all required directories must already exist. This tool validates the local clip and narration then renders the final 720p MP4. It **does not** generate AI animation, initiate provider charges, download a clip, or verify visual content or lip sync. The demo cannot be produced without a real or synthetic downloaded animation clip.
