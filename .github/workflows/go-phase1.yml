@@ -33,6 +33,8 @@ jobs:
         run: bash -n scripts/benchmark-long-video.sh scripts/verify-benchmark-output.sh scripts/test-benchmark-output.sh
       - name: Validate medium qualification script syntax
         run: bash -n scripts/test-medium-video-qualification.sh
+      - name: Production qualification script syntax
+        run: bash -n scripts/qualify-production-media.sh
       - name: Benchmark output regression tests
         run: bash scripts/test-benchmark-output.sh
       - name: Unit tests
