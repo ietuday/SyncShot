@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for offline benchmark evidence history."""
 import json
+import hashlib
 from pathlib import Path
 import subprocess
 import sys
@@ -98,6 +99,17 @@ class HistoryTests(unittest.TestCase):
             drift = subprocess.run(strict_cmd, capture_output=True, text=True)
             self.assertNotEqual(drift.returncode, 0)
             self.assertIn("drift", drift.stderr)
+            checksums = {}
+            for name in manifest["baseline"] + manifest["candidate"]:
+                checksums[name] = hashlib.sha256((data / name).read_bytes()).hexdigest()
+            (data / "evidence-sha256.json").write_text(
+                json.dumps(checksums), encoding="utf-8")
+            integrity_cmd = cmd + ["--verify-evidence-sha256"]
+            self.assertEqual(subprocess.run(integrity_cmd, capture_output=True).returncode, 0)
+            (data / "candidate-01.json").write_text("corrupted", encoding="utf-8")
+            corrupt = subprocess.run(integrity_cmd, capture_output=True, text=True)
+            self.assertNotEqual(corrupt.returncode, 0)
+            self.assertIn("checksum mismatch", corrupt.stderr)
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
             alert_cmd = cmd + ["--alert-threshold-percent", "15"]
