@@ -293,3 +293,17 @@ python3 scripts/test-prepare-animation-pilot.py
 ```
 
 This prepares **up to 30 seconds and five scenes**, never invokes an AI provider, and does not change the source transcript or audio. It clips the final visual scene at the time limit. The resulting pilot scene plan still references the original full narration; **trim the narration into a separate audio file and update the pilot JSON's `audio` field before final assembly**. For example: `ffmpeg -i inputs/audio/narration.m4a -t 30 -c:a aac pilot-narration.m4a`, adjusting `-t` to the actual reported pilot duration. The full paid-generation workflow, image hosting and real-provider validation remain outside this safe planning stage.
+
+## Phase 9.12–9.14 — Pilot audio, preview and integration recovery
+
+This combined change restores the Phase 9.12 narration trim and Phase 9.13 preview workflow after their original PRs became conflicted, then adds an FFmpeg integration smoke. Prepare an initial pilot scene plan with Phase 9.11, trim its matching audio, and preview image/animation requests **without paid calls**:
+
+```bash
+mkdir -p output/animation-workflow
+python3 scripts/prepare-animation-pilot.py --plan output/animation-workflow/scene-plan.json --output output/animation-workflow/pilot-plan.json --seconds 30 --max-scenes 5
+python3 scripts/prepare-pilot-audio.py --plan output/animation-workflow/pilot-plan.json --audio-output output/animation-workflow/pilot-narration.m4a --plan-output output/animation-workflow/pilot-ready.json
+python3 scripts/preview-animation-pilot.py --pilot output/animation-workflow/pilot-ready.json --workdir output/animation-workflow --limit 3
+python3 scripts/test-pilot-integration.py
+```
+
+The prepared plan preserves scene timing while separately recording the measured AAC audio duration. The smoke uses real FFmpeg to ensure short narration trimming, timeline consistency and no-overwrite output safety. Paid AI generation, image hosting, downloading clips, and real media final assembly still require separate explicit steps.

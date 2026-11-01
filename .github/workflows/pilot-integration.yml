@@ -1,0 +1,24 @@
+name: Animation pilot integration checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare-animation-pilot.py'
+      - 'scripts/prepare-pilot-audio.py'
+      - 'scripts/preview-animation-pilot.py'
+      - 'scripts/test-pilot-integration.py'
+      - '.github/workflows/pilot-integration.yml'
+  workflow_dispatch:
+jobs:
+  pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Pilot preparation and preview unit checks
+        run: |
+          python3 scripts/test-prepare-pilot-audio.py
+          python3 scripts/test-preview-animation-pilot.py
+      - name: Real FFmpeg pilot integration smoke
+        run: python3 scripts/test-pilot-integration.py
