@@ -58,3 +58,7 @@ The long-video benchmark harness writes `failure-diagnostics.json` beside `run.l
 ## Phase 8.10 — Interrupted publication recovery validation
 
 The cinematic integration suite now injects a final-publication failure after visual chunks have rendered, verifies no final output is published, and retries the same render. The second attempt must reuse unchanged cached chunks and produce a playable video of the expected duration. Run `go test ./internal/cinematic -run TestInterruptedPublishPreservesCacheForRetry -count=1` (requires FFmpeg and ffprobe). This simulates a publisher failure, not a real OOM or a forcibly terminated OS process. The original 15-minute narration still needs validation on the 12 GiB laptop.
+
+## Phase 8.11 — Corrupt cached chunk recovery test
+
+An FFmpeg integration test deliberately corrupts a completed content-addressed visual MP4 cache entry and repeats the cinematic render. The renderer must reject the invalid cached media, rebuild it, and publish a valid final video. This validates corrupted-cache recovery without relying on manually deleting old chunks. Run `go test ./internal/cinematic -run TestCorruptCachedChunkIsRebuilt -count=1` with FFmpeg installed. The original 15-minute laptop rendering benchmark still requires manual execution.
