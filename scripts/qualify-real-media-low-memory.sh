@@ -24,6 +24,7 @@ mkdir -p "$REPORT_DIR"
 for command in go ffmpeg ffprobe python3; do
   command -v "$command" >/dev/null 2>&1 || { echo "Required command missing: $command" >&2; exit 2; }
 done
+python3 scripts/preflight-real-media.py "$AUDIO_DIR" "$IMAGE_DIR" "$REPORT_DIR"
 WORK="$(mktemp -d "$REPORT_DIR/work-XXXXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
 OUTPUT="$WORK/qualified.mp4"
