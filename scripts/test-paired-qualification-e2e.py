@@ -57,8 +57,46 @@ def check_comparator_contract():
                 raise AssertionError(f"comparator accepted invalid metric: {invalid}")
     print("Benchmark comparator contract checks passed")
 
+def check_median_contract():
+    """Verify robust aggregation and input equivalence before rendering."""
+    import runpy
+    module = runpy.run_path(str(ROOT / "scripts/compare-benchmarks.py"))
+    aggregate = module["aggregate_reports"]
+    compare = module["compare"]
+    template = {
+        "workload_id": "median-contract",
+        "input_fingerprint": "a" * 64,
+        "realtime_factor": 1.0,
+        "peak_process_tree_rss_kb": 100.0,
+        "peak_ffmpeg_rss_kb": 50.0,
+    }
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        def make(name, **changes):
+            path = root / (name + ".json")
+            path.write_text(json.dumps([dict(template, **changes)]), encoding="utf-8")
+            return path
+        baseline = aggregate([make("base1"), make("base2", realtime_factor=1.1),
+                              make("base3", realtime_factor=10)])
+        candidate = aggregate([make("cand1", realtime_factor=1.2),
+                               make("cand2", realtime_factor=1.3),
+                               make("cand3", realtime_factor=12)])
+        assert baseline["realtime_factor"] == 1.1
+        assert candidate["realtime_factor"] == 1.3
+        rows, failed = compare(baseline, candidate, 15)
+        assert failed and rows[0]["regression"], "median regression should fail"
+        bad = make("bad", input_fingerprint="b" * 64)
+        try:
+            aggregate([make("good"), bad])
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("aggregation accepted different input media")
+    print("Median comparator contract checks passed")
+
 def main():
     check_comparator_contract()
+    check_median_contract()
     with tempfile.TemporaryDirectory() as directory:
         work = Path(directory)
         (work / "images").mkdir()
