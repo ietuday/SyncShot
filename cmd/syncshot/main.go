@@ -21,7 +21,7 @@ func defaultConfig() pipeline.Config {
   AudioDir:"./inputs/audio",ImagesDir:"./inputs/images",
   OutVideoPath:"./output/video/final.mp4",OutShortsDir:"./output/shorts",
   WorkDir:"./output/work",FPS:24,SecondsPerImage:3,
-  ClipSeconds:50,MaxWorkers:4,CinematicEnabled:true,
+  ClipSeconds:50,MaxWorkers:2,CinematicEnabled:true,CinematicChunkScenes:2,
   CinematicCrossfade:0.5,CinematicMotion:"zoom_in",
   CinematicAutoSceneSeconds:30,SubscribeOpacity:0.8,NotificationOpacity:0.8,
  }
@@ -57,7 +57,7 @@ func run(args []string)error{
  imagesDir:=flags.String("images-dir","","override images directory")
  output:=flags.String("output","","override output video path")
  fps:=flags.Int("fps",0,"override video frames per second")
- chunkScenes:=flags.Int("chunk-scenes",-1,"scenes per cinematic chunk (0 disables chunking)")
+ chunkScenes:=flags.Int("chunk-scenes",-1,"scenes per cinematic chunk (default 2; 0 disables chunking)")
  timeout:=flags.Duration("timeout",0,"overall render timeout, e.g. 2h (0 means no deadline)")
  if err:=flags.Parse(args);err!=nil{return err}
  if flags.NArg()!=0{return fmt.Errorf("unexpected positional arguments: %v",flags.Args())}
@@ -80,6 +80,9 @@ func run(args []string)error{
  if *timeout>0 {var cancel context.CancelFunc;ctx,cancel=context.WithTimeout(ctx,*timeout);defer cancel()}
  log:=utils.NewLogger()
  log.Info("Starting SyncShot-Go")
+ if cfg.CinematicEnabled && cfg.CinematicTimelinePath=="" && cfg.CinematicChunkScenes>0 {
+  log.Info(fmt.Sprintf("Memory-conscious cinematic rendering enabled: %d scenes per chunk, %d image workers",cfg.CinematicChunkScenes,cfg.MaxWorkers))
+ }
  if err:=pipeline.RunContext(ctx,log,cfg);err!=nil{
   if errors.Is(ctx.Err(),context.DeadlineExceeded){return fmt.Errorf("render exceeded configured timeout %s: %w",timeout.String(),ctx.Err())}
   return err
