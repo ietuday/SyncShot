@@ -1,0 +1,14 @@
+name: Animation pilot preview checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/preview-animation-pilot.py'
+      - 'scripts/test-preview-animation-pilot.py'
+      - '.github/workflows/animation-pilot-preview.yml'
+  workflow_dispatch:
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-preview-animation-pilot.py
