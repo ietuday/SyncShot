@@ -339,3 +339,13 @@ The hosted image URL above is a placeholder. The command **does not** call a pai
 Run `python3 scripts/test-single-scene-animation-e2e.py` with FFmpeg and ffprobe installed. This integration smoke constructs synthetic narration and a synthetic visual clip, prepares the trimmed Phase 9.16 one-scene request, previews the Runway task without sending it, validates the MP4, assembles the final audio/video, checks approximate duration, and verifies no-overwrite behavior. It makes **no provider API calls or paid image/video generations**.
 
 This validates **local orchestration and assembly only**, not Runway output quality, credentials, online task completion, lip sync, or the full-length 925-second story. Run a separate authorized real-provider pilot before assuming actual AI animation works.
+
+## Phase 9.18 — Offline real-provider pilot readiness gate
+
+Before authorizing a paid Runway image-to-video pilot, validate the prepared single-scene plan, local narration and approved hosted image reference:
+
+```bash
+python3 scripts/check-provider-pilot.py --plan output/animation-workflow/provider-scene-plan.json --image-urls output/animation-workflow/provider-image-urls.json --report output/animation-workflow/provider-readiness.json
+```
+
+The report identifies missing audio, mismatched scene lengths, missing prompts, or invalid HTTPS image URLs. This check **makes no network calls or paid generations**; it does not verify that a hosted image URL is reachable, that the media is licensed, or that the account has Runway credits. A successful readiness verdict is **not** proof that real AI video generation works. To continue, manually review provider costs, configure credentials and explicitly invoke the existing Runway adapter with `--execute`.
