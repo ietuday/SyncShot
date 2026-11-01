@@ -62,3 +62,7 @@ The cinematic integration suite now injects a final-publication failure after vi
 ## Phase 8.11 — Corrupt cached chunk recovery test
 
 An FFmpeg integration test deliberately corrupts a completed content-addressed visual MP4 cache entry and repeats the cinematic render. The renderer must reject the invalid cached media, rebuild it, and publish a valid final video. This validates corrupted-cache recovery without relying on manually deleting old chunks. Run `go test ./internal/cinematic -run TestCorruptCachedChunkIsRebuilt -count=1` with FFmpeg installed. The original 15-minute laptop rendering benchmark still requires manual execution.
+
+## Phase 8.12 — Test real audio and images on the 12 GiB laptop
+
+After pulling `syncshot-go`, run `bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images`. This manually benchmarks the actual source files with the conservative 720p / one-scene-chunk / one-worker preset and checks peak FFmpeg RSS (default ceiling 8192 MiB), video dimensions, and stream start/end alignment. Benchmark logs and measurements remain in `output/real-media-qualification/run-*/`; the temporary qualification video is removed after the test. Your input files are never altered. This test can take substantial CPU time and storage and does not run in ordinary PR CI. A successful run on your 12 GiB system is still required before claiming the original OOM is fixed.
