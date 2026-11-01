@@ -6,7 +6,7 @@ ROOT="$(pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-go build -o "$TMP/syncshot" --memory-mode normal ./cmd/syncshot
+go build -o "$TMP/syncshot" ./cmd/syncshot
 cd "$TMP"
 mkdir -p inputs/audio inputs/images
 
