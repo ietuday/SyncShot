@@ -26,11 +26,6 @@ class FailureRecovery(unittest.TestCase):
             go = bindir / "go"
             go.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
             go.chmod(0o755)
-            bash = bindir / "bash"
-            # Keep the true bash interpreter; benchmark script is intercepted by path.
-            fake = base / "benchmark.sh"
-            fake.write_text("#!/bin/sh\nexit 23\n", encoding="utf-8")
-            fake.chmod(0o755)
             env = os.environ.copy()
             env.update({"PATH": f"{bindir}:{env['PATH']}",
                         "SYNC_SHOT_BENCHMARK_INPUTS": str(media),
@@ -41,17 +36,21 @@ class FailureRecovery(unittest.TestCase):
                 return subprocess.run(["bash", "-c", command, "bash", str(ENTRY),
                                        str(config), str(output), str(reports)],
                                       cwd=ROOT, env=env, capture_output=True, text=True)
+            prior = set()
             for attempt in (1, 2):
                 result = run()
                 self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
-                dirs = sorted(reports.glob("qualification-*"))
+                dirs = set(reports.glob("qualification-*"))
                 self.assertEqual(len(dirs), attempt)
-                status = json.loads(dirs[-1].joinpath("status.json").read_text())
+                new = dirs - prior
+                self.assertEqual(len(new), 1)
+                status = json.loads(next(iter(new)).joinpath("status.json").read_text())
+                prior = dirs
                 self.assertEqual(status["stage"], "benchmark")
                 self.assertEqual(status["status"], "failure")
                 self.assertEqual(status["exit_code"], 23)
                 self.assertFalse(output.exists())
-            self.assertNotEqual(dirs[0], dirs[1])
+
 
 if __name__ == "__main__":
     unittest.main()
