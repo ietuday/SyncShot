@@ -41,3 +41,9 @@ The history collector now also writes `regression-alerts.md` alongside structure
 ## Phase 7.35 — Baseline workload compatibility gates
 
 The history summarizer supports `--require-workload-id ID` and `--min-repetitions N` to reject evidence that lacks the desired workload or enough repeated qualifications. Both checks happen before writing reports or issuing regression alerts. The manual aggregation workflow exposes matching inputs. Use these gates to avoid mixing unrelated workloads or treating one-off results as robust measurements. Defaults preserve existing compatibility (no required workload ID and minimum of one run per side). These gates do not verify hardware, environment, media provenance, or statistical significance; they are only preliminary safeguards.
+
+## Phase 7.36 — Environment provenance checks
+
+Paired qualification evidence now records OS, CPU architecture, Python version, GitHub runner image and architecture, and the SHA-256 of the benchmark configuration. The history utility accepts `--require-matching-environment` (also available as a manual workflow toggle). When enabled, it rejects missing metadata and requires the recorded values to match across all selected artifacts before producing regression alerts. Previous artifacts lacking provenance are deliberately excluded in strict mode.
+
+This is **metadata equality**, not proof of identical hardware performance: CPU model, load, kernel patch level, FFmpeg version, and media provenance remain uncontrolled. The config hash is sensitive to path changes as well as actual rendering settings. Keep default mode backward compatible with older artifacts, and use strict mode only for evidence collected under the new schema.
