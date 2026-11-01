@@ -22,6 +22,8 @@ class Tests(unittest.TestCase):
             data=mod.summarize(report)
             self.assertEqual(data["status"],"passed")
             self.assertEqual(data["peak_ffmpeg_rss_mib"],2)
+            self.assertTrue(data["recommendations"])
+            self.assertIn("Suggested next steps",(report/"summary.md").read_text())
             self.assertTrue((report/"summary.md").exists())
             self.assertEqual(json.loads((report/"summary.json").read_text())["elapsed_seconds"],42)
 
