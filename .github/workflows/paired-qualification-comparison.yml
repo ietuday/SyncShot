@@ -48,6 +48,12 @@ jobs:
           SYNC_SHOT_BASELINE_SHA: ${{ inputs.baseline_sha || '' }}
           SYNC_SHOT_BASELINE_CHECKOUT: ${{ inputs.baseline_sha && 'baseline-source' || '' }}
         run: python3 scripts/test-paired-qualification-e2e.py
+      - name: Publish benchmark summary
+        if: always()
+        run: |
+          if [ -f paired-qualification-evidence/performance-summary.md ]; then
+            cat paired-qualification-evidence/performance-summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload comparison evidence
         if: always()
         uses: actions/upload-artifact@v4
