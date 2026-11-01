@@ -235,3 +235,22 @@ python3 scripts/test-assemble-animated-video.py
 ```
 
 This requires FFmpeg, available disk space, a valid source audio file and one `scene-0001.mp4` etc. per planned scene. The plan must start at zero, have no gaps/overlaps and cover the narration duration. Generated clips are not lip-synced; looping short clips may look repetitive. FFmpeg stream timing may differ slightly from nominal scene boundaries due to frame quantization; inspect the output with ffprobe and listen before publishing. This standalone assembly utility is not yet an automatic end-to-end single-command workflow.
+
+## Phase 9.7 — Guided animation workflow
+
+The optional `scripts/animation-workflow.py` CLI wraps individual production stages with consistent defaults. It **does not automatically submit paid requests or download media**, and does not yet offer one-command fully automated animation. It deliberately supports explicit, separately repeatable stages so failed phases can be rerun without repeating previous work.
+
+```bash
+python3 scripts/animation-workflow.py --stage transcribe --audio inputs/audio/narration.m4a --language hi
+python3 scripts/animation-workflow.py --stage plan --style mythological_3d --scene-seconds 8
+python3 scripts/animation-workflow.py --stage preview-images --limit 5
+# Review scene plan and prompts. Explicitly use the Phase 9.3 paid API command if desired.
+# Host approved images, then preview animation generation:
+python3 scripts/animation-workflow.py --stage preview-animation --image-urls scene-image-urls.json --limit 5
+# Submit Runway jobs with the explicit Phase 9.4 --execute command, then:
+python3 scripts/animation-workflow.py --stage retrieve --tasks submitted-animation.json
+# Download clips separately using the Phase 9.5 --download command; then:
+python3 scripts/animation-workflow.py --stage assemble --clips-dir output/animated-scenes --output output/video/animated-story.mp4
+```
+
+Review the result of every stage. The orchestration does not provide transcript accuracy guarantees, image hosting, paid-service authorization, polling, retries, automatic downloading or character lip-sync. Run `python3 scripts/test-animation-workflow.py` for offline checks.
