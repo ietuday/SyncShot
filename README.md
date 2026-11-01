@@ -146,3 +146,29 @@ Diagnostic archive exports now refuse to overwrite existing archives, create out
 ## Phase 8.33 — Bounded qualification diagnostic bundles
 
 The diagnostic packager now rejects any whitelisted input over 16 MiB or a combined uncompressed input size over 32 MiB. This avoids unexpectedly large archives or memory/disk pressure from corrupted measurement and summary files. An oversize failure removes the temporary archive without publishing the destination. Empty regular diagnostic files remain supported. Run `python3 scripts/test-package-qualification-report.py` for regression coverage. These limits do not replace the manual 15-minute qualification on the 12 GiB laptop.
+
+## Phase 9.1 — Narration-guided scene planning foundation
+
+The new `go run ./cmd/storyplan` command converts **existing timestamped transcription data** into a structured JSON scene manifest. It does **not** transcribe audio, synthesize visuals, animate characters or render the scene manifest yet. Those are separate planned integrations. Styles: `mythological_3d` (default), `cartoon_2d`, `cinematic_realistic`.
+
+Save an input file `transcript.json`:
+
+```json
+{
+  "audio": "inputs/audio/narration.m4a",
+  "duration_seconds": 12,
+  "segments": [
+    {"start": 0, "end": 6, "text": "Shri Ram walks through the forest."},
+    {"start": 6, "end": 12, "text": "He meets a sage."}
+  ]
+}
+```
+
+Then run:
+
+```bash
+go run ./cmd/storyplan --transcript transcript.json --output scene-plan.json --style mythological_3d --scene-seconds 6
+go test ./internal/storyplan ./cmd/storyplan
+```
+
+The output contains time-aligned scene boundaries and draft visual prompts for manual review or future animation providers. Longer transcript segments are split into equal-duration scenes, repeating their narration text rather than inventing word-level timing. No transcription service is configured. Use an external transcription tool to supply timestamped transcript JSON, and review all generated prompts for story accuracy before using them in an animation pipeline.
