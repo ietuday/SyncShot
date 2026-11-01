@@ -1,0 +1,36 @@
+name: Shorts media qualification
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/shorts-media-qualification.yml'
+      - 'scripts/test-shorts-media-fixtures.sh'
+      - 'scripts/check-shorts-quality.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Check fixture syntax
+        run: bash -n scripts/test-shorts-media-fixtures.sh
+      - name: Render and validate vertical Shorts
+        env:
+          SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: shorts-media-evidence
+        run: bash scripts/test-shorts-media-fixtures.sh
+      - name: Upload Shorts quality evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shorts-media-evidence
+          path: shorts-media-evidence/
+          if-no-files-found: warn
+          retention-days: 14
