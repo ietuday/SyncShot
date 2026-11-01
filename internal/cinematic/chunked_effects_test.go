@@ -68,4 +68,39 @@ func TestRenderChunkedEffectsWithFullTracks(t *testing.T){
   }
  }
  if video!=1||audio!=1||subs!=1{t.Fatalf("incorrect streams: %s",data)}
+ cached,err:=filepath.Glob(filepath.Join(dir,".syncshot-chunk-cache","*.mp4"))
+ if err!=nil||len(cached)!=2{t.Fatalf("expected two cached visual chunks, found %v (%v)",cached,err)}
+ stamps:=make([]int64,len(cached))
+ for i,p:=range cached{info,err:=os.Stat(p);if err!=nil{t.Fatal(err)};stamps[i]=info.ModTime().UnixNano()}
+ if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,voice,target,2,effects,os.Rename);err!=nil{t.Fatal(err)}
+ for i,p:=range cached{info,err:=os.Stat(p);if err!=nil{t.Fatal(err)};if info.ModTime().UnixNano()!=stamps[i]{t.Fatal("cache hit unexpectedly re-rendered chunk")}}
+
+}
+
+func TestChunkCacheKeyUsesImageContentAndSettings(t *testing.T){
+ dir:=t.TempDir()
+ image:=filepath.Join(dir,"image.png")
+ if err:=os.WriteFile(image,[]byte("image-A"),0600);err!=nil{t.Fatal(err)}
+ scene:=Scene{Image:image,Duration:2,Motion:Static}
+ chunk:=Timeline{FPS:24,Width:320,Height:180,Scenes:[]Scene{scene}}
+ a,err:=chunkCacheKey(chunk);if err!=nil{t.Fatal(err)}
+ moved:=filepath.Join(dir,"moved.png")
+ if err:=os.Rename(image,moved);err!=nil{t.Fatal(err)}
+ chunk.Scenes[0].Image=moved
+ b,err:=chunkCacheKey(chunk);if err!=nil{t.Fatal(err)}
+ if a!=b{t.Fatal("temporary path should not affect cache identity")}
+ if err:=os.WriteFile(moved,[]byte("image-B"),0600);err!=nil{t.Fatal(err)}
+ c,err:=chunkCacheKey(chunk);if err!=nil{t.Fatal(err)}
+ if a==c{t.Fatal("changed image content reused cached visual")}
+ chunk.Scenes[0].Duration=3
+ d,err:=chunkCacheKey(chunk);if err!=nil{t.Fatal(err)}
+ if c==d{t.Fatal("changed scene duration reused cached visual")}
+}
+
+func TestInvalidCachedChunkIsRejected(t *testing.T){
+ dir:=t.TempDir()
+ p:=filepath.Join(dir,"bad.mp4")
+ if validCachedChunk(context.Background(),p,1){t.Fatal("missing cache accepted")}
+ if err:=os.WriteFile(p,[]byte("not mp4"),0600);err!=nil{t.Fatal(err)}
+ if validCachedChunk(context.Background(),p,1){t.Fatal("corrupt cache accepted")}
 }
