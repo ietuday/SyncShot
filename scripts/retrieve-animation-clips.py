@@ -35,9 +35,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError("redirects are disabled for clip downloads")
 
 def download(url, destination, opener=None):
-    validate_url(url)
     if destination.exists() or destination.is_symlink():
         raise FileExistsError(f"refusing to overwrite {destination}")
+    validate_url(url)
     destination.parent.mkdir(parents=True, exist_ok=True)
     opener = opener or urllib.request.build_opener(NoRedirect())
     fd, name = tempfile.mkstemp(prefix=".clip-", suffix=".part", dir=destination.parent)
