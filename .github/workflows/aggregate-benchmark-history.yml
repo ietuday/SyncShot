@@ -5,6 +5,8 @@ on:
       - '.github/workflows/aggregate-benchmark-history.yml'
       - 'scripts/summarize-benchmark-history.py'
       - 'scripts/test-benchmark-history.py'
+      - 'scripts/extract-benchmark-evidence.py'
+      - 'scripts/test-extract-benchmark-evidence.py'
   workflow_dispatch:
     inputs:
       run_ids:
@@ -68,7 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate history summarizer
-        run: python3 scripts/test-benchmark-history.py
+        run: |
+          python3 scripts/test-benchmark-history.py
+          python3 scripts/test-extract-benchmark-evidence.py
   history:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
@@ -110,10 +114,7 @@ jobs:
               archive="attested-download/run-$id/paired-qualification-evidence.tar.gz"
               test -f "$archive"
               gh attestation verify "$archive" --repo "$GH_REPO" --signer-workflow "$GH_REPO/.github/workflows/paired-qualification-comparison.yml"
-              tar -tzf "$archive" | while IFS= read -r entry; do
-                [[ "$entry" =~ ^paired-qualification-evidence/([A-Za-z0-9_.-]+)?$ ]] || exit 1
-              done
-              tar -xzf "$archive" -C "history-input/run-$id" --strip-components=1
+              python3 scripts/extract-benchmark-evidence.py "$archive" "history-input/run-$id"
             else
               gh run download "$id" --repo "$GH_REPO" --name paired-qualification-evidence --dir "history-input/run-$id"
             fi
