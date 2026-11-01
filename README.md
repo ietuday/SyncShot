@@ -66,3 +66,7 @@ An FFmpeg integration test deliberately corrupts a completed content-addressed v
 ## Phase 8.12 — Test real audio and images on the 12 GiB laptop
 
 After pulling `syncshot-go`, run `bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images`. This manually benchmarks the actual source files with the conservative 720p / one-scene-chunk / one-worker preset and checks peak FFmpeg RSS (default ceiling 8192 MiB), video dimensions, and stream start/end alignment. Benchmark logs and measurements remain in `output/real-media-qualification/run-*/`; the temporary qualification video is removed after the test. Your input files are never altered. This test can take substantial CPU time and storage and does not run in ordinary PR CI. A successful run on your 12 GiB system is still required before claiming the original OOM is fixed.
+
+## Phase 8.13 — Isolated real-media qualification reports
+
+Each real-media qualification now creates a unique `output/real-media-qualification/qualification-*/` report root, so the memory gate reads the current benchmark rather than a potentially newer/older unrelated run. It rejects report directories nested inside the source audio or image directories to prevent the test from scanning its own outputs. Source media is still not modified. Run `bash scripts/test-real-media-qualification.sh` for basic harness wiring checks.
