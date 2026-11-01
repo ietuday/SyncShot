@@ -53,3 +53,9 @@ This is **metadata equality**, not proof of identical hardware performance: CPU 
 Qualification evidence now records the first line of `ffmpeg -version`, the output of `go version`, and the CPU model string when available. Strict environment comparison requires these fields in addition to Phase 7.36's OS, architecture, Python, runner image, and config hash. Older artifacts without these fields are rejected in strict mode, while non-strict aggregation remains backwards compatible.
 
 This check compares recorded identities, not measured hardware isolation or workload equivalence. The FFmpeg banner does not describe every linked codec library; CPU model equality does not capture load, frequency scaling, virtualization, or competing jobs.
+
+## Phase 7.38 — Input drift verification
+
+Use `--require-matching-inputs` (or enable the equivalent checkbox on manual history aggregation) to verify each referenced qualification report's SHA-256 input fingerprint and labeled workload ID. The gate checks every baseline and candidate report in each selected evidence artifact, then rejects mismatched fingerprints or workloads across artifacts *before* generating performance-regression alerts. Missing or malformed SHA-256 fingerprints, report references, and workload IDs fail validation. This option intentionally remains opt-in to allow historical datasets without complete report artifacts to be summarized in compatibility mode.
+
+Fingerprints protect against comparing different benchmark inputs, but do not guarantee that files were collected from trusted machines or that all non-input environment factors are identical. Combine this check with `--require-matching-environment` and workload/repetition constraints for stronger evidence hygiene.
