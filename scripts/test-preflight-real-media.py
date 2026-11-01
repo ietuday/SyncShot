@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"no supported images"):
             mod.preflight(self.audio,self.images,self.report,0)
     def test_insufficient_disk_space(self):
-        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\\n"),Result("audio\\n"),Result("320,180\\n")]):
+        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("audio\n"),Result("320,180\n")]):
             with self.assertRaisesRegex(ValueError,"insufficient free disk"):
                 mod.preflight(self.audio,self.images,self.report,float("1e100"))
     def test_unreadable_audio(self):
@@ -65,7 +65,7 @@ class Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"ffprobe cannot read"):
                 mod.preflight(self.audio,self.images,self.report,0)
     def test_unreadable_image(self):
-        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\\n"),Result("audio\\n"),Result("",code=1)]):
+        with patch.object(mod.subprocess,"run",side_effect=[Result("3.0\n"),Result("audio\n"),Result("",code=1)]):
             with self.assertRaisesRegex(ValueError,"invalid image"):
                 mod.preflight(self.audio,self.images,self.report,0)
 if __name__=="__main__":
