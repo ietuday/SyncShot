@@ -175,3 +175,27 @@ func TestInterruptedPublishPreservesCacheForRetry(t *testing.T){
  duration,err:=utils.ProbeDurationPrecise(context.Background(),output)
  if err!=nil||math.Abs(duration-tl.Duration())>.35{t.Fatalf("recovered video duration %.3f expected %.3f: %v",duration,tl.Duration(),err)}
 }
+
+func TestCorruptCachedChunkIsRebuilt(t *testing.T){
+ if testing.Short(){t.Skip("FFmpeg integration")}
+ for _,binary:=range []string{"ffmpeg","ffprobe"}{if _,err:=exec.LookPath(binary);err!=nil{t.Skip(binary+" unavailable")}}
+ dir:=t.TempDir()
+ img:=filepath.Join(dir,"scene.png")
+ narration:=filepath.Join(dir,"voice.wav")
+ makeMedia:=func(dest string,params ...string){
+  args:=append([]string{"-hide_banner","-loglevel","error","-y"},params...)
+  if out,err:=exec.Command("ffmpeg",append(args,dest)...).CombinedOutput();err!=nil{t.Fatalf("generate media %s: %v %s",dest,err,out)}
+ }
+ makeMedia(img,"-f","lavfi","-i","color=c=red:s=320x180","-frames:v","1")
+ makeMedia(narration,"-f","lavfi","-i","sine=frequency=440:duration=1.2","-c:a","pcm_s16le")
+ tl:=Timeline{FPS:12,Width:320,Height:180,Scenes:[]Scene{{Image:img,Duration:1.2,Motion:Static}}}
+ target:=filepath.Join(dir,"rendered.mp4")
+ if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,narration,target,1,Overlays{},os.Rename);err!=nil{t.Fatal(err)}
+ parts,err:=filepath.Glob(filepath.Join(dir,".syncshot-chunk-cache","*.mp4"))
+ if err!=nil||len(parts)!=1{t.Fatalf("expected one cached chunk: %v %v",parts,err)}
+ if err:=os.WriteFile(parts[0],[]byte("corrupt MP4"),0600);err!=nil{t.Fatal(err)}
+ if validCachedChunk(context.Background(),parts[0],1.2){t.Fatal("corrupt cached chunk validated")}
+ if err:=RenderChunkedEffects(context.Background(),utils.NewLogger(),tl,narration,target,1,Overlays{},os.Rename);err!=nil{t.Fatalf("recovery failed: %v",err)}
+ if !validCachedChunk(context.Background(),parts[0],1.2){t.Fatal("corrupt cache not rebuilt")}
+ if info,err:=os.Stat(target);err!=nil||info.Size()==0{t.Fatalf("output missing after recovery: %v",err)}
+}
