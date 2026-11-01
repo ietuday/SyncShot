@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run paired complete qualification on the same synthetic inputs and compare evidence."""
 import json
+import re
 import os
 import shutil
 from pathlib import Path
@@ -10,8 +11,8 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 
-def run(*args, env=None):
-    subprocess.run(args, cwd=ROOT, env=env, check=True)
+def run(*args, env=None, cwd=ROOT):
+    subprocess.run(args, cwd=cwd, env=env, check=True)
 
 
 def check_comparator_contract():
@@ -108,6 +109,23 @@ def repetitions_from_env():
 
 def main():
     repetitions = repetitions_from_env()
+    baseline_sha = os.environ.get("SYNC_SHOT_BASELINE_SHA", "").strip()
+    baseline_path = os.environ.get("SYNC_SHOT_BASELINE_CHECKOUT", "").strip()
+    if bool(baseline_sha) != bool(baseline_path):
+        raise ValueError("Baseline SHA and checkout must be provided together")
+    baseline_root = ROOT
+    if baseline_sha:
+        if not re.fullmatch(r"[0-9a-fA-F]{40}", baseline_sha):
+            raise ValueError("Expected full 40-character baseline commit SHA")
+        baseline_root = Path(baseline_path).resolve()
+        if not (baseline_root / "scripts/qualify-production-media.sh").is_file():
+            raise ValueError("Baseline checkout missing qualification script")
+        actual = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                         cwd=baseline_root, text=True).strip()
+        if actual.lower() != baseline_sha.lower():
+            raise ValueError("Baseline checkout commit mismatch")
+    candidate_sha = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                            cwd=ROOT, text=True).strip()
     check_comparator_contract()
     check_median_contract()
     with tempfile.TemporaryDirectory() as directory:
@@ -152,8 +170,9 @@ def main():
                 for directory in (work / "work", work / "shorts"):
                     if directory.exists():
                         shutil.rmtree(directory)
+                source = baseline_root if side == "baseline" else ROOT
                 run("bash", "scripts/qualify-production-media.sh", str(config),
-                    str(work / (label + ".mp4")), str(report_root), env=env)
+                    str(work / (label + ".mp4")), str(report_root), env=env, cwd=source)
                 matches = list(report_root.glob("qualification-*/qualification-summary.json"))
                 if len(matches) != 1:
                     raise RuntimeError(f"{label}: missing or duplicate qualification report")
@@ -180,6 +199,9 @@ def main():
                 json.dumps(rows, indent=2) + "\\n", encoding="utf-8")
             (dest / "run-manifest.json").write_text(json.dumps({
                 "repetitions_per_side": repetitions,
+                "baseline_commit": baseline_sha or candidate_sha,
+                "candidate_commit": candidate_sha,
+                "mode": "cross-revision" if baseline_sha else "same-revision",
                 "workload_id": env["SYNC_SHOT_BENCHMARK_WORKLOAD_ID"],
                 "baseline": [f"baseline-{i+1:02d}-qualification-summary.json"
                              for i in range(repetitions)],
