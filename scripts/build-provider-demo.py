@@ -36,7 +36,7 @@ def build_demo(plan, clips_dir, output, report, verifier=verify.verify,
         stage = Path(tmp) / "report.json"
         with stage.open("x", encoding="utf-8") as file:
             json.dump({**info,"video_output":str(output)}, file,ensure_ascii=False,indent=2)
-            file.write("\\n")
+            file.write("\n")
             file.flush()
             os.fsync(file.fileno())
         assembler(plan, clips_dir, output)
