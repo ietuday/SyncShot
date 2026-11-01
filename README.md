@@ -134,3 +134,7 @@ The dedicated real-media qualification CI's Python tests now additionally cover 
 ## Phase 8.29 — Host RAM and swap evidence for long rendering
 
 The benchmark now records `host-memory-before.txt` and `host-memory-after.txt` with `/proc/meminfo` values (MemTotal, MemAvailable, SwapTotal and SwapFree), where available. These snapshots help interpret FFmpeg process RSS relative to the machine's available memory and swap, but do not prove a kernel OOM event. To confirm an OOM SIGKILL, inspect `sudo journalctl -k` on the device. The original 15-minute render on the 12 GiB laptop remains outstanding.
+
+## Phase 8.30 — Share a compact qualification diagnostic bundle
+
+After the manual 15-minute qualification finishes (or fails), select the resulting `output/real-media-qualification/qualification-XXXXXXXX` directory and run `python3 scripts/package-qualification-report.py output/real-media-qualification/qualification-XXXXXXXX --output output/real-media-diagnostics.tar.gz`. The resulting archive contains only summary/status JSON, Markdown, measurement CSV and selected system-memory/failure diagnostics, **not** your narration, images, rendered video, binaries or raw run logs. Review the archive before sharing: summaries and measurements may still expose workload details. This provides inspectable evidence from the real laptop without uploading private media. Run `python3 scripts/test-package-qualification-report.py` for regression checks.
