@@ -30,13 +30,15 @@ fi
 IFS=":" read -r -a INPUT_PATHS <<< "$SYNC_SHOT_BENCHMARK_INPUTS"
 python3 scripts/fingerprint-inputs.py --output /dev/null "${INPUT_PATHS[@]}"
 go run ./cmd/syncshot --config "$CONFIG" --output "$OUTPUT" --dry-run
+RUN_REPORT="$(mktemp -d "$REPORT/qualification-XXXXXXXX")"
+echo "Qualification evidence directory: $RUN_REPORT"
 SYNC_SHOT_BENCHMARK_OUTPUT="$OUTPUT" \
-  bash scripts/benchmark-long-video.sh "$REPORT" --config "$CONFIG" --output "$OUTPUT" --timeout "${SYNC_SHOT_QUALIFICATION_TIMEOUT:-3h}"
-python3 scripts/summarize-benchmarks.py "$REPORT" --json "$REPORT/qualification-summary.json"
+  bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$CONFIG" --output "$OUTPUT" --timeout "${SYNC_SHOT_QUALIFICATION_TIMEOUT:-3h}"
+python3 scripts/summarize-benchmarks.py "$RUN_REPORT" --json "$RUN_REPORT/qualification-summary.json"
 python3 scripts/check-media-quality.py "$OUTPUT" \
   --width "${SYNC_SHOT_EXPECT_WIDTH:-1920}" \
   --height "${SYNC_SHOT_EXPECT_HEIGHT:-1080}" \
   --min-duration "${SYNC_SHOT_MIN_DURATION:-30}" \
-  --max-duration "${SYNC_SHOT_MAX_DURATION:-4000}" > "$REPORT/media-quality.json"
-python3 scripts/check-audio-integrity.py "$OUTPUT" > "$REPORT/audio-integrity.json"
-echo "Qualification checks passed. Review video manually and inspect reports in: $REPORT"
+  --max-duration "${SYNC_SHOT_MAX_DURATION:-4000}" > "$RUN_REPORT/media-quality.json"
+python3 scripts/check-audio-integrity.py "$OUTPUT" > "$RUN_REPORT/audio-integrity.json"
+echo "Qualification checks passed. Review video manually and inspect reports in: $RUN_REPORT"
