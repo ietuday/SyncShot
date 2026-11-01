@@ -38,3 +38,7 @@ For the **real** narration/image collection, use the existing `scripts/qualify-p
 ## Phase 8.5 — Automatic chunk-cache housekeeping
 
 After **successful** cinematic final-video publication, SyncShot removes cache files that are older than seven days **and not referenced by the current render**. Only regular, hash-named MP4 entries inside the dedicated `.syncshot-chunk-cache` directory are eligible. Fresh chunks, active chunks, symlinks and unrelated files are preserved. If the render fails, cleanup is skipped so completed chunks remain available for recovery. Cleanup errors are logged as warnings rather than invalidating a successfully published video. Disk usage can still grow between successful runs, and disk-space monitoring is a future improvement.
+
+## Phase 8.6 — Disk-space preflight
+
+Before rendering starts, SyncShot checks free filesystem space in both the work directory and final-video output directory on Linux. When either has less than **2 GiB free**, rendering stops early with an actionable error rather than consuming more storage and failing halfway through. On non-Linux platforms this check is currently skipped. This is a conservative minimum, not a forecast of total disk consumption for an unusually long render; check available storage before multi-hour jobs. The normal audio + images command is unchanged.
