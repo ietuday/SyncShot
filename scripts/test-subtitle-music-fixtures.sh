@@ -30,8 +30,9 @@ bash scripts/benchmark-long-video.sh "$WORK/reports" --config "$WORK/config.json
 python3 scripts/summarize-benchmarks.py "$WORK/reports" --json "$WORK/summary.json"
 python3 scripts/check-media-quality.py "$WORK/final.mp4" --width 1280 --height 720 --min-duration 15 --max-duration 21 > "$WORK/media-quality.json"
 python3 scripts/check-audio-integrity.py "$WORK/final.mp4" > "$WORK/audio-integrity.json"
+python3 scripts/check-subtitle-cue-timing.py "$WORK/captions.srt" "$WORK/final.mp4" --output "$WORK/subtitle-cues.json"
 if [[ -n "${SYNC_SHOT_BENCHMARK_EVIDENCE_DIR:-}" ]]; then
   mkdir -p "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR"
-  cp "$WORK/summary.json" "$WORK/media-quality.json" "$WORK/audio-integrity.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/"
+  cp "$WORK/summary.json" "$WORK/media-quality.json" "$WORK/audio-integrity.json" "$WORK/subtitle-cues.json" "$SYNC_SHOT_BENCHMARK_EVIDENCE_DIR/"
 fi
 echo "Subtitle and music integration qualification passed"
