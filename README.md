@@ -333,3 +333,9 @@ python3 scripts/prepare-provider-pilot.py \
 ```
 
 The hosted image URL above is a placeholder. The command **does not** call a paid AI provider. Animated video generation remains a separate, explicitly authorized action. Run `python3 scripts/test-prepare-provider-pilot.py` to exercise the offline and FFmpeg integration tests.
+
+## Phase 9.17 — One-scene local end-to-end animation smoke
+
+Run `python3 scripts/test-single-scene-animation-e2e.py` with FFmpeg and ffprobe installed. This integration smoke constructs synthetic narration and a synthetic visual clip, prepares the trimmed Phase 9.16 one-scene request, previews the Runway task without sending it, validates the MP4, assembles the final audio/video, checks approximate duration, and verifies no-overwrite behavior. It makes **no provider API calls or paid image/video generations**.
+
+This validates **local orchestration and assembly only**, not Runway output quality, credentials, online task completion, lip sync, or the full-length 925-second story. Run a separate authorized real-provider pilot before assuming actual AI animation works.
