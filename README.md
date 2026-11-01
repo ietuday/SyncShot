@@ -106,3 +106,7 @@ By default the real-media qualification deletes its temporary rendered video aft
 ## Phase 8.22 — Final real-media qualification verdict
 
 After qualification exits, `qualification-status.json` records `status`, `exit_code`, and `last_stage`, including whether optional video retention failed after rendering passed. This final verdict is distinct from `summary.json`, which records the rendering benchmark alone. The end-to-end smoke test checks the final verdict after retaining its synthetic video. The original 15-minute media has not yet been tested on the 12 GiB Ubuntu laptop.
+
+## Phase 8.23 — Qualification failure-path CI regression
+
+The real-media qualification GitHub Actions smoke workflow now also runs `bash scripts/smoke-qualification-failure.sh`, which deliberately sets an unrealistically low FFmpeg RSS budget on a short synthetic render. It asserts the validation fails with a nonzero exit, preserves `summary.json`, records `qualification-status.json` with a failed memory stage, writes `failure-analysis.json`, and does not retain an unqualified video. This tests report correctness on failure; the original 15-minute laptop render remains unverified.
