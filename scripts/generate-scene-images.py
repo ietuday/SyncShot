@@ -74,12 +74,8 @@ def generate(scenes: list[dict], directory: Path, execute: bool,
             if not isinstance(content, bytes) or not content.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise ValueError("provider returned invalid PNG image")
             # Use exclusive creation so competing jobs cannot overwrite a scene.
-            try:
-                with target.open("xb") as output:
-                    output.write(content)
-            except Exception:
-                target.unlink(missing_ok=True)
-                raise
+            with target.open("xb") as output:
+                output.write(content)
         items.append(item)
     return items
 
