@@ -340,6 +340,15 @@ Run `python3 scripts/test-single-scene-animation-e2e.py` with FFmpeg and ffprobe
 
 This validates **local orchestration and assembly only**, not Runway output quality, credentials, online task completion, lip sync, or the full-length 925-second story. Run a separate authorized real-provider pilot before assuming actual AI animation works.
 
+## Phase 9.19 — Explicit consent for a single paid animation pilot
+
+Live Runway generation now requires **both** `--execute` and `--confirm-paid-pilot`, with `--limit 1`. Multi-scene paid execution is intentionally rejected in this pilot phase; preview commands remain free and unchanged. After reviewing provider pricing and media permissions, an authorized one-scene invocation is:
+
+```bash
+python3 scripts/animate-scene-images.py --plan output/animation-workflow/provider-scene-plan.json --image-urls output/animation-workflow/provider-image-urls.json --output output/animation-workflow/submitted-one-scene.json --limit 1 --execute --confirm-paid-pilot
+```
+
+This command **can incur a real provider charge**; it is not run by tests or CI. It requires `RUNWAYML_API_SECRET`, `runwayml`, a reachable hosted illustration and an eligible Runway account. Status monitoring/downloads remain separate. The confirmation flag is an application guard, not an invoice cap enforced by the provider.
 ## Phase 9.18 — Offline real-provider pilot readiness gate
 
 Before authorizing a paid Runway image-to-video pilot, validate the prepared single-scene plan, local narration and approved hosted image reference:
