@@ -114,3 +114,7 @@ The real-media qualification GitHub Actions smoke workflow now also runs `bash s
 ## Phase 8.24 — Invalid-media qualification regression
 
 The qualification failure-path smoke now also supplies a corrupt narration file alongside an otherwise valid image. It asserts the wrapper fails rather than reporting success or retaining a `qualified.mp4`. This is in addition to the existing post-render memory-budget failure test. Run `bash scripts/smoke-qualification-failure.sh`. The original 15-minute workload on a 12 GiB Ubuntu laptop remains unverified.
+
+## Phase 8.25 — Original-media readiness preflight
+
+Before a potentially lengthy real-media qualification run, `scripts/preflight-real-media.py` checks that supported narration and image files exist and are readable by ffprobe, lists narration durations, and requires at least 2 GiB of free space in the chosen report directory. Run `bash scripts/qualify-real-media-low-memory.sh inputs/audio inputs/images` as usual; the preflight runs automatically. It does not guarantee memory safety or replace the manual 15-minute test on the 12 GiB laptop.

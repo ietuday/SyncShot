@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'scripts/qualify-real-media-low-memory.sh'
+      - 'scripts/preflight-real-media.py'
       - 'scripts/smoke-qualify-real-media.sh'
       - 'scripts/smoke-qualification-failure.sh'
       - 'scripts/check-low-memory-benchmark.py'
