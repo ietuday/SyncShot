@@ -12,6 +12,7 @@ import (
  "path/filepath"
  "strconv"
  "strings"
+ "time"
 
  "syncshotgo/internal/utils"
 )
@@ -85,6 +86,25 @@ func validCachedChunk(ctx context.Context,path string,want float64)bool{
  return err==nil && math.Abs(duration-want)<=0.35
 }
 
+// pruneChunkCache removes only old, unreferenced regular MP4 cache files.
+// It never follows symlinks, and preserves all chunks used by this run.
+func pruneChunkCache(directory string, keep map[string]bool, now time.Time) (int,error) {
+ entries,err:=os.ReadDir(directory);if err!=nil{return 0,err}
+ removed:=0
+ for _,entry:=range entries {
+  name:=entry.Name()
+  if keep[name] || entry.Type()&os.ModeSymlink!=0 || !entry.Type().IsRegular() {continue}
+  if !strings.HasSuffix(name,".mp4") || len(name)!=68 {continue}
+  key:=strings.TrimSuffix(name,".mp4")
+  if len(key)!=64 || strings.Trim(key,"0123456789abcdef")!="" {continue}
+  info,err:=entry.Info();if err!=nil{return removed,err}
+  if now.Sub(info.ModTime())<7*24*time.Hour {continue}
+  if err:=os.Remove(filepath.Join(directory,name));err!=nil{return removed,err}
+  removed++
+ }
+ return removed,nil
+}
+
 // RenderChunkedEffects processes bounded scene groups and adds narration, music,
 // ducking, subtitles and graphics in a single final, full-duration mux pass.
 func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio,output string,maxScenes int,overlays Overlays,publish func(string,string)error) error{
@@ -93,13 +113,15 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  if err:=os.MkdirAll(filepath.Dir(output),0755);err!=nil{return err}
  dir,err:=os.MkdirTemp(filepath.Dir(output),".cinematic-effects-*");if err!=nil{return err}
  defer os.RemoveAll(dir)
+ cacheDir:=filepath.Join(filepath.Dir(output),".syncshot-chunk-cache")
+ keep:=make(map[string]bool,len(chunks))
  args:=[]string{"-hide_banner","-y"}
  for i,chunk:=range chunks{
   if err:=ctx.Err();err!=nil{return err}
   key,err:=chunkCacheKey(chunk)
   if err!=nil{return fmt.Errorf("fingerprint chunk %d: %w",i,err)}
-  cacheDir:=filepath.Join(filepath.Dir(output),".syncshot-chunk-cache")
   if err:=os.MkdirAll(cacheDir,0700);err!=nil{return err}
+  keep[key+".mp4"]=true
   part:=filepath.Join(cacheDir,key+".mp4")
   if validCachedChunk(ctx,part,chunk.Duration()){
    log.Info(fmt.Sprintf("Reusing validated cinematic chunk %d/%d",i+1,len(chunks)))
@@ -181,5 +203,9 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  d,err:=utils.ProbeDurationPrecise(ctx,final);if err!=nil{return err}
  if math.Abs(d-t.Duration())>0.35{return fmt.Errorf("chunked duration drift %.3f vs %.3f",d,t.Duration())}
  if err:=ctx.Err();err!=nil{return err}
- return publish(final,output)
+ if err:=publish(final,output);err!=nil{return err}
+ if removed,err:=pruneChunkCache(cacheDir,keep,time.Now());err!=nil {
+  log.Warn("Chunk cache cleanup skipped: "+err.Error())
+ }else if removed>0 {log.Info(fmt.Sprintf("Removed %d old unused cached chunks",removed))}
+ return nil
 }
