@@ -34,7 +34,7 @@ def summarize(report: Path) -> dict:
     if not advice:
         advice.append("Review audio/video quality checks and visually inspect the output before production use.")
     result["recommendations"]=advice
-    (report/"summary.json").write_text(json.dumps(result,indent=2)+"\\n")
+    (report/"summary.json").write_text(json.dumps(result,indent=2)+"\n")
     text=("# SyncShot Qualification Summary\n\n"+
           f"- Status: **{result['status']}** (exit {result['exit_code']})\n"+
           f"- Duration: {result['elapsed_seconds']} seconds\n"+
