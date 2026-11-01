@@ -6,19 +6,23 @@ cd "$ROOT"
 AUDIO_DIR="${1:-inputs/audio}"
 IMAGE_DIR="${2:-inputs/images}"
 REPORT_DIR="${3:-output/real-media-qualification}"
-mkdir -p "$REPORT_DIR"
-REPORT_DIR="$(realpath "$REPORT_DIR")"
-# The qualification workspace must not be inside input directories.
-# Otherwise generated assets can contaminate the media scan/fingerprint.
-
 AUDIO_DIR="$(realpath "$AUDIO_DIR")"
 IMAGE_DIR="$(realpath "$IMAGE_DIR")"
 test -d "$AUDIO_DIR" || { echo "Audio directory missing: $AUDIO_DIR" >&2; exit 2; }
 test -d "$IMAGE_DIR" || { echo "Image directory missing: $IMAGE_DIR" >&2; exit 2; }
+REPORT_DIR="$(realpath -m "$REPORT_DIR")"
+# The qualification workspace must not be inside input directories.
+# Otherwise generated assets can contaminate the media scan/fingerprint.
+
 for source in "$AUDIO_DIR" "$IMAGE_DIR"; do
   case "$REPORT_DIR/" in
     "$source/"*) echo "Report directory cannot be inside an input directory: $source" >&2; exit 2;;
   esac
+done
+# Validate the destination before writing any generated files.
+mkdir -p "$REPORT_DIR"
+for command in go ffmpeg ffprobe python3; do
+  command -v "$command" >/dev/null 2>&1 || { echo "Required command missing: $command" >&2; exit 2; }
 done
 WORK="$(mktemp -d "$REPORT_DIR/work-XXXXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
