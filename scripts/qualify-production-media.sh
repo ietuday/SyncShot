@@ -29,6 +29,7 @@ fi
 # Preflight: validate source paths and CLI settings before starting an expensive render.
 IFS=":" read -r -a INPUT_PATHS <<< "$SYNC_SHOT_BENCHMARK_INPUTS"
 python3 scripts/check-qualification-paths.py "$OUTPUT" "$CONFIG" "$REPORT" "${INPUT_PATHS[@]}"
+python3 scripts/audit-qualification-inputs.py "${INPUT_PATHS[@]}"
 python3 scripts/fingerprint-inputs.py --output /dev/null "${INPUT_PATHS[@]}"
 go run ./cmd/syncshot --config "$CONFIG" --output "$OUTPUT" --dry-run
 RUN_REPORT="$(mktemp -d "$REPORT/qualification-XXXXXXXX")"
