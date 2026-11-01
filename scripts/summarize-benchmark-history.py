@@ -2,6 +2,7 @@
 """Summarize archived SyncShot qualification evidence without fabricating missing runs."""
 import argparse
 import json
+import math
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -23,6 +24,8 @@ def collect(directory):
         if any(not isinstance(row.get(key), (int, float)) or
                isinstance(row.get(key), bool) for key in ("baseline", "candidate", "change_pct")):
             raise ValueError(f"{directory}: invalid numeric values for {metric}")
+        if not all(math.isfinite(row[key]) for key in ("baseline", "candidate", "change_pct")):
+            raise ValueError(f"{directory}: nonfinite metric for {metric}")
     for key in ("baseline_commit", "candidate_commit", "workload_id"):
         if not isinstance(manifest.get(key), str) or not manifest[key]:
             raise ValueError(f"{directory}: missing {key}")
