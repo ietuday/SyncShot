@@ -2,6 +2,7 @@
 """Summarize archived SyncShot qualification evidence without fabricating missing runs."""
 import argparse
 import json
+import hashlib
 import math
 from pathlib import Path
 from datetime import datetime, timezone
@@ -164,6 +165,8 @@ def main():
                         help="Reject evidence with other workload IDs")
     parser.add_argument("--min-repetitions", type=int, default=1,
                         help="Minimum qualification runs per side")
+    parser.add_argument("--verify-evidence-sha256", action="store_true",
+                        help="Verify every referenced qualification file against archived SHA-256 hashes")
     parser.add_argument("--require-matching-inputs", action="store_true",
                         help="Require matching workload and input fingerprints across evidence")
     parser.add_argument("--require-matching-environment", action="store_true",
@@ -191,6 +194,27 @@ def main():
             env = record["environment"]
             if not isinstance(env, dict) or any(env.get(key) != first[key] for key in required):
                 parser.error("benchmark environment mismatch")
+    if args.verify_evidence_sha256:
+        for directory in args.evidence:
+            manifest = json.loads((directory / "run-manifest.json").read_text(encoding="utf-8"))
+            names = manifest.get("baseline", []) + manifest.get("candidate", [])
+            checksum_path = directory / "evidence-sha256.json"
+            if (not names or not isinstance(names, list)
+                    or not all(isinstance(name, str) for name in names)
+                    or not checksum_path.is_file()):
+                parser.error("missing checksum manifest or report references in " + str(directory))
+            digests = json.loads(checksum_path.read_text(encoding="utf-8"))
+            if not isinstance(digests, dict) or set(digests) != set(names):
+                parser.error("evidence checksum references mismatch in " + str(directory))
+            for name in names:
+                report = directory / name
+                if (report.parent != directory or not report.is_file()
+                        or not isinstance(digests[name], str)
+                        or len(digests[name]) != 64):
+                    parser.error("missing or malformed checksum report " + name)
+                actual = hashlib.sha256(report.read_bytes()).hexdigest()
+                if actual != digests[name]:
+                    parser.error("benchmark evidence checksum mismatch in " + name)
     if args.require_matching_inputs:
         fingerprints = []
         for directory in args.evidence:

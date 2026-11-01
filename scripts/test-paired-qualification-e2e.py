@@ -254,6 +254,13 @@ def main():
                 "comparison": "paired-performance-comparison.json",
                 "max_regression_percent": 200,
             }, indent=2) + "\n", encoding="utf-8")
+            digests = {}
+            for side, paths in reports.items():
+                for index, path in enumerate(paths, 1):
+                    digests[f"{side}-{index:02d}-qualification-summary.json"] = hashlib.sha256(
+                        path.read_bytes()).hexdigest()
+            (dest / "evidence-sha256.json").write_text(
+                json.dumps(digests, indent=2) + "\n", encoding="utf-8")
             for side, paths in reports.items():
                 for index, path in enumerate(paths, start=1):
                     (dest / f"{side}-{index:02d}-qualification-summary.json").write_bytes(
