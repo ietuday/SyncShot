@@ -2,6 +2,8 @@
 """Create a compact review bundle from one qualification run (never include source media)."""
 import argparse
 import tarfile
+import os
+import tempfile
 from pathlib import Path
 
 FILES = (
@@ -16,26 +18,35 @@ RUN_FILES = (
 def package(report: Path, destination: Path) -> int:
     if not report.is_dir():
         raise ValueError("qualification directory not found")
-    runs = [p for p in report.glob("run-*") if p.is_dir()]
+    runs = [p for p in report.glob("run-*") if p.is_dir() and not p.is_symlink()]
     if len(runs) != 1:
         raise ValueError(f"expected exactly one benchmark run, found {len(runs)}")
-    dest = destination.resolve()
+    dest = destination.absolute()
+    if dest.exists():
+        raise ValueError("refusing to overwrite an existing diagnostic archive")
+    if dest.is_relative_to(report.resolve()):
+        raise ValueError("archive destination must be outside the qualification report")
     count = 0
-    with tarfile.open(dest, "w:gz") as archive:
-        for name in FILES:
-            file = report/name
-            if file.is_file() and not file.is_symlink():
-                archive.add(file, arcname=name, recursive=False)
-                count += 1
-        for name in RUN_FILES:
-            file = runs[0]/name
-            if file.is_file() and not file.is_symlink():
-                archive.add(file, arcname="benchmark/"+name, recursive=False)
-                count += 1
-    if not count:
-        dest.unlink(missing_ok=True)
-        raise ValueError("no diagnostic files available")
-    return count
+    with tempfile.NamedTemporaryFile(prefix=".qualification-",suffix=".tar.gz",dir=dest.parent,delete=False) as tmp:
+        staging = Path(tmp.name)
+    try:
+        with tarfile.open(staging, "w:gz") as archive:
+            for name in FILES:
+                file = report/name
+                if file.is_file() and not file.is_symlink():
+                    archive.add(file, arcname=name, recursive=False)
+                    count += 1
+            for name in RUN_FILES:
+                file = runs[0]/name
+                if file.is_file() and not file.is_symlink():
+                    archive.add(file, arcname="benchmark/"+name, recursive=False)
+                    count += 1
+        if not count:
+            raise ValueError("no diagnostic files available")
+        os.link(staging,dest)  # atomic creation, fails if destination appeared concurrently
+        return count
+    finally:
+        staging.unlink(missing_ok=True)
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser()
