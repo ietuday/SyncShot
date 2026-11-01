@@ -2,6 +2,7 @@ package main
 
 import (
  "os"
+ "errors"
  "path/filepath"
  "strings"
  "testing"
@@ -45,4 +46,16 @@ func TestDryRunMissingDirectories(t *testing.T){
 func TestConfigErrorIncludesPath(t *testing.T){
  _,err:=loadConfig(filepath.Join(t.TempDir(),"missing.json"))
  if err==nil||!strings.Contains(err.Error(),"open config"){t.Fatalf("unexpected error: %v",err)}
+}
+
+func TestClarifyRenderFailure(t *testing.T){
+ original:=errors.New("cinematic rendering: ffmpeg exited: signal: killed")
+ got:=clarifyRenderFailure(original)
+ if !errors.Is(got,original){t.Fatalf("error wrapping lost: %v",got)}
+ for _,hint:=range []string{"SIGKILL","OOM","--chunk-scenes 1","journalctl"} {
+  if !strings.Contains(got.Error(),hint){t.Fatalf("missing %s: %v",hint,got)}
+ }
+ other:=errors.New("ffmpeg exited: exit status 1")
+ if clarifyRenderFailure(other)!=other{t.Fatal("misleading hint on ordinary exit")}
+ if clarifyRenderFailure(nil)!=nil{t.Fatal("unexpected nil handling")}
 }
