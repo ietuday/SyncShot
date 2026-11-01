@@ -5,6 +5,8 @@ on:
       - 'scripts/qualify-real-media-low-memory.sh'
       - 'scripts/benchmark-long-video.sh'
       - 'scripts/preflight-real-media.py'
+      - 'scripts/package-qualification-report.py'
+      - 'scripts/test-package-qualification-report.py'
       - 'scripts/test-preflight-real-media.py'
       - 'scripts/smoke-qualify-real-media.sh'
       - 'scripts/smoke-qualification-failure.sh'
@@ -26,6 +28,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Real-media preflight regression tests
         run: python3 scripts/test-preflight-real-media.py
+      - name: Diagnostic bundle regression tests
+        run: python3 scripts/test-package-qualification-report.py
       - name: Qualification wrapper end-to-end smoke
         run: bash scripts/smoke-qualify-real-media.sh
       - name: Qualification failed-memory-gate regression
