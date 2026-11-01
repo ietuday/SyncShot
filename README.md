@@ -126,3 +126,7 @@ Preflight now rejects zero/malformed image dimensions, nonfinite narration durat
 ## Phase 8.27 — Narration audio-stream validation
 
 Real-media preflight now requires each supported narration file to contain an actual readable audio stream, not merely a positive container duration. This prevents a mislabeled silent video container from passing the input check. The qualification CI's Python preflight regression tests cover a missing audio stream. Run `python3 scripts/test-preflight-real-media.py` for focused tests. The original 15-minute render on the 12 GiB laptop remains unverified.
+
+## Phase 8.28 — Preflight rejection regression coverage
+
+The dedicated real-media qualification CI's Python tests now additionally cover absent narration/images, unreadable ffprobe media and insufficient available disk. These checks fail before launching an expensive render. Run `python3 scripts/test-preflight-real-media.py`. The original 15-minute user workload on the 12 GiB Ubuntu laptop is still unverified.
