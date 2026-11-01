@@ -10,6 +10,7 @@ import (
  "os"
  "os/exec"
  "os/signal"
+ "strings"
  "syscall"
 
  "syncshotgo/internal/pipeline"
@@ -49,6 +50,15 @@ func checkDependencies()error{
  return nil
 }
 
+// clarifyRenderFailure includes actionable guidance for SIGKILL without assuming OOM.
+func clarifyRenderFailure(err error) error {
+ if err==nil{return nil}
+ if strings.Contains(err.Error(),"signal: killed") {
+  return fmt.Errorf("%w (FFmpeg received SIGKILL; Linux OOM is one possible cause. Check 'journalctl -k' for 'Out of memory: Killed process'. Try --chunk-scenes 1 and monitor memory with 'free -h')",err)
+ }
+ return err
+}
+
 func run(args []string)error{
  flags:=flag.NewFlagSet("syncshot",flag.ContinueOnError)
  configPath:=flags.String("config","","JSON configuration file")
@@ -85,7 +95,7 @@ func run(args []string)error{
  }
  if err:=pipeline.RunContext(ctx,log,cfg);err!=nil{
   if errors.Is(ctx.Err(),context.DeadlineExceeded){return fmt.Errorf("render exceeded configured timeout %s: %w",timeout.String(),ctx.Err())}
-  return err
+  return clarifyRenderFailure(err)
  }
  log.Info("Pipeline completed successfully")
  return nil
