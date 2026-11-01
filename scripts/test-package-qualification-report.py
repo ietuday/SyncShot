@@ -31,6 +31,37 @@ class Tests(unittest.TestCase):
             with tarfile.open(archive, "r:gz") as bundle:
                 self.assertEqual(sorted(bundle.getnames()), ["benchmark/measurements.csv", "summary.json"])
 
+    def test_rejects_oversized_file_without_publication(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root, _ = self.setup_run(temp)
+            with (root / "summary.json").open("wb") as stream:
+                stream.truncate(mod.MAX_FILE_BYTES + 1)
+            dest = Path(temp) / "bundle.tar.gz"
+            with self.assertRaisesRegex(ValueError, "per-file size limit"):
+                mod.package(root, dest)
+            self.assertFalse(dest.exists())
+            self.assertEqual(list(Path(temp).glob(".qualification-*.tar.gz")), [])
+
+    def test_rejects_oversized_aggregate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root, run = self.setup_run(temp)
+            for path in (root / "summary.json", root / "summary.md", run / "measurements.csv"):
+                with path.open("wb") as stream:
+                    stream.truncate(12 * 1024 * 1024)
+            dest = Path(temp) / "bundle.tar.gz"
+            with self.assertRaisesRegex(ValueError, "total size limit"):
+                mod.package(root, dest)
+            self.assertFalse(dest.exists())
+
+    def test_empty_whitelisted_file_is_counted(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root, _ = self.setup_run(temp)
+            (root / "summary.json").write_bytes(b"")
+            dest = Path(temp) / "bundle.tar.gz"
+            self.assertEqual(mod.package(root, dest), 1)
+            with tarfile.open(dest, "r:gz") as bundle:
+                self.assertEqual(bundle.getnames(), ["summary.json"])
+
     def test_rejects_ambiguous_runs(self):
         with tempfile.TemporaryDirectory() as temp:
             root, _ = self.setup_run(temp)
