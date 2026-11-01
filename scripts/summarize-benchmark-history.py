@@ -35,6 +35,7 @@ def collect(directory):
         "candidate_commit": manifest["candidate_commit"],
         "workload_id": manifest["workload_id"],
         "mode": manifest.get("mode", "unknown"),
+        "environment": manifest.get("environment"),
         "repetitions_per_side": manifest.get("repetitions_per_side"),
         "metrics": {key: by_metric[key] for key in METRICS},
     }
@@ -163,6 +164,8 @@ def main():
                         help="Reject evidence with other workload IDs")
     parser.add_argument("--min-repetitions", type=int, default=1,
                         help="Minimum qualification runs per side")
+    parser.add_argument("--require-matching-environment", action="store_true",
+                        help="Require consistent runner/platform/config provenance for all records")
     args = parser.parse_args()
     if args.min_repetitions < 1:
         parser.error("min-repetitions must be positive")
@@ -175,6 +178,16 @@ def main():
         runs = record["repetitions_per_side"]
         if not isinstance(runs, int) or isinstance(runs, bool) or runs < args.min_repetitions:
             parser.error("insufficient repetitions in " + record["evidence_directory"])
+    if args.require_matching_environment:
+        first = records[0]["environment"]
+        required = ("system", "machine", "python", "runner_image",
+                    "runner_arch", "config_sha256")
+        if not isinstance(first, dict) or any(not first.get(key) or first[key] == "unknown" for key in required):
+            parser.error("environment provenance missing or incomplete")
+        for record in records[1:]:
+            env = record["environment"]
+            if not isinstance(env, dict) or any(env.get(key) != first[key] for key in required):
+                parser.error("benchmark environment mismatch")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "history.json").write_text(
         json.dumps({"schema_version": 1, "records": records}, indent=2) + "\n",
