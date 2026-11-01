@@ -276,3 +276,14 @@ python3 scripts/test-check-animation-clips.py
 ```
 
 The checker does not delete or redownload files, regenerate paid tasks, or modify final videos. Supply a new report filename for another pass. Video stream presence and a positive reported duration do not guarantee visual quality or perfect narration synchronization.
+
+## Phase 9.11 — Prepare a small no-cost animation pilot
+
+Before requesting dozens of paid AI clips, prepare a bounded preview plan from a completed Phase 9.1 scene plan:
+
+```bash
+python3 scripts/prepare-animation-pilot.py --plan output/animation-workflow/scene-plan.json --output output/animation-workflow/pilot-plan.json --seconds 30 --max-scenes 5
+python3 scripts/test-prepare-animation-pilot.py
+```
+
+This prepares **up to 30 seconds and five scenes**, never invokes an AI provider, and does not change the source transcript or audio. It clips the final visual scene at the time limit. The resulting pilot scene plan still references the original full narration; **trim the narration into a separate audio file and update the pilot JSON's `audio` field before final assembly**. For example: `ffmpeg -i inputs/audio/narration.m4a -t 30 -c:a aac pilot-narration.m4a`, adjusting `-t` to the actual reported pilot duration. The full paid-generation workflow, image hosting and real-provider validation remain outside this safe planning stage.
