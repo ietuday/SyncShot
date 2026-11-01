@@ -152,7 +152,7 @@ def main():
     alerts = regressions(records, args.alert_threshold_percent)
     (args.output_dir / "regression-alerts.json").write_text(
         json.dumps({"threshold_percent": args.alert_threshold_percent,
-                    "alerts": alerts}, indent=2) + "\\n", encoding="utf-8")
+                    "alerts": alerts}, indent=2) + "\n", encoding="utf-8")
     if alerts:
         print(f"Found {len(alerts)} benchmark regressions", file=__import__("sys").stderr)
         raise SystemExit(1)
