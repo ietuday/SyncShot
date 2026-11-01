@@ -86,3 +86,7 @@ The real-media qualification runner now attempts to write `summary.json` and `su
 ## Phase 8.17 — Qualification failure classification
 
 If the real-media qualification fails after the benchmark report directory is created, it now saves `failure-analysis.json` with the failing stage (`benchmark`, `memory`, `av_sync`, or `dimensions`), exit code, and troubleshooting advice. `ffmpeg_sigkill` is not treated as confirmed OOM; use the Linux kernel journal for confirmation. Run `python3 scripts/test-analyze-qualification-failure.py` for the classifier regression tests. Original 15-minute workload validation on the user's 12 GiB laptop is still pending.
+
+## Phase 8.18 — Actionable qualification summaries
+
+Real-media `summary.json` and `summary.md` now include suggested next steps based on recorded render status and peak FFmpeg RSS. A failed render points to logs and OOM confirmation; high measured RAM encourages workload reduction; a missing RSS sample triggers instrumentation review. These are evidence-based suggestions, not guarantees of rendering success, and the actual 15-minute media still needs a local test.
