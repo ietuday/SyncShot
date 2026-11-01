@@ -50,3 +50,7 @@ The automatic chunked-effects final FFmpeg stitching pass now sets `-filter_comp
 ## Phase 8.8 — Low-memory regression and A/V endpoint validation
 
 The manual `bash scripts/qualify-low-memory-15m.sh` now rejects a render whose recorded peak FFmpeg RSS exceeds `SYNC_SHOT_MAX_FFMPEG_RSS_MIB` (default 8192 MiB). It also checks decoded audio/video stream start and end timestamps are within 0.5 seconds using ffprobe; this **does not** validate word-level lip sync or perceptual synchronization. The limit is a test threshold, not a runtime memory cap, and can be adjusted for differently sized test machines. The actual 15-minute user media still needs a separate manual test on the 12 GiB Ubuntu host.
+
+## Phase 8.9 — Failed-render diagnostics
+
+The long-video benchmark harness writes `failure-diagnostics.json` beside `run.log` and `measurements.csv` after an unsuccessful run. The JSON distinguishes an FFmpeg `signal: killed` from an actual kernel OOM confirmation: the latter requires kernel logs (for example `sudo journalctl -k`) and is **not** inferred from SIGKILL alone. The summary provides the exact low-memory retry suggestion. Run unit checks with `python3 scripts/test-summarize-render-failure.py`.
