@@ -89,3 +89,9 @@ Strict attestation mode now extracts only validated, root-level regular files fr
 ## Phase 7.44 — Negative-case archive security regression tests
 
 The archive extractor test suite additionally covers hardlinks, nested paths, missing required manifests, and corrupted gzip streams. These cases must fail without accepting unsafe evidence. The pull-request aggregate-history validation runs the negative-case tests. This validates archive extraction behavior only: a real GitHub attestation signing and verification run still requires workflow dispatch using available repository permissions.
+
+## Phase 7.45 — Live attestation smoke verification
+
+For successful manual paired qualification dispatches, the attestation job now verifies the newly signed archive against the expected GitHub repository and workflow, then creates a modified copy and asserts that its verification fails. The attested archive is uploaded only after both checks pass, giving direct evidence that the signed bytes are accepted and modified bytes are rejected. This smoke test is intentionally scoped to manual runs because GitHub OIDC/attestation write permissions must not be granted to untrusted pull request executions.
+
+Pull-request CI can validate workflow syntax, but cannot execute this manual signing test. Run the manual workflow and inspect the `Attest benchmark evidence archive` job before treating the path as operationally validated.
