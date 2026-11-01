@@ -188,3 +188,15 @@ go run ./cmd/storyplan --transcript transcript.json --output scene-plan.json --s
 The transcription script runs on **CPU using int8 inference**, two threads and one worker by default, with the lightweight `tiny` model (optional `base` and `small`). This is intended to make transcription approachable on a 12 GiB laptop but is **not a measured RAM guarantee**. The initial model download requires internet access and may be blocked by corporate proxies; use an appropriately cached model where available. Hindi speech can need a larger model and manual proofreading for accuracy. No user audio is uploaded by this script's inference pipeline, although model installation/download involves external repositories.
 
 Output is a JSON transcript with `audio`, `duration_seconds`, and timestamped `segments`, compatible with Phase 9.1. The script refuses to overwrite an existing output file. The timestamped transcript is not yet hooked automatically into the primary `syncshot` renderer; it produces **scene prompts, not animated video**. Run `python3 scripts/test-transcribe-audio.py` for offline unit tests without downloading a model.
+
+## Phase 9.3 — Optional AI scene illustrations
+
+This phase adds a **separate** script to create PNG illustrations from the Phase 9.1 scene plan. It does not yet animate the illustrations or integrate them with the final MP4 renderer. The script previews five scenes by default, performs **no paid requests unless `--execute` is supplied**, and refuses to overwrite existing scene image files. Each generation request is billed by the API provider; generating 100+ scenes can be expensive. Review visual prompts before executing.
+
+```bash
+python3 scripts/generate-scene-images.py --plan scene-plan.json --output-dir output/scene-images --limit 5
+export OPENAI_API_KEY='YOUR_KEY' # use a secure environment injection, never commit credentials
+python3 scripts/generate-scene-images.py --plan scene-plan.json --output-dir output/scene-images --limit 5 --execute
+```
+
+The `--execute` mode requires network access to OpenAI's Images API, an authorized API key, and appropriate billing. It requests one 1024x1024 PNG per scene with the `gpt-image-1` model. Images may not maintain character identity across independent calls; character consistency and real image-to-video animation are future phases. Run `python3 scripts/test-generate-scene-images.py` to test locally without network access or API charges.
