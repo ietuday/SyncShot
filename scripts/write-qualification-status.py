@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import tempfile
 
-STAGES = {"benchmark", "benchmark_summary", "video_quality", "audio_integrity", "complete"}
+STAGES = {"media_audit", "media_decode", "input_fingerprint", "config_dry_run", "preflight_summary", "benchmark", "benchmark_summary", "video_quality", "audio_integrity", "complete"}
 
 def write_status(path: Path, stage: str, code: int):
     if stage not in STAGES:
