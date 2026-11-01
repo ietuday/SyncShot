@@ -59,3 +59,9 @@ This check compares recorded identities, not measured hardware isolation or work
 Use `--require-matching-inputs` (or enable the equivalent checkbox on manual history aggregation) to verify each referenced qualification report's SHA-256 input fingerprint and labeled workload ID. The gate checks every baseline and candidate report in each selected evidence artifact, then rejects mismatched fingerprints or workloads across artifacts *before* generating performance-regression alerts. Missing or malformed SHA-256 fingerprints, report references, and workload IDs fail validation. This option intentionally remains opt-in to allow historical datasets without complete report artifacts to be summarized in compatibility mode.
 
 Fingerprints protect against comparing different benchmark inputs, but do not guarantee that files were collected from trusted machines or that all non-input environment factors are identical. Combine this check with `--require-matching-environment` and workload/repetition constraints for stronger evidence hygiene.
+
+## Phase 7.39 — Archived report checksum verification
+
+New paired qualification artifacts include `evidence-sha256.json` mapping each archived baseline/candidate qualification report filename to its SHA-256 checksum. The historical aggregator supports `--verify-evidence-sha256` (manual workflow checkbox). Strict verification rejects missing checksum manifests, missing or extra report references, and modified report bytes before producing history or alerts. Older artifacts without checksums can still be aggregated with strict verification disabled.
+
+These hashes detect accidental corruption after the checksums were created. They are not cryptographic attestations of provenance: an attacker able to replace both reports and checksums can forge matching values.
