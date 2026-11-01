@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run paired complete qualification on the same synthetic inputs and compare evidence."""
 import json
+from datetime import datetime, timezone
 import hashlib
 import platform
 import re
@@ -223,6 +224,12 @@ def main():
             (dest / "paired-performance-comparison.json").write_text(
                 json.dumps(rows, indent=2) + "\n", encoding="utf-8")
             (dest / "run-manifest.json").write_text(json.dumps({
+                "schema_version": 2,
+                "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "github_run_id": os.environ.get("GITHUB_RUN_ID"),
+                "github_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
+                "github_repository": os.environ.get("GITHUB_REPOSITORY"),
+                "github_workflow": os.environ.get("GITHUB_WORKFLOW"),
                 "environment": {
                     "system": platform.system(),
                     "machine": platform.machine(),

@@ -4,6 +4,7 @@ import argparse
 import json
 import hashlib
 import math
+from datetime import datetime
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -37,6 +38,8 @@ def collect(directory):
         "workload_id": manifest["workload_id"],
         "mode": manifest.get("mode", "unknown"),
         "environment": manifest.get("environment"),
+        "audit": {key: manifest.get(key) for key in ("schema_version", "generated_at_utc",
+                  "github_run_id", "github_run_attempt", "github_repository", "github_workflow")},
         "repetitions_per_side": manifest.get("repetitions_per_side"),
         "metrics": {key: by_metric[key] for key in METRICS},
     }
@@ -165,6 +168,8 @@ def main():
                         help="Reject evidence with other workload IDs")
     parser.add_argument("--min-repetitions", type=int, default=1,
                         help="Minimum qualification runs per side")
+    parser.add_argument("--require-audit-metadata", action="store_true",
+                        help="Require schema v2, UTC timestamp and GitHub run audit identifiers")
     parser.add_argument("--verify-evidence-sha256", action="store_true",
                         help="Verify every referenced qualification file against archived SHA-256 hashes")
     parser.add_argument("--require-matching-inputs", action="store_true",
@@ -194,6 +199,24 @@ def main():
             env = record["environment"]
             if not isinstance(env, dict) or any(env.get(key) != first[key] for key in required):
                 parser.error("benchmark environment mismatch")
+    if args.require_audit_metadata:
+        for record in records:
+            audit = record["audit"]
+            if audit["schema_version"] != 2:
+                parser.error("missing or unsupported audit schema")
+            try:
+                stamp = datetime.fromisoformat(audit["generated_at_utc"])
+                if stamp.tzinfo is None or stamp.utcoffset().total_seconds() != 0:
+                    raise ValueError("timestamp not UTC")
+            except (TypeError, ValueError, AttributeError):
+                parser.error("invalid audit UTC timestamp")
+            for key in ("github_run_id", "github_run_attempt"):
+                val = audit[key]
+                if not isinstance(val, str) or not val.isdecimal() or int(val) < 1:
+                    parser.error("invalid audit " + key)
+            for key in ("github_repository", "github_workflow"):
+                if not isinstance(audit[key], str) or not audit[key].strip():
+                    parser.error("missing audit " + key)
     if args.verify_evidence_sha256:
         for directory in args.evidence:
             manifest = json.loads((directory / "run-manifest.json").read_text(encoding="utf-8"))
