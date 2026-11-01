@@ -40,4 +40,20 @@ class Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"not succeeded"):
                 m.finish(TASKS,PLAN,None,clips,root/"demo.mp4",root/"report.json",
                          collector=lambda *a:{"clips":[{"status":"FAILED"}]})
+
+    def test_retry_reuses_existing_download(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);clips=root/"clips";clips.mkdir()
+            (clips/"scene-0001.mp4").write_bytes(b"previous download")
+            flags=[]
+            def collect(*args):
+                flags.append(args[3])
+                return {"clips":[{"scene":1,"status":"SUCCEEDED"}]}
+            result=m.finish(TASKS,PLAN,None,clips,root/"demo.mp4",root/"report.json",
+                            download=True,collector=collect,
+                            builder=lambda *args:{"video_output":str(root/"demo.mp4")})
+            self.assertEqual(flags,[False])
+            self.assertEqual(result["video_output"],str(root/"demo.mp4"))
+            self.assertEqual((clips/"scene-0001.mp4").read_bytes(),b"previous download")
+
 if __name__=="__main__":unittest.main()
