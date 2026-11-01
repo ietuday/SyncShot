@@ -11,6 +11,7 @@ import (
  "os/exec"
  "os/signal"
  "strings"
+ "strconv"
  "syscall"
 
  "syncshotgo/internal/pipeline"
@@ -59,9 +60,24 @@ func clarifyRenderFailure(err error) error {
  return err
 }
 
+// lowMemoryHost uses physical RAM, not free memory, to avoid changing modes mid-run.
+func lowMemoryHost() bool {
+ data,err:=os.ReadFile("/proc/meminfo")
+ if err!=nil{return false}
+ for _,line:=range strings.Split(string(data),"\n") {
+  fields:=strings.Fields(line)
+  if len(fields)==3 && fields[0]=="MemTotal:" && fields[2]=="kB" {
+   kb,parseErr:=strconv.ParseUint(fields[1],10,64)
+   return parseErr==nil && kb>0 && kb<=16*1024*1024
+  }
+ }
+ return false
+}
+
 func run(args []string)error{
  flags:=flag.NewFlagSet("syncshot",flag.ContinueOnError)
  configPath:=flags.String("config","","JSON configuration file")
+ memoryMode:=flags.String("memory-mode","auto","render memory mode: auto, low or normal")
  dryRun:=flags.Bool("dry-run",false,"validate configuration and media dependencies without rendering")
  audioDir:=flags.String("audio-dir","","override narration directory")
  imagesDir:=flags.String("images-dir","","override images directory")
@@ -72,6 +88,13 @@ func run(args []string)error{
  if err:=flags.Parse(args);err!=nil{return err}
  if flags.NArg()!=0{return fmt.Errorf("unexpected positional arguments: %v",flags.Args())}
  cfg,err:=loadConfig(*configPath);if err!=nil{return err}
+ if *memoryMode!="auto" && *memoryMode!="low" && *memoryMode!="normal" {return fmt.Errorf("invalid memory mode %q (want auto, low or normal)",*memoryMode)}
+ lowMemory:=*memoryMode=="low" || (*memoryMode=="auto" && lowMemoryHost())
+ if lowMemory && cfg.CinematicEnabled && cfg.CinematicTimelinePath=="" {
+  if cfg.RenderProfile=="" {cfg.RenderProfile="720p"}
+  if cfg.CinematicChunkScenes==2 {cfg.CinematicChunkScenes=1}
+  if cfg.MaxWorkers==2 {cfg.MaxWorkers=1}
+ }
  if *audioDir!=""{cfg.AudioDir=*audioDir}
  if *imagesDir!=""{cfg.ImagesDir=*imagesDir}
  if *output!=""{cfg.OutVideoPath=*output}
@@ -90,6 +113,7 @@ func run(args []string)error{
  if *timeout>0 {var cancel context.CancelFunc;ctx,cancel=context.WithTimeout(ctx,*timeout);defer cancel()}
  log:=utils.NewLogger()
  log.Info("Starting SyncShot-Go")
+ if lowMemory {log.Info("Low-memory rendering profile selected (override with --memory-mode normal)")}
  if cfg.CinematicEnabled && cfg.CinematicTimelinePath=="" && cfg.CinematicChunkScenes>0 {
   log.Info(fmt.Sprintf("Memory-conscious cinematic rendering enabled: %d scenes per chunk, %d image workers",cfg.CinematicChunkScenes,cfg.MaxWorkers))
  }

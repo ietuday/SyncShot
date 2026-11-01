@@ -14,7 +14,7 @@ ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'sine=frequency=440:duration=
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=blue:s=320x180' -frames:v 1 inputs/images/001.png
 ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=red:s=320x180' -frames:v 1 inputs/images/002.png
 
-"$TMP/syncshot"
+"$TMP/syncshot" --memory-mode normal
 
 test -s output/video/final.mp4
 test -s output/shorts/short_000.mp4
@@ -38,7 +38,7 @@ echo "Smoke test passed: final video and Shorts have correct dimensions, duratio
 video_before="$(sha256sum output/video/final.mp4 | cut -d' ' -f1)"
 short_before="$(sha256sum output/shorts/short_000.mp4 | cut -d' ' -f1)"
 printf 'not a valid PNG' > inputs/images/003.png
-if "$TMP/syncshot"; then
+if "$TMP/syncshot" --memory-mode normal; then
   echo "ERROR: SyncShot succeeded with an invalid image" >&2
   exit 1
 fi
@@ -49,7 +49,7 @@ test "$short_before" = "$short_after" || { echo "Previous Shorts changed after f
 
 # Failed jobs must release the run lock and allow a clean subsequent run.
 rm inputs/images/003.png
-"$TMP/syncshot"
+"$TMP/syncshot" --memory-mode normal
 test -s output/video/final.mp4
 test -s output/shorts/short_000.mp4
 echo "Failure recovery smoke test passed."
