@@ -223,3 +223,15 @@ python3 scripts/retrieve-animation-clips.py --tasks submitted-animation.json --o
 ```
 
 Downloads refuse to replace existing files and use temporary files before publication. The adapter checks that URLs use HTTPS/public addresses, rejects redirects, limits each clip to 256 MiB and performs a basic MP4 signature check. For stronger security, run against trusted task outputs only; task URLs are obtained from the Runway SDK. **This is not yet a synchronized final video.** Generated 5-second animations may require further timing adaptation for narration scenes. Test without API access using `python3 scripts/test-retrieve-animation-clips.py`.
+
+## Phase 9.6 — Assemble animated clips with narration
+
+After downloading completed clips from Phase 9.5, use the existing Phase 9 scene plan to create a single 720p MP4. Each scene clip is looped or trimmed to its narration-aligned duration. FFmpeg renders scenes **sequentially**, to limit peak memory usage, then concatenates video and combines it with the original narration. The final output refuses overwrites and is staged until successful completion.
+
+```bash
+mkdir -p output/video
+python3 scripts/assemble-animated-video.py --plan scene-plan.json --clips-dir output/animated-scenes --output output/video/animated-story.mp4
+python3 scripts/test-assemble-animated-video.py
+```
+
+This requires FFmpeg, available disk space, a valid source audio file and one `scene-0001.mp4` etc. per planned scene. The plan must start at zero, have no gaps/overlaps and cover the narration duration. Generated clips are not lip-synced; looping short clips may look repetitive. FFmpeg stream timing may differ slightly from nominal scene boundaries due to frame quantization; inspect the output with ffprobe and listen before publishing. This standalone assembly utility is not yet an automatic end-to-end single-command workflow.
