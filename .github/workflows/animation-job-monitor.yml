@@ -1,0 +1,14 @@
+name: Animation job monitor checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/monitor-animation-jobs.py'
+      - 'scripts/test-monitor-animation-jobs.py'
+      - '.github/workflows/animation-job-monitor.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-monitor-animation-jobs.py
