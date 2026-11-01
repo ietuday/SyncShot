@@ -7,6 +7,11 @@ on:
       - 'scripts/compare-benchmarks.py'
   workflow_dispatch:
     inputs:
+      baseline_sha:
+        description: 'Optional full 40-character baseline commit SHA (manual runs only)'
+        required: false
+        type: string
+        default: ''
       repetitions:
         description: 'Runs per side (1-3; default keeps CI fast)'
         required: false
@@ -21,6 +26,13 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout pinned baseline revision
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.baseline_sha != '' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.baseline_sha }}
+          path: baseline-source
+          persist-credentials: false
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -33,6 +45,8 @@ jobs:
         env:
           SYNC_SHOT_BENCHMARK_EVIDENCE_DIR: paired-qualification-evidence
           SYNC_SHOT_QUALIFICATION_REPETITIONS: ${{ inputs.repetitions || '1' }}
+          SYNC_SHOT_BASELINE_SHA: ${{ inputs.baseline_sha || '' }}
+          SYNC_SHOT_BASELINE_CHECKOUT: ${{ inputs.baseline_sha && 'baseline-source' || '' }}
         run: python3 scripts/test-paired-qualification-e2e.py
       - name: Upload comparison evidence
         if: always()
