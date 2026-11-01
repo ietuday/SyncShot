@@ -2,6 +2,7 @@
 """Validate all produced Shorts using encoded stream metadata and audio decoding."""
 import argparse
 import json
+import math
 from pathlib import Path
 import subprocess
 
@@ -26,12 +27,30 @@ def inspect(folder, maximum):
             raise ValueError(f"{clip.name}: expected H.264/AAC")
         if not 0 < duration <= maximum + 0.5:
             raise ValueError(f"{clip.name}: invalid duration {duration}")
+        # Container duration alone can hide gaps or delayed audio streams.
+        timings = []
+        for kind, stream in (("video", videos[0]), ("audio", audios[0])):
+            try:
+                start = float(stream.get("start_time", "0"))
+                length = float(stream["duration"])
+            except (TypeError, ValueError, KeyError) as exc:
+                raise ValueError(f"{clip.name}: missing {kind} timing") from exc
+            if not all(map(math.isfinite, (start, length))) or length <= 0:
+                raise ValueError(f"{clip.name}: invalid {kind} timing")
+            timings.append((start, start + length))
+        start_delta = abs(timings[0][0] - timings[1][0])
+        end_delta = abs(timings[0][1] - timings[1][1])
+        if start_delta > 0.25 or end_delta > 0.5:
+            raise ValueError(f"{clip.name}: audio/video stream boundaries misaligned: "
+                             f"start {start_delta:.3f}s, end {end_delta:.3f}s")
         # A complete audio decode detects truncation and corrupted packets.
         subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin",
                         "-i", str(clip), "-map", "0:a:0", "-vn", "-f", "null", "-"],
                        capture_output=True, check=True)
         results.append({"name": clip.name, "duration_seconds": duration,
-                        "width": 1080, "height": 1920, "audio_decodable": True})
+                        "width": 1080, "height": 1920, "audio_decodable": True,
+                        "av_start_delta_seconds": round(start_delta, 3),
+                        "av_end_delta_seconds": round(end_delta, 3)})
     return {"clip_count": len(results), "clips": results}
 
 def main():
