@@ -15,6 +15,10 @@ go version >> "$RUN_DIR/environment.txt"
 ffprobe -version | head -n 1 >> "$RUN_DIR/environment.txt"
 printf "%s\n" "$(git rev-parse HEAD 2>/dev/null || echo unknown)" > "$RUN_DIR/source-commit.txt"
 { uname -srm; nproc 2>/dev/null || true; } > "$RUN_DIR/machine.txt"
+# Capture host memory context to interpret process RSS and potential OOM.
+if [[ -r /proc/meminfo ]]; then
+  grep -E "^(MemTotal|MemAvailable|SwapTotal|SwapFree):" /proc/meminfo > "$RUN_DIR/host-memory-before.txt" || true
+fi
 # Explicit workload ID must encode media, render settings and hardware for comparisons.
 printf "%s\n" "${SYNC_SHOT_BENCHMARK_WORKLOAD_ID:-unlabeled}" > "$RUN_DIR/workload-id.txt"
 if [[ -n "${SYNC_SHOT_BENCHMARK_INPUTS:-}" ]]; then
@@ -81,6 +85,9 @@ wait "$root_pid"
 status=$?
 set -e
 elapsed="$(($(date +%s)-started))"
+if [[ -r /proc/meminfo ]]; then
+  grep -E "^(MemTotal|MemAvailable|SwapTotal|SwapFree):" /proc/meminfo > "$RUN_DIR/host-memory-after.txt" || true
+fi
 size=0
 if [[ "$status" -eq 0 ]]; then
   if size="$(bash "$ROOT/scripts/verify-benchmark-output.sh" "$OUTPUT_VIDEO" "$original_signature" "$RUN_DIR/output-duration.txt")"; then
