@@ -265,3 +265,14 @@ python3 scripts/test-monitor-animation-jobs.py
 ```
 
 Requires `runwayml`, `RUNWAYML_API_SECRET` and network access. Polling may have API rate limits. To check again, supply a **new** report name. It does not cancel or retry generation, download clips, or recover failed tasks automatically. Scene-to-video assembly remains a separate stage.
+
+## Phase 9.9 — Animation clip readiness before final assembly
+
+After downloading Runway clips, validate the entire scene collection before starting an expensive final FFmpeg render. The checker requires `ffprobe`, a Phase 9 scene plan, and clips named `scene-0001.mp4`, `scene-0002.mp4` etc. It reports missing, empty, unprobeable, and valid MP4s. An exit code of **0** means all clips are available and contain a video stream; **2** means some scenes need recovery; **1** indicates invalid input or a tool error.
+
+```bash
+python3 scripts/check-animation-clips.py --plan output/animation-workflow/scene-plan.json --clips-dir output/animated-scenes --report output/animation-workflow/clip-readiness-01.json
+python3 scripts/test-check-animation-clips.py
+```
+
+The checker does not delete or redownload files, regenerate paid tasks, or modify final videos. Supply a new report filename for another pass. Video stream presence and a positive reported duration do not guarantee visual quality or perfect narration synchronization.

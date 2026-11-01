@@ -1,0 +1,14 @@
+name: Animation clip readiness checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-animation-clips.py'
+      - 'scripts/test-check-animation-clips.py'
+      - '.github/workflows/animation-clip-readiness.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-check-animation-clips.py
