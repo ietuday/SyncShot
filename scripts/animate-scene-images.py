@@ -52,6 +52,8 @@ def main(argv=None):
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--limit", type=int, default=1)
     p.add_argument("--execute", action="store_true", help="submit paid Runway tasks")
+    p.add_argument("--confirm-paid-pilot", action="store_true",
+                   help="explicitly approve a single billable generation request")
     args = p.parse_args(argv)
     try:
         if args.output.exists() or args.output.is_symlink():
@@ -60,6 +62,10 @@ def main(argv=None):
             raise ValueError("input JSON too large")
         jobs = build_jobs(json.loads(args.plan.read_text()), json.loads(args.image_urls.read_text()), args.limit)
         if args.execute:
+            if args.limit != 1 or len(jobs) != 1:
+                raise ValueError("paid pilot execution limited to one scene per invocation")
+            if not args.confirm_paid_pilot:
+                raise ValueError("--confirm-paid-pilot required for paid generation")
             if not os.environ.get("RUNWAYML_API_SECRET"):
                 raise ValueError("RUNWAYML_API_SECRET required for --execute")
             try:
