@@ -20,6 +20,8 @@ class FailureRecovery(unittest.TestCase):
             config.write_text("{}", encoding="utf-8")
             media = base / "input.mp3"
             media.write_bytes(b"dummy")
+            image = base / "input.png"
+            image.write_bytes(b"dummy image")
             output = base / "video.mp4"
             reports = base / "reports"
             # Executable shims replace costly Go and benchmark rendering.
@@ -28,7 +30,7 @@ class FailureRecovery(unittest.TestCase):
             go.chmod(0o755)
             env = os.environ.copy()
             env.update({"PATH": f"{bindir}:{env['PATH']}",
-                        "SYNC_SHOT_BENCHMARK_INPUTS": str(media),
+                        "SYNC_SHOT_BENCHMARK_INPUTS": f"{media}:{image}",
                         "SYNC_SHOT_BENCHMARK_WORKLOAD_ID": "recovery-fixture"})
             # This test uses a shell-local function to intercept just the benchmark call.
             command = 'function bash() { if [[ "$1" == "scripts/benchmark-long-video.sh" ]]; then return 23; else command bash "$@"; fi; }; export -f bash; command bash "$1" "$2" "$3" "$4"'
