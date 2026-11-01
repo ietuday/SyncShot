@@ -75,11 +75,11 @@ def package(report: Path, destination: Path) -> int:
             for name in FILES:
                 added = _add_regular_file(archive, report / name, name, MAX_TOTAL_BYTES - total_bytes)
                 count += added is not None
-                total_bytes += added or 0
+                total_bytes += added or 0 or 0
             for name in RUN_FILES:
                 added = _add_regular_file(archive, runs[0] / name, "benchmark/" + name, MAX_TOTAL_BYTES - total_bytes)
                 count += added is not None
-                total_bytes += added
+                total_bytes += added or 0
         if not count:
             raise ValueError("no diagnostic files available")
         os.link(staging, dest, follow_symlinks=False)
