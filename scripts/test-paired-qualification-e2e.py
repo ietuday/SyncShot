@@ -12,7 +12,53 @@ ROOT = Path(__file__).resolve().parent.parent
 def run(*args, env=None):
     subprocess.run(args, cwd=ROOT, env=env, check=True)
 
+
+def check_comparator_contract():
+    """Exercise expected comparator failures without running an expensive render."""
+    import runpy
+    comparator = runpy.run_path(str(ROOT / "scripts/compare-benchmarks.py"))
+    compare = comparator["compare"]
+    read_run = comparator["read_run"]
+    baseline = {
+        "workload_id": "synthetic-test",
+        "input_fingerprint": "a" * 64,
+        "realtime_factor": 1.0,
+        "peak_process_tree_rss_kb": 100.0,
+        "peak_ffmpeg_rss_kb": 50.0,
+    }
+    rows, failed = compare(baseline, dict(baseline), 15)
+    assert len(rows) == 3 and not failed
+    changed = dict(baseline, realtime_factor=1.16)
+    rows, failed = compare(baseline, changed, 15)
+    assert failed and rows[0]["regression"] and not rows[1]["regression"]
+    rows, failed = compare(baseline, dict(baseline, peak_ffmpeg_rss_kb=57.5), 15)
+    assert not failed, "exactly 15 percent must pass"
+    for changed in (
+        dict(baseline, workload_id="different"),
+        dict(baseline, input_fingerprint="b" * 64),
+        dict(baseline, input_fingerprint="invalid"),
+    ):
+        try:
+            compare(baseline, changed, 200)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("comparator accepted incompatible benchmark")
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "invalid.json"
+        for invalid in (0, -1, "nan", "inf"):
+            path.write_text(json.dumps([dict(baseline, realtime_factor=invalid)]),
+                            encoding="utf-8")
+            try:
+                read_run(path)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError(f"comparator accepted invalid metric: {invalid}")
+    print("Benchmark comparator contract checks passed")
+
 def main():
+    check_comparator_contract()
     with tempfile.TemporaryDirectory() as directory:
         work = Path(directory)
         (work / "images").mkdir()
