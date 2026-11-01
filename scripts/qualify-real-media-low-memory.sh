@@ -52,6 +52,7 @@ on_qualification_exit() {
       echo "Qualification failed (exit $status). Reports and logs: $RUN_REPORT" >&2
     fi
   fi
+  rm -rf -- "$WORK"
 }
 trap 'on_qualification_exit "$?"' EXIT
 bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
