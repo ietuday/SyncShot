@@ -159,10 +159,22 @@ def main():
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--alert-threshold-percent", type=float, default=200,
                         help="Positive regression percent triggering nonzero exit")
+    parser.add_argument("--require-workload-id", default=None,
+                        help="Reject evidence with other workload IDs")
+    parser.add_argument("--min-repetitions", type=int, default=1,
+                        help="Minimum qualification runs per side")
     args = parser.parse_args()
+    if args.min_repetitions < 1:
+        parser.error("min-repetitions must be positive")
     if not math.isfinite(args.alert_threshold_percent) or args.alert_threshold_percent < 0:
         parser.error("alert threshold must be finite and nonnegative")
     records = [collect(path) for path in args.evidence]
+    for record in records:
+        if args.require_workload_id and record["workload_id"] != args.require_workload_id:
+            parser.error("workload mismatch in " + record["evidence_directory"])
+        runs = record["repetitions_per_side"]
+        if not isinstance(runs, int) or isinstance(runs, bool) or runs < args.min_repetitions:
+            parser.error("insufficient repetitions in " + record["evidence_directory"])
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "history.json").write_text(
         json.dumps({"schema_version": 1, "records": records}, indent=2) + "\n",

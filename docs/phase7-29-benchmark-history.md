@@ -37,3 +37,7 @@ This is an **in-workflow alert**, not email, messaging, or issue creation. Diffe
 ## Phase 7.34 — Actionable CI regression summary
 
 The history collector now also writes `regression-alerts.md` alongside structured `regression-alerts.json`. The Markdown lists the affected evidence directory, workload, metric, percentage change and abbreviated baseline/candidate commits. Manual collection displays this summary in the GitHub Actions job summary, including when threshold violations fail the job. No email, issue, or external notification is sent. Results remain subject to the comparability limitations described above.
+
+## Phase 7.35 — Baseline workload compatibility gates
+
+The history summarizer supports `--require-workload-id ID` and `--min-repetitions N` to reject evidence that lacks the desired workload or enough repeated qualifications. Both checks happen before writing reports or issuing regression alerts. The manual aggregation workflow exposes matching inputs. Use these gates to avoid mixing unrelated workloads or treating one-off results as robust measurements. Defaults preserve existing compatibility (no required workload ID and minimum of one run per side). These gates do not verify hardware, environment, media provenance, or statistical significance; they are only preliminary safeguards.
