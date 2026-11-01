@@ -172,3 +172,19 @@ go test ./internal/storyplan ./cmd/storyplan
 ```
 
 The output contains time-aligned scene boundaries and draft visual prompts for manual review or future animation providers. Longer transcript segments are split into equal-duration scenes, repeating their narration text rather than inventing word-level timing. No transcription service is configured. Use an external transcription tool to supply timestamped transcript JSON, and review all generated prompts for story accuracy before using them in an animation pipeline.
+
+## Phase 9.2 — Optional local Hindi/English audio transcription
+
+To generate the timestamped JSON required by Phase 9.1, install `faster-whisper` in a Python virtual environment (optional dependency):
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install faster-whisper
+python3 scripts/transcribe-audio.py --audio inputs/audio/narration.m4a --output transcript.json --language hi --model tiny
+go run ./cmd/storyplan --transcript transcript.json --output scene-plan.json --style mythological_3d --scene-seconds 8
+```
+
+The transcription script runs on **CPU using int8 inference**, two threads and one worker by default, with the lightweight `tiny` model (optional `base` and `small`). This is intended to make transcription approachable on a 12 GiB laptop but is **not a measured RAM guarantee**. The initial model download requires internet access and may be blocked by corporate proxies; use an appropriately cached model where available. Hindi speech can need a larger model and manual proofreading for accuracy. No user audio is uploaded by this script's inference pipeline, although model installation/download involves external repositories.
+
+Output is a JSON transcript with `audio`, `duration_seconds`, and timestamped `segments`, compatible with Phase 9.1. The script refuses to overwrite an existing output file. The timestamped transcript is not yet hooked automatically into the primary `syncshot` renderer; it produces **scene prompts, not animated video**. Run `python3 scripts/test-transcribe-audio.py` for offline unit tests without downloading a model.
