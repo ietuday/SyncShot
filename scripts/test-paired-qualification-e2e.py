@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Run paired complete qualification on the same synthetic inputs and compare evidence."""
 import json
+import hashlib
+import platform
 import re
 import os
 import shutil
@@ -221,6 +223,14 @@ def main():
             (dest / "paired-performance-comparison.json").write_text(
                 json.dumps(rows, indent=2) + "\n", encoding="utf-8")
             (dest / "run-manifest.json").write_text(json.dumps({
+                "environment": {
+                    "system": platform.system(),
+                    "machine": platform.machine(),
+                    "python": platform.python_version(),
+                    "runner_image": os.environ.get("ImageOS", "unknown"),
+                    "runner_arch": os.environ.get("RUNNER_ARCH", "unknown"),
+                    "config_sha256": hashlib.sha256(config.read_bytes()).hexdigest(),
+                },
                 "repetitions_per_side": repetitions,
                 "baseline_commit": baseline_sha or candidate_sha,
                 "candidate_commit": candidate_sha,
