@@ -105,6 +105,12 @@ func pruneChunkCache(directory string, keep map[string]bool, now time.Time) (int
  return removed,nil
 }
 
+// stitchFFmpegArgs caps filter graph parallelism to reduce peak memory during
+// the final multi-chunk crossfade/mux pass on low-RAM machines.
+func stitchFFmpegArgs() []string {
+ return []string{"-hide_banner","-y","-filter_complex_threads","1","-filter_threads","1"}
+}
+
 // RenderChunkedEffects processes bounded scene groups and adds narration, music,
 // ducking, subtitles and graphics in a single final, full-duration mux pass.
 func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio,output string,maxScenes int,overlays Overlays,publish func(string,string)error) error{
@@ -115,7 +121,7 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  defer os.RemoveAll(dir)
  cacheDir:=filepath.Join(filepath.Dir(output),".syncshot-chunk-cache")
  keep:=make(map[string]bool,len(chunks))
- args:=[]string{"-hide_banner","-y"}
+ args:=stitchFFmpegArgs()
  for i,chunk:=range chunks{
   if err:=ctx.Err();err!=nil{return err}
   key,err:=chunkCacheKey(chunk)
