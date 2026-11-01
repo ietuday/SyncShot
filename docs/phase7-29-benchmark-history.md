@@ -47,3 +47,9 @@ The history summarizer supports `--require-workload-id ID` and `--min-repetition
 Paired qualification evidence now records OS, CPU architecture, Python version, GitHub runner image and architecture, and the SHA-256 of the benchmark configuration. The history utility accepts `--require-matching-environment` (also available as a manual workflow toggle). When enabled, it rejects missing metadata and requires the recorded values to match across all selected artifacts before producing regression alerts. Previous artifacts lacking provenance are deliberately excluded in strict mode.
 
 This is **metadata equality**, not proof of identical hardware performance: CPU model, load, kernel patch level, FFmpeg version, and media provenance remain uncontrolled. The config hash is sensitive to path changes as well as actual rendering settings. Keep default mode backward compatible with older artifacts, and use strict mode only for evidence collected under the new schema.
+
+## Phase 7.37 — Toolchain and CPU provenance
+
+Qualification evidence now records the first line of `ffmpeg -version`, the output of `go version`, and the CPU model string when available. Strict environment comparison requires these fields in addition to Phase 7.36's OS, architecture, Python, runner image, and config hash. Older artifacts without these fields are rejected in strict mode, while non-strict aggregation remains backwards compatible.
+
+This check compares recorded identities, not measured hardware isolation or workload equivalence. The FFmpeg banner does not describe every linked codec library; CPU model equality does not capture load, frequency scaling, virtualization, or competing jobs.
