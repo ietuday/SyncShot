@@ -132,6 +132,27 @@ def regressions(records, threshold):
     return alerts
 
 
+def alert_markdown(alerts, threshold):
+    """Render actionable warnings without assuming cross-run comparability."""
+    lines = ["# SyncShot benchmark regression alerts", "",
+             f"Configured threshold: {threshold:g}%", ""]
+    if not alerts:
+        lines.extend(["No metric exceeded the configured threshold.", ""])
+    else:
+        lines.extend(["| Evidence | Workload | Metric | Change | Baseline | Candidate |",
+                      "| --- | --- | --- | ---: | --- | --- |"])
+        for item in alerts:
+            def escape_cell(value):
+                return str(value).replace("|", "\\|").replace("\\n", " ")
+            cells = (item["evidence_directory"], item["workload_id"],
+                     item["metric"], f'{item["change_pct"]:+.2f}%',
+                     item["baseline_commit"][:12], item["candidate_commit"][:12])
+            lines.append("| " + " | ".join(escape_cell(v) for v in cells) + " |")
+        lines.append("")
+    lines.extend(["This flags CI evidence only; validate workload, media and runner equivalence.", ""])
+    return "\n".join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("evidence", type=Path, nargs="+", help="Unpacked evidence folders")
@@ -153,6 +174,8 @@ def main():
     (args.output_dir / "regression-alerts.json").write_text(
         json.dumps({"threshold_percent": args.alert_threshold_percent,
                     "alerts": alerts}, indent=2) + "\n", encoding="utf-8")
+    (args.output_dir / "regression-alerts.md").write_text(
+        alert_markdown(alerts, args.alert_threshold_percent), encoding="utf-8")
     if alerts:
         print(f"Found {len(alerts)} benchmark regressions", file=__import__("sys").stderr)
         raise SystemExit(1)

@@ -50,6 +50,9 @@ class HistoryTests(unittest.TestCase):
             alerts = json.loads((output / "regression-alerts.json").read_text(encoding="utf-8"))
             self.assertEqual(len(alerts["alerts"]), 1)
             self.assertEqual(alerts["alerts"][0]["metric"], "realtime_factor")
+            alert_md = (output / "regression-alerts.md").read_text(encoding="utf-8")
+            self.assertIn("realtime_factor", alert_md)
+            self.assertIn("18.00%", alert_md)
             rows[0]["change_pct"] = "nan"
             compare.write_text(json.dumps(rows), encoding="utf-8")
             bad = subprocess.run(cmd, capture_output=True, text=True)
