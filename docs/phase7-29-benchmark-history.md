@@ -33,3 +33,7 @@ The history summarizer additionally emits `trend.csv` and a dependency-free `tre
 The historical summary CLI now accepts `--alert-threshold-percent` (default 200). It produces `regression-alerts.json`, listing any metric whose candidate-over-baseline percentage exceeds this limit, with workload and revision identifiers. A detected regression exits nonzero **after** saving evidence, so GitHub Actions fails visibly while retaining diagnostic artifacts. Manual aggregate workflow dispatch exposes `alert_threshold_percent`. For example, use 15 only with repeated, controlled and comparable benchmark runs.
 
 This is an **in-workflow alert**, not email, messaging, or issue creation. Different workloads or uncontrolled runners cannot be treated as reliable performance regressions; the default 200% CI allowance remains intentionally permissive.
+
+## Phase 7.34 — Actionable CI regression summary
+
+The history collector now also writes `regression-alerts.md` alongside structured `regression-alerts.json`. The Markdown lists the affected evidence directory, workload, metric, percentage change and abbreviated baseline/candidate commits. Manual collection displays this summary in the GitHub Actions job summary, including when threshold violations fail the job. No email, issue, or external notification is sent. Results remain subject to the comparability limitations described above.
