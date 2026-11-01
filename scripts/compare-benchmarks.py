@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+from statistics import median
 
 METRICS = ("realtime_factor", "peak_process_tree_rss_kb", "peak_ffmpeg_rss_kb")
 
@@ -42,16 +43,35 @@ def compare(base, current, limit):
                      "change_pct": round(percent, 2), "regression": is_regression})
     return rows, failed
 
+def aggregate_reports(paths):
+    """Use medians from independent reports with identical labeled workloads and inputs."""
+    runs = [read_run(path) for path in paths]
+    anchor = runs[0]
+    for run in runs[1:]:
+        # Reuse the existing identity and SHA-256 validation rules.
+        compare(anchor, run, float("inf"))
+    return {
+        "workload_id": anchor["workload_id"],
+        "input_fingerprint": anchor["input_fingerprint"],
+        **{metric: median(float(run[metric]) for run in runs) for metric in METRICS},
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
     parser.add_argument("candidate", type=Path)
     parser.add_argument("--max-regression-percent", type=float, default=15)
+    parser.add_argument("--baseline-extra", type=Path, action="append", default=[],
+                        help="Additional independent baseline report; repeat for median")
+    parser.add_argument("--candidate-extra", type=Path, action="append", default=[],
+                        help="Additional independent candidate report; repeat for median")
     args = parser.parse_args()
     if not 0 <= args.max_regression_percent < float("inf"):
         parser.error("regression threshold must be finite and nonnegative")
-    rows, failed = compare(read_run(args.baseline), read_run(args.candidate),
-                           args.max_regression_percent)
+    baseline = aggregate_reports([args.baseline, *args.baseline_extra])
+    candidate = aggregate_reports([args.candidate, *args.candidate_extra])
+    rows, failed = compare(baseline, candidate, args.max_regression_percent)
     print(json.dumps(rows, indent=2))
     if failed:
         parser.exit(1, "Benchmark performance regression detected\n")
