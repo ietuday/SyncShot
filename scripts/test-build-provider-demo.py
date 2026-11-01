@@ -37,4 +37,16 @@ class Tests(unittest.TestCase):
                 m.build_demo(plan,clips,root/"out.mp4",root/"report.json",verifier=lambda *a:{"ready":True},
                              probe=lambda _: {},assembler=lambda *a:self.fail("must not render"))
 
+    def test_assembly_failure_leaves_no_report(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);clips=root/"clips";clips.mkdir()
+            (root/"audio.m4a").write_bytes(b"fixture")
+            plan={"audio":str(root/"audio.m4a")}
+            def fail(*args):
+                raise RuntimeError("render failed")
+            with self.assertRaisesRegex(RuntimeError,"render failed"):
+                m.build_demo(plan,clips,root/"demo.mp4",root/"report.json",
+                             verifier=lambda *a:{"ready":True},probe=lambda *a:{},assembler=fail)
+            self.assertFalse((root/"report.json").exists())
+
 if __name__=="__main__": unittest.main()

@@ -404,3 +404,7 @@ This requires `RUNWAYML_API_SECRET` and the `runwayml` package to query an exist
 ## Phase 9.24 — Safely resume a partially completed provider pilot
 
 If `complete-provider-pilot.py --download` previously downloaded `scene-0001.mp4` but rendering failed, run the same completion command again with **new output/report paths**. The tool rechecks the previously submitted task status but reuses the existing local clip rather than downloading over it. Local clip verification and narration assembly still run, and an invalid recovered clip fails validation rather than being silently trusted. No paid generation tasks are submitted by this recovery path.
+
+## Phase 9.25 — Staged provider-demo verification reports
+
+The verified provider demo now stages and flushes the JSON report before beginning FFmpeg assembly. After successful video publication, the report is published with an exclusive hard-link operation so an existing report is never overwritten. If rendering fails, no final report is published. If report publication fails after video assembly, the finished video is preserved for manual recovery. No provider-generation requests are made by this stage.
