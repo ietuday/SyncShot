@@ -58,6 +58,60 @@ def markdown(records):
     return "\n".join(lines)
 
 
+
+def trend_csv(records):
+    """Long-form comparison data; input order is not a timestamp."""
+    import csv
+    import io
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(("sequence", "workload_id", "baseline_commit", "candidate_commit",
+                     "metric", "baseline", "candidate", "change_pct"))
+    for sequence, record in enumerate(records, 1):
+        for metric in METRICS:
+            row = record["metrics"][metric]
+            writer.writerow((sequence, record["workload_id"], record["baseline_commit"],
+                             record["candidate_commit"], metric,
+                             row["baseline"], row["candidate"], row["change_pct"]))
+    return buffer.getvalue()
+
+
+def trend_svg(records):
+    """Dependency-free SVG of percentage changes in the provided evidence order."""
+    from html import escape
+    width, height = 980, 440
+    left, right, top, bottom = 90, 30, 60, 75
+    values = [row["metrics"][m]["change_pct"] for row in records for m in METRICS]
+    low, high = min([0, *values]), max([0, *values])
+    margin = max(5.0, (high - low) * 0.1)
+    low, high = low - margin, high + margin
+    plot_w, plot_h = width - left - right, height - top - bottom
+    def x(index):
+        return left + plot_w * (index / max(1, len(records) - 1))
+    def y(value):
+        return top + plot_h * (high - value) / (high - low)
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+             '<rect width="100%" height="100%" fill="white"/>',
+             '<text x="90" y="28" font-size="20">Benchmark comparison changes by evidence order</text>',
+             f'<line x1="{left}" y1="{y(0):.1f}" x2="{width-right}" y2="{y(0):.1f}" stroke="#777" stroke-dasharray="5 5"/>']
+    palette = ("#1769aa", "#c35424", "#26845b")
+    for k, metric in enumerate(METRICS):
+        points = [(x(i), y(rec["metrics"][metric]["change_pct"]))
+                  for i, rec in enumerate(records)]
+        path = " ".join(f'{px:.1f},{py:.1f}' for px, py in points)
+        parts.append(f'<polyline points="{path}" fill="none" stroke="{palette[k]}" stroke-width="2.5"/>')
+        for px, py in points:
+            parts.append(f'<circle cx="{px:.1f}" cy="{py:.1f}" r="4" fill="{palette[k]}"/>')
+        parts.append(f'<text x="{left + k*290}" y="{height-12}" font-size="13" fill="{palette[k]}">{escape(metric)}</text>')
+    for i in range(len(records)):
+        parts.append(f'<text x="{x(i):.1f}" y="{height-bottom+23}" font-size="12" text-anchor="middle">{i+1}</text>')
+    parts.append(f'<text x="12" y="{top+12}" font-size="12">{high:+.1f}%</text>')
+    parts.append(f'<text x="12" y="{height-bottom}" font-size="12">{low:+.1f}%</text>')
+    parts.append(f'<text x="{left}" y="{height-45}" font-size="12">Sequence follows input order, not time. Compare only compatible workloads.</text>')
+    parts.append('</svg>')
+    return "\n".join(parts) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("evidence", type=Path, nargs="+", help="Unpacked evidence folders")
@@ -69,6 +123,8 @@ def main():
         json.dumps({"schema_version": 1, "records": records}, indent=2) + "\n",
         encoding="utf-8")
     (args.output_dir / "history.md").write_text(markdown(records), encoding="utf-8")
+    (args.output_dir / "trend.csv").write_text(trend_csv(records), encoding="utf-8")
+    (args.output_dir / "trend.svg").write_text(trend_svg(records), encoding="utf-8")
 
 
 if __name__ == "__main__":
