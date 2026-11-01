@@ -65,6 +65,8 @@ jobs:
         run: python3 scripts/test-fingerprint-inputs.py -v
       - name: Subtitle cue timing tests
         run: python3 scripts/test-subtitle-cue-timing.py -v
+      - name: Shorts visual regression tests
+        run: python3 scripts/test-shorts-visual-content.py -v
       - name: Race detector (without FFmpeg integration)
         run: go test -short -race ./...
 
