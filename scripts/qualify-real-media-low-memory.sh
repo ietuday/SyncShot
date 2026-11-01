@@ -27,6 +27,8 @@ done
 WORK="$(mktemp -d "$REPORT_DIR/work-XXXXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
 OUTPUT="$WORK/qualified.mp4"
+KEEP_VIDEO="${SYNC_SHOT_KEEP_QUALIFIED_VIDEO:-0}"
+case "$KEEP_VIDEO" in 0|1) ;; *) echo "SYNC_SHOT_KEEP_QUALIFIED_VIDEO must be 0 or 1" >&2; exit 2;; esac
 python3 - "$WORK/config.json" "$AUDIO_DIR" "$IMAGE_DIR" "$WORK" "$OUTPUT" <<'PY'
 import json,sys
 path,audio,images,work,output=sys.argv[1:]
@@ -54,7 +56,16 @@ on_qualification_exit() {
       echo "Qualification failed at $QUALIFICATION_STAGE (exit $status). Reports and logs: $RUN_REPORT" >&2
     fi
   fi
+  if [[ "$status" -eq 0 && "$KEEP_VIDEO" = 1 && -s "$OUTPUT" ]]; then
+    if cp -- "$OUTPUT" "$RUN_REPORT/qualified.mp4"; then
+      echo "Qualified video retained at: $RUN_REPORT/qualified.mp4"
+    else
+      echo "Could not retain qualified video" >&2
+      status=1
+    fi
+  fi
   rm -rf -- "$WORK"
+  return "$status"
 }
 trap 'on_qualification_exit "$?"' EXIT
 bash scripts/benchmark-long-video.sh "$RUN_REPORT" --config "$WORK/config.json" --memory-mode low --output "$OUTPUT"
