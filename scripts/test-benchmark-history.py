@@ -23,6 +23,9 @@ class HistoryTests(unittest.TestCase):
                 "workload_id": "synthetic",
                 "mode": "cross-revision",
                 "repetitions_per_side": 3,
+                "environment": {"system": "Linux", "machine": "x86_64",
+                                "python": "3.12", "runner_image": "ubuntu24",
+                                "runner_arch": "X64", "config_sha256": "a" * 64},
             }
             (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             metrics = ["realtime_factor", "peak_process_tree_rss_kb", "peak_ffmpeg_rss_kb"]
@@ -55,6 +58,19 @@ class HistoryTests(unittest.TestCase):
                 cmd + ["--require-workload-id", "synthetic", "--min-repetitions", "3"],
                 capture_output=True, text=True)
             self.assertEqual(compatible.returncode, 0)
+            matched = subprocess.run(
+                cmd + ["--require-matching-environment"],
+                capture_output=True, text=True)
+            self.assertEqual(matched.returncode, 0)
+            manifest["environment"]["config_sha256"] = ""
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            unmatched = subprocess.run(
+                cmd + ["--require-matching-environment"],
+                capture_output=True, text=True)
+            self.assertNotEqual(unmatched.returncode, 0)
+            self.assertIn("provenance", unmatched.stderr)
+            manifest["environment"]["config_sha256"] = "a" * 64
+            (data / "run-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             rows[0]["change_pct"] = 18
             compare.write_text(json.dumps(rows), encoding="utf-8")
             alert_cmd = cmd + ["--alert-threshold-percent", "15"]
