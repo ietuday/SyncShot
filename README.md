@@ -379,3 +379,7 @@ python3 scripts/build-provider-demo.py --plan output/animation-workflow/provider
 ```
 
 The required clip is `output/animated-scenes/scene-0001.mp4`. Both output paths must not exist, and all required directories must already exist. This tool validates the local clip and narration then renders the final 720p MP4. It **does not** generate AI animation, initiate provider charges, download a clip, or verify visual content or lip sync. The demo cannot be produced without a real or synthetic downloaded animation clip.
+
+## Phase 9.22 — Verified demo FFmpeg regression
+
+Run `python3 scripts/test-provider-demo-ffmpeg.py` to test the Phase 9.21 demo builder with actual local, synthetic audio/video. The test checks clip verification, looping a short input clip to fit three seconds of narration, the generated MP4's audio/video streams and duration, and protection from overwriting an existing output. No external API access, hosted imagery, Runway tasks, or paid generation is involved. This confirms local orchestration, **not** realistic animation quality.
