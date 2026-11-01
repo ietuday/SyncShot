@@ -93,7 +93,7 @@ jobs:
             IDS=()
             for id in "${ALL_IDS[@]}"; do
               if [ "$REQUIRE_ATTESTATION" = "true" ]; then artifact_name="attested-paired-qualification-evidence"; else artifact_name="paired-qualification-evidence"; fi
-              available="$(gh api "repos/$GH_REPO/actions/runs/$id/artifacts" --jq "[.artifacts[] | select(.name == \\"$artifact_name\\" and .expired == false)] | length")"
+              available="$(gh api "repos/$GH_REPO/actions/runs/$id/artifacts" --jq '.artifacts[] | select(.expired == false) | .name' | grep -Fxc "$artifact_name" || true)"
               if [[ "$available" -gt 0 ]]; then IDS+=("$id"); fi
               if (( ${#IDS[@]} >= LATEST_COUNT )); then break; fi
             done
