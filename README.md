@@ -82,3 +82,7 @@ The manual real-media qualification generates `summary.json` and `summary.md` in
 ## Phase 8.16 — Keep diagnostic reports for failed qualification
 
 The real-media qualification runner now attempts to write `summary.json` and `summary.md` when it exits unsuccessfully after the benchmark starts, without concealing the original exit status. It prints the specific qualification report directory to stderr on failure and still removes temporary rendered media. If the underlying benchmark did not produce `measurements.csv` (for example failure before recording began), its summary may not be available, but existing logs are preserved. The original 15-minute media still requires a manual Ubuntu qualification run.
+
+## Phase 8.17 — Qualification failure classification
+
+If the real-media qualification fails after the benchmark report directory is created, it now saves `failure-analysis.json` with the failing stage (`benchmark`, `memory`, `av_sync`, or `dimensions`), exit code, and troubleshooting advice. `ffmpeg_sigkill` is not treated as confirmed OOM; use the Linux kernel journal for confirmation. Run `python3 scripts/test-analyze-qualification-failure.py` for the classifier regression tests. Original 15-minute workload validation on the user's 12 GiB laptop is still pending.
