@@ -318,3 +318,18 @@ python3 scripts/animate-scene-images.py --plan output/animation-workflow/provide
 ```
 
 To **actually submit a paid generation** after independently reviewing pricing and authorizing the request, you must separately run `scripts/animate-scene-images.py` with `--execute` and a configured `RUNWAYML_API_SECRET`. The provider adapter currently requests a five-second clip. Preparing a one-scene plan does not trim the narration to that scene's endpoint; the existing full pilot audio is still referenced and **must be separately trimmed** before assembling this one-scene output. The URL should point to an image you are authorized to share with the animation provider. No real Runway job, downloaded video or final media quality has yet been tested.
+
+## Phase 9.16 — One-scene pilot audio alignment
+
+The one-scene provider pilot now creates a separate, scene-length AAC audio file alongside the provider-ready scene plan. It requires FFmpeg and ffprobe, validates the trimmed audio length (within 0.15 seconds), and keeps all outputs non-overwriting.
+
+```bash
+python3 scripts/prepare-provider-pilot.py \
+  --pilot output/animation-workflow/pilot-ready.json \
+  --image-url https://example.com/your-approved-scene.png \
+  --plan-output output/animation-workflow/provider-scene-plan.json \
+  --urls-output output/animation-workflow/provider-image-urls.json \
+  --audio-output output/animation-workflow/provider-scene-audio.m4a
+```
+
+The hosted image URL above is a placeholder. The command **does not** call a paid AI provider. Animated video generation remains a separate, explicitly authorized action. Run `python3 scripts/test-prepare-provider-pilot.py` to exercise the offline and FFmpeg integration tests.
