@@ -4,6 +4,7 @@ import { readJobs } from '../jobs.js';
 import '../studio.css';
 import { downloadScenePlan } from '../scene-export.js';
 import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.js';
+import { reorderScenes, setSceneDuration } from '../scene-editor.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -20,6 +21,16 @@ function Studio() {
   const [error, setError] = useState('');
   const [sampleSelected, setSampleSelected] = useState(false);
   const [demoDuration, setDemoDuration] = useState(String(sampleDuration));
+  const [editedScenes, setEditedScenes] = useState(null);
+  const [photoUrls, setPhotoUrls] = useState({});
+  const [dragIndex, setDragIndex] = useState(null);
+
+  useEffect(() => {
+    if (!demoMode || !images.length) { setPhotoUrls({}); return; }
+    const urls = Object.fromEntries(images.map(file => [file.name, URL.createObjectURL(file)]));
+    setPhotoUrls(urls);
+    return () => Object.values(urls).forEach(url => URL.revokeObjectURL(url));
+  }, [images]);
 
   useEffect(() => {
     if (demoMode) { setConnected(true); return; }
@@ -61,6 +72,7 @@ function Studio() {
         const photos = sampleSelected ? samplePhotos : images.map(file => file.name);
         const duration = Number(demoDuration);
         const scenes = planDemoScenes({ photos, duration, sceneLength, transition });
+        setEditedScenes(scenes);
         setJobs([{ id: 'demo-' + Date.now(), mode: 'plan', status: 'completed', progress: 100,
           scenes, hasNarration: false, media: { audio: sampleSelected ? 'Demo narration (60s)' : audio?.name || 'Manual duration', durationSeconds: duration, images: photos.length } }, ...jobs]);
       } catch (err) { setError(err.message); }
@@ -88,6 +100,8 @@ function Studio() {
   }
 
   const latest = jobs[0];
+  const displayedScenes = demoMode ? editedScenes : latest?.scenes;
+  const moveScene = (from, to) => setEditedScenes(current => reorderScenes(current, from, to));
   const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
   const canRender = demoMode
     ? connected && (sampleSelected || images.length > 0) && Number(demoDuration) > 0
@@ -186,16 +200,53 @@ function Studio() {
           ? <video key={latest.id} controls src={latest.videoUrl} aria-label="Video preview" />
           : <a href={latest.videoUrl}>Download MP4</a>)}
       </div>
-      {latest?.scenes && <div className="scene-plan">
+      {displayedScenes && <div className="scene-plan">
         <div className="scene-plan-heading">
           <h2>Full video scene plan</h2>
-          <button type="button" onClick={() => downloadScenePlan(latest.scenes, latest.hasNarration)}>Download scene plan CSV</button>
+          <button type="button" onClick={() => downloadScenePlan(displayedScenes, latest?.hasNarration)}>Download scene plan CSV</button>
         </div>
         <p>{demoMode ? 'Estimated scene timing for demonstration only. Actual renderer timing may differ.' : 'Crossfade scenes overlap. Each caption is listed under the scene where it starts.'}</p>
+        {demoMode && <div className="visual-editor">
+          <h3>Visual scene editor</h3>
+          <p>Drag scenes to reorder, or use the arrow buttons. Set each duration in seconds; the timeline and CSV update immediately. The edited total may differ from narration length.</p>
+          <div className="timeline-strip" aria-label="Scene timeline">
+            {displayedScenes.map((scene, index) => <div className="timeline-segment" key={index}
+              style={{ flexGrow: scene.duration ?? (scene.end - scene.start) }} title={scene.image}>
+              {index + 1}
+            </div>)}
+          </div>
+          <p><strong>Edited video length:</strong> {displayedScenes.at(-1)?.end.toFixed(2)} seconds</p>
+          <ol className="scene-cards" aria-label="Editable scene list">
+            {displayedScenes.map((scene, index) => <li key={index} className="scene-card" draggable
+              onDragStart={event => { setDragIndex(index); event.dataTransfer.effectAllowed = 'move'; }}
+              onDragOver={event => event.preventDefault()}
+              onDrop={event => { event.preventDefault(); if (dragIndex !== null) moveScene(dragIndex, index); setDragIndex(null); }}
+              onDragEnd={() => setDragIndex(null)}>
+              {photoUrls[scene.image]
+                ? <img className="scene-thumb" src={photoUrls[scene.image]} alt={scene.image} />
+                : <div className="scene-thumb placeholder" aria-label="Sample photo placeholder">Scene {index + 1}</div>}
+              <div className="scene-details">
+                <strong>{index + 1}. {scene.image}</strong>
+                <small>{scene.start.toFixed(2)}–{scene.end.toFixed(2)} s</small>
+                <label>Duration (seconds)
+                  <input type="number" min="0.5" max="3600" step="0.5"
+                    value={scene.duration ?? Number((scene.end - scene.start).toFixed(2))}
+                    onChange={event => setEditedScenes(current => setSceneDuration(current, index, Number(event.target.value)))} />
+                </label>
+              </div>
+              <div className="scene-reorder">
+                <button type="button" disabled={index === 0} aria-label={`Move scene ${index + 1} earlier`}
+                  onClick={() => moveScene(index, index - 1)}>↑</button>
+                <button type="button" disabled={index === displayedScenes.length - 1} aria-label={`Move scene ${index + 1} later`}
+                  onClick={() => moveScene(index, index + 1)}>↓</button>
+              </div>
+            </li>)}
+          </ol>
+        </div>}
         <table>
           <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th>{latest.hasNarration && <th scope="col">Narration</th>}</tr></thead>
           <tbody>
-            {latest.scenes.map((scene, index) => <tr key={index}>
+            {displayedScenes.map((scene, index) => <tr key={index}>
               <td>{index + 1}</td>
               <td>{scene.start.toFixed(2)} s</td>
               <td>{scene.end.toFixed(2)} s</td>
