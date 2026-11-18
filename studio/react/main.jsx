@@ -7,7 +7,7 @@ import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.
 import { reorderScenes, setSceneDuration } from '../scene-editor.js';
 import { sceneAtTime, clampPreviewTime } from '../scene-preview.js';
 import { recalculateScenes } from '../scene-editor.js';
-import { editedTimelinePayload } from '../timeline-contract.js';
+import { editedTimelinePayload, downloadEditedTimeline } from '../timeline-contract.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -260,6 +260,7 @@ function Studio() {
         <div className="scene-plan-heading">
           <h2>Full video scene plan</h2>
           <button type="button" onClick={() => downloadScenePlan(displayedScenes, latest?.hasNarration)}>Download scene plan CSV</button>
+          <button type="button" onClick={() => downloadEditedTimeline(displayedScenes, motion)}>Export timeline JSON</button>
         </div>
         <p>{demoMode ? 'Estimated scene timing for demonstration only.' : 'The edited timeline uses visible scene durations; the renderer adds the selected crossfade overlap. Each caption is listed where it starts.'}</p>
         {editedScenes && <div className="visual-editor">
