@@ -630,6 +630,63 @@ frameRateControl.addEventListener('change', updateExportOptions);
 byId('format').addEventListener('change', updateExportOptions);
 updateExportOptions();
 
+const settingsKey = 'syncshot-studio-settings-v1';
+const settingFields = [
+  'motion', 'transition', 'format', 'framing', 'crop-position',
+  'pacing', 'export-type', 'resolution', 'frame-rate',
+];
+const settingsStatus = byId('settings-status');
+
+function applySavedSettings(settings) {
+  let skipped = 0;
+  for (const id of settingFields) {
+    const select = byId(id);
+    const option = Array.from(select.options).find(item => item.value === settings[id]);
+    if (!option || (option.disabled && id !== 'export-type')) {
+      skipped++;
+      continue;
+    }
+    select.value = option.value;
+  }
+  const requestedExportType = byId('export-type').value;
+  stopPreview();
+  applyPreviewFormat();
+  applyPreviewFraming();
+  showPhotoOrder();
+  updateExportOptions();
+  if (requestedExportType !== byId('export-type').value) skipped++;
+  if (!byId('plan').disabled) showPlan();
+  return skipped;
+}
+
+byId('save-settings').addEventListener('click', () => {
+  try {
+    const settings = Object.fromEntries(settingFields.map(id => [id, byId(id).value]));
+    localStorage.setItem(settingsKey, JSON.stringify(settings));
+    settingsStatus.textContent = 'Settings saved in this browser.';
+  } catch {
+    settingsStatus.textContent = 'This browser could not save your settings.';
+  }
+});
+
+byId('load-settings').addEventListener('click', () => {
+  try {
+    const raw = localStorage.getItem(settingsKey);
+    if (!raw) {
+      settingsStatus.textContent = 'No saved settings in this browser yet.';
+      return;
+    }
+    const settings = JSON.parse(raw);
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) throw new Error('Invalid settings');
+    const skipped = applySavedSettings(settings);
+    settingsStatus.textContent = skipped
+      ? 'Settings loaded. Unavailable options were skipped.'
+      : 'Settings loaded.';
+  } catch {
+    settingsStatus.textContent = 'Saved settings could not be loaded.';
+  }
+});
+
 let exportedUrl;
 let activeExport;
 const cancelExport = byId('cancel-export');
