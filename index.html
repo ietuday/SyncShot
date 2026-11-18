@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=motion-1">
-  <script src="./demo.js?v=motion-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=fade-1">
+  <script src="./demo.js?v=fade-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -22,6 +22,12 @@
             <option value="static">None</option>
             <option value="zoom-in">Zoom in</option>
             <option value="zoom-out">Zoom out</option>
+          </select>
+        </label>
+        <label>Transition
+          <select id="transition">
+            <option value="cut">Cut</option>
+            <option value="fade">Crossfade</option>
           </select>
         </label>
         <label>Scene pacing
