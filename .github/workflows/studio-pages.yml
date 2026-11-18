@@ -37,6 +37,9 @@ jobs:
         working-directory: studio
       - run: node --test test/*.test.mjs
         working-directory: studio
+      - name: Validate Node API syntax
+        run: node --check server.mjs && node --check uploads.mjs && node --check timeline-contract.js
+        working-directory: studio
       - name: Build separate Studio application
         run: npm run build
         working-directory: studio
