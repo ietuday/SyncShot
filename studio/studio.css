@@ -19,3 +19,11 @@ fieldset { display: grid; gap: 1rem; border: 0; margin: 0 0 1.2rem; padding: 0; 
 label { display: grid; gap: .4rem; font-weight: 600; }
 input { font: inherit; font-weight: normal; width: 100%; }
 progress { width: min(75%, 24rem); accent-color: #155640; }
+.actions, .photo-order li, .photo-order li div { display: flex; flex-wrap: wrap; gap: .55rem; }
+.photo-order { margin: 0; list-style: none; padding: 0; }
+.photo-order li { align-items: center; justify-content: space-between; overflow-wrap: anywhere; }
+.photo-order button { padding: .4rem .65rem; }
+.checkbox { display: flex; align-items: center; }
+.checkbox input { width: auto; }
+select { font: inherit; padding: .35rem; max-width: 14rem; }
+video { width: 100%; border-radius: .5rem; background: #101a16; }

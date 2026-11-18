@@ -13,7 +13,7 @@ cd studio
 npm ci
 ```
 
-Start `npm run api` and `npm run dev` in separate terminals from `studio`. Open http://127.0.0.1:5173/ for the studio and http://127.0.0.1:5173/angular/ for history. Select one narration and up to 200 images in the studio, then click **Render video**. Each upload can total up to 512 MB. The studio sends images in filename order.
+Start `npm run api` and `npm run dev` in separate terminals from `studio`. Open http://127.0.0.1:5173/ for the studio and http://127.0.0.1:5173/angular/ for history. Select one narration and up to 200 images in the studio, then click **Render video**. Each upload can total up to 512 MB. Photos start in filename order and can be moved up or down. Choose a motion and transition, and optionally add an SRT file. **Preview 10 seconds** plays a short sample with those settings. Scene timing can vary from the full render.
 
 A bodyless `POST /api/jobs` still uses the original `inputs/audio` and `inputs/images` folders. The render bar tracks FFmpeg output time across visual chunks and the final stitch. It reaches 100% once the MP4 is available. Browser uploads generate the full MP4. Folder-based API jobs also generate Shorts.
 

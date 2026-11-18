@@ -27,12 +27,20 @@ async function render(job, upload) {
     });
     job.media = JSON.parse(preflight.stdout);
     if (upload) job.media.audio = upload.audioName;
+    const filename = job.mode === 'preview' ? 'preview.mp4' : 'final.mp4';
     await mkdir(directory, { recursive: true });
     const configPath = join(directory, 'config.json');
     await writeFile(configPath, JSON.stringify({
       WorkDir: join(directory, 'work'),
       OutShortsDir: join(directory, 'shorts'),
-      ...(upload ? { ClipSeconds: 0 } : {}),
+      ...(upload ? {
+        ClipSeconds: 0,
+        PreviewSeconds: job.mode === 'preview' ? 10 : 0,
+        CinematicMotion: upload.motion,
+        CinematicCrossfade: upload.crossfade,
+        CinematicAutoSceneSeconds: job.media.durationSeconds / job.media.images,
+        ...(upload.subtitles ? { SubtitleSRTPath: upload.subtitles } : {}),
+      } : {}),
     }));
     job.status = 'rendering';
     const process = run(renderer, [
@@ -49,7 +57,7 @@ async function render(job, upload) {
     } finally {
       lines.close();
     }
-    const video = await stat(join(directory, 'final.mp4'));
+    const video = await stat(join(directory, filename));
     if (!video.isFile() || video.size === 0) throw new Error('Renderer produced no video.');
     job.progress = 100;
     job.status = 'completed';
@@ -100,6 +108,7 @@ createServer(async (request, response) => {
       active = false;
       return json(response, 415, { error: 'Send media as multipart form data.' });
     }
+    job.mode = upload?.mode ?? 'full';
     jobs.set(job.id, job);
     json(response, 202, job);
     void render(job, upload);
@@ -108,14 +117,16 @@ createServer(async (request, response) => {
   const match = url.match(/^\/api\/jobs\/([a-f0-9-]+)\/video$/);
   const job = match && jobs.get(match[1]);
   if (method === 'GET' && job?.status === 'completed') {
-    const stream = createReadStream(join(runs, job.id, 'final.mp4'));
+    const preview = job.mode === 'preview';
+    const filename = preview ? 'preview.mp4' : 'final.mp4';
+    const stream = createReadStream(join(runs, job.id, filename));
     stream.once('error', () => {
       if (response.headersSent) response.destroy();
       else json(response, 404, { error: 'Video is unavailable.' });
     });
     stream.once('open', () => {
       response.writeHead(200, { 'Content-Type': 'video/mp4',
-        'Content-Disposition': 'attachment; filename="syncshot.mp4"' });
+        'Content-Disposition': preview ? 'inline; filename="preview.mp4"' : 'attachment; filename="syncshot.mp4"' });
       stream.pipe(response);
     });
     response.once('close', () => stream.destroy());

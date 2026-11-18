@@ -9,6 +9,10 @@ function Studio() {
   const [submitting, setSubmitting] = useState(false);
   const [audio, setAudio] = useState(null);
   const [images, setImages] = useState([]);
+  const [motion, setMotion] = useState('zoom_in');
+  const [transition, setTransition] = useState('fade');
+  const [subtitlesEnabled, setSubtitlesEnabled] = useState(false);
+  const [subtitles, setSubtitles] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -33,12 +37,25 @@ function Studio() {
     };
   }, []);
 
-  async function start() {
+  function movePhoto(index, direction) {
+    setImages(current => {
+      const reordered = [...current];
+      const destination = index + direction;
+      [reordered[index], reordered[destination]] = [reordered[destination], reordered[index]];
+      return reordered;
+    });
+  }
+
+  async function start(mode) {
     setSubmitting(true);
     setError('');
     try {
       const body = new FormData();
       body.append('audio', audio);
+      body.append('mode', mode);
+      body.append('motion', motion);
+      body.append('transition', transition);
+      if (subtitlesEnabled) body.append('subtitles', subtitles);
       for (const image of images) body.append('images', image);
       await readJobs('POST', body);
       setJobs(await readJobs());
@@ -51,6 +68,7 @@ function Studio() {
 
   const latest = jobs[0];
   const busy = latest && ['checking inputs', 'rendering'].includes(latest.status);
+  const canRender = connected && !submitting && !busy && audio && images.length && (!subtitlesEnabled || subtitles);
   return <main>
     <nav><strong>SyncShot</strong><a href="/angular/">Render history</a></nav>
     <section>
@@ -65,19 +83,58 @@ function Studio() {
           <input type="file" accept=".jpg,.jpeg,.png,.webp,.bmp" multiple
             onChange={event => setImages(Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name)))} />
         </label>
+        {!!images.length && <ol className="photo-order" aria-label="Photo order">
+          {images.map((image, index) => <li key={`${image.name}-${image.lastModified}-${index}`}>
+            <span>{index + 1}. {image.name}</span>
+            <div>
+              <button type="button" aria-label={`Move ${image.name} up`} disabled={index === 0}
+                onClick={() => movePhoto(index, -1)}>↑</button>
+              <button type="button" aria-label={`Move ${image.name} down`} disabled={index === images.length - 1}
+                onClick={() => movePhoto(index, 1)}>↓</button>
+            </div>
+          </li>)}
+        </ol>}
+        <label>Photo motion
+          <select value={motion} onChange={event => setMotion(event.target.value)}>
+            <option value="static">None</option>
+            <option value="zoom_in">Zoom in</option>
+            <option value="zoom_out">Zoom out</option>
+            <option value="pan_left">Pan left</option>
+            <option value="pan_right">Pan right</option>
+          </select>
+        </label>
+        <label>Transition
+          <select value={transition} onChange={event => setTransition(event.target.value)}>
+            <option value="fade">Crossfade</option>
+            <option value="cut">Cut</option>
+          </select>
+        </label>
+        <label className="checkbox">
+          <input type="checkbox" checked={subtitlesEnabled} onChange={event => {
+            setSubtitlesEnabled(event.target.checked);
+            setSubtitles(null);
+          }} /> Add subtitles from an SRT file
+        </label>
+        {subtitlesEnabled && <label>Subtitle file
+          <input type="file" accept=".srt" onChange={event => setSubtitles(event.target.files[0] ?? null)} />
+        </label>}
       </fieldset>
-      <button onClick={start} disabled={!connected || submitting || busy || !audio || !images.length}>
-        {submitting ? 'Uploading…' : 'Render video'}
-      </button>
+      <div className="actions">
+        <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>
+        <button onClick={() => start('full')} disabled={!canRender}>Render video</button>
+      </div>
+      {submitting && <p role="status">Uploading…</p>}
       {latest && (busy || latest.status === 'completed') && <p>
         <progress aria-label="Render progress" max="100" value={latest.progress ?? 0} /> {latest.progress ?? 0}%
       </p>}
       <div aria-live="polite">
         {!connected && <p>Waiting for the local job API.</p>}
-        {latest && <p>Latest job: {latest.status}</p>}
+        {latest && <p>{latest.mode === 'preview' ? 'Preview' : 'Full render'}: {latest.status}</p>}
         {latest?.media && <p>{latest.media.audio} · {Math.round(latest.media.durationSeconds)} s · {latest.media.images} images</p>}
         {(error || latest?.error) && <p className="error">{error || latest.error}</p>}
-        {latest?.videoUrl && <a href={latest.videoUrl}>Download MP4</a>}
+        {latest?.videoUrl && (latest.mode === 'preview'
+          ? <video key={latest.id} controls src={latest.videoUrl} aria-label="Video preview" />
+          : <a href={latest.videoUrl}>Download MP4</a>)}
       </div>
     </section>
   </main>;
