@@ -29,7 +29,7 @@ Set **Captions** to **Transcribe locally with Whisper**. Choose Hindi, English o
 
 ## GitHub Pages browser demo
 
-The `feature/studio-foundation` workflow builds Vite with `VITE_DEMO_MODE=true` and deploys the static frontend to `/SyncShot/`. In browser demo mode you can generate a sample 60-second scene plan, choose local photo names, adjust pacing and export CSV; it does not upload files, invoke Whisper, or produce MP4s. Real video rendering remains available only with the local Node/Go API. Enable **GitHub Actions** as the Pages build source in repository Settings → Pages if deployment is not active.
+The `feature/studio-foundation` workflow builds Vite with `VITE_DEMO_MODE=true` and deploys the static frontend to `/SyncShot/studio/` while preserving the original homepage. In browser demo mode you can generate a sample 60-second scene plan, choose local photo names, adjust pacing and export CSV; it does not upload files, invoke Whisper, or produce MP4s. Real video rendering remains available only with the local Node/Go API. Enable **GitHub Actions** as the Pages build source in repository Settings → Pages if deployment is not active.
 
 ## Browser scene editor
 
@@ -38,3 +38,7 @@ In GitHub Pages demo mode, select sample photo names or upload images locally, p
 ## Scene preview (browser demo only)
 
 After **Plan scenes**, the Visual scene editor has Play, Pause, Restart, and seek controls. It shows user-selected photos in order, or named sample placeholders, at the edited scene timings. This is an in-browser slideshow to review composition and pacing, not a produced video, and does not preview actual Go renderer crossfades or sound. It leaves the preserved original GitHub Pages homepage unchanged.
+
+## Phase 4: Editable timeline rendering (local API)
+
+When the Node/Go API is running locally, upload an audio file and photos, then **Plan scenes**. Reorder the scenes or edit the visible durations. Select **Render edited timeline** to upload the source media and a versioned JSON timeline, then generate a real MP4 from the edited order and durations. The API checks image references against the current uploaded filenames, validates duration/motion, and requires the edited visual runtime to match measured audio within 0.06 seconds. The Go manual-timeline renderer handles the full output at 720p. Existing automatic previews and renders stay available separately. Edited manual timelines currently support **full render only** (not the 10-second MP4 preview); browser timeline playback is a slideshow. For low-memory computers, manual timelines currently use the single-pass Go rendering path rather than the chunked automatic renderer. GitHub Pages remains a frontend-only demo and cannot run the Go/Node backend.
