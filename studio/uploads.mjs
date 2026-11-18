@@ -15,6 +15,7 @@ const transitions = new Map([['cut', 0], ['fade', 0.5]]);
 const modes = new Set(['preview', 'full', 'plan']);
 const languages = new Set(['auto', 'hi', 'en']);
 const sceneLengths = new Set(['auto', '8', '15', '30']);
+const maxTimelineBytes = 128 * 1024;
 
 export async function receiveMedia(request, directory) {
   const audio = join(directory, 'audio');
@@ -22,12 +23,13 @@ export async function receiveMedia(request, directory) {
   await Promise.all([mkdir(audio, { recursive: true }), mkdir(images, { recursive: true })]);
   const parser = Busboy({
     headers: request.headers,
-    limits: { files: maxImages + 3, fields: 6, fieldSize: 32, fileSize: maxUploadBytes },
+    limits: { files: maxImages + 3, fields: 7, fieldSize: maxTimelineBytes, fileSize: maxUploadBytes },
   });
   let received = 0;
   let audioName;
   let audioPath;
   let subtitles;
+  let timeline;
   const settings = new Map();
   const imageNames = new Map();
   let failure;
@@ -43,6 +45,15 @@ export async function receiveMedia(request, directory) {
 
   parser.on('fieldsLimit', () => reject('Unexpected upload field.'));
   parser.on('field', (name, value, { valueTruncated }) => {
+    if (name === 'timeline') {
+      if (valueTruncated || timeline !== undefined || value.length > maxTimelineBytes) {
+        reject('Edited timeline is too large or duplicated.');
+        return;
+      }
+      try { timeline = JSON.parse(value); }
+      catch { reject('Edited timeline must be valid JSON.'); }
+      return;
+    }
     const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths, transcribe: languages };
     if (valueTruncated || !Object.hasOwn(allowed, name) || !allowed[name].has(value) || settings.has(name)) {
       reject('Invalid render settings.');
@@ -100,8 +111,9 @@ export async function receiveMedia(request, directory) {
   if (!audioName || !imageNames.size) throw new Error('Select one narration and at least one image.');
   const language = settings.get('transcribe');
   if (subtitles && language) throw new Error('Choose either an SRT file or automatic captions.');
+  if (timeline && settings.get('mode') !== 'full') throw new Error('Edited timelines support full rendering only.');
   return {
-    audio, images, audioName, audioPath, subtitles, imageNames, language,
+    timeline, audio, images, audioName, audioPath, subtitles, imageNames, language,
     sceneLength: Number(settings.get('sceneLength')) || 0,
     mode: settings.get('mode') ?? 'full',
     motion: settings.get('motion') ?? 'zoom_in',
