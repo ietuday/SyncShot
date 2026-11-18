@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=frame-rate-1">
-  <script src="./demo.js?v=frame-rate-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=timeline-scrub-1">
+  <script src="./demo.js?v=timeline-scrub-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -106,6 +106,7 @@
         <button id="download-plan" type="button">Download scene CSV</button>
         <button id="preview">Preview 10 seconds</button>
         <button id="preview-ending">Preview ending</button>
+        <button id="inspect-timeline" type="button">Inspect timeline</button>
         <button id="export">Export WebM</button>
         <button id="cancel-export" type="button" hidden>Cancel export</button>
       </div>
@@ -116,7 +117,12 @@
       <p id="status" role="status"></p>
       <figure id="player" tabindex="-1" aria-label="Scene preview" hidden>
         <div id="frame"></div>
-        <figcaption id="time"></figcaption>
+        <figcaption>
+          <label>Preview position
+            <input id="preview-position" type="range" min="0" max="0" step="any" value="0" aria-describedby="time">
+          </label>
+          <output id="time" for="preview-position"></output>
+        </figcaption>
       </figure>
       <div class="scene-plan">
         <table hidden>

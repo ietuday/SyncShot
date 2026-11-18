@@ -338,7 +338,7 @@ byId('audio').addEventListener('change', () => {
   stopPreview();
   if (audio.src) URL.revokeObjectURL(audio.src);
   const file = byId('audio').files[0];
-  byId('preview').disabled = byId('preview-ending').disabled = Boolean(file);
+  byId('preview').disabled = byId('preview-ending').disabled = byId('inspect-timeline').disabled = Boolean(file);
   byId('plan').disabled = byId('download-plan').disabled = Boolean(file);
   byId('export').disabled = Boolean(file);
   if (file) audio.src = URL.createObjectURL(file);
@@ -358,7 +358,7 @@ audio.addEventListener('loadedmetadata', () => {
   }
   duration = audio.duration;
   showPhotoOrder();
-  byId('preview').disabled = byId('preview-ending').disabled = byId('plan').disabled = byId('download-plan').disabled = byId('export').disabled = false;
+  byId('preview').disabled = byId('preview-ending').disabled = byId('inspect-timeline').disabled = byId('plan').disabled = byId('download-plan').disabled = byId('export').disabled = false;
   showPlan();
 });
 audio.addEventListener('error', () => {
@@ -449,7 +449,7 @@ function paintTitle(context, title, width, height) {
   context.restore();
 }
 
-async function preview(ending = false, plannedScenes, selectedScene) {
+async function preview(ending = false, plannedScenes, selectedScene, inspect = false) {
   stopPreview();
   const request = previewRequest;
   const scenes = plannedScenes ?? showPlan();
@@ -463,7 +463,8 @@ async function preview(ending = false, plannedScenes, selectedScene) {
   const limit = Math.min(segmentLength, ending ? 3 : 10);
   const offset = selectedScene?.start ?? (ending ? duration - limit : 0);
   const end = offset + limit;
-  if (byId('audio').files.length) {
+  const hasAudio = Boolean(byId('audio').files.length);
+  if (hasAudio && !inspect) {
     audio.currentTime = offset;
     try {
       await audio.play();
@@ -475,7 +476,9 @@ async function preview(ending = false, plannedScenes, selectedScene) {
   if (request !== previewRequest) return;
   const player = byId('player');
   player.hidden = false;
-  if (selectedScene) player.focus();
+  if (selectedScene || inspect) player.focus();
+  const slider = byId('preview-position');
+  slider.max = duration;
   const started = performance.now();
   function createLayer() {
     const layer = document.createElement('div');
@@ -512,10 +515,8 @@ async function preview(ending = false, plannedScenes, selectedScene) {
     slot.subject.style.transform = 'scale(' + zoomAt(scene, elapsed, motion) + ')';
   }
 
-  function draw(now) {
-    const position = byId('audio').files.length ? audio.currentTime : offset + (now - started) / 1000;
-    const elapsed = Math.min(end, Math.max(offset, position));
-    const frameTime = selectedScene && elapsed === selectedScene.end
+  function renderPreview(elapsed, holdScene = false) {
+    const frameTime = holdScene && elapsed === selectedScene?.end
       ? Math.max(offset, elapsed - 0.000001)
       : elapsed;
     const title = titleAt(cards, frameTime, duration);
@@ -531,14 +532,29 @@ async function preview(ending = false, plannedScenes, selectedScene) {
     const text = captionAt(cues, frameTime);
     if (caption.textContent !== text) caption.textContent = text;
     caption.hidden = !text;
+    slider.value = elapsed;
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
+  }
+
+  slider.oninput = () => {
+    cancelAnimationFrame(timer);
+    audio.pause();
+    renderPreview(Number(slider.value));
+  };
+
+  function draw(now) {
+    const position = hasAudio ? audio.currentTime : offset + (now - started) / 1000;
+    const elapsed = Math.min(end, Math.max(offset, position));
+    renderPreview(elapsed, true);
     if (elapsed < end) timer = requestAnimationFrame(draw);
     else audio.pause();
   }
-  timer = requestAnimationFrame(draw);
+  renderPreview(offset);
+  if (!inspect) timer = requestAnimationFrame(draw);
 }
 byId('preview').addEventListener('click', () => preview());
 byId('preview-ending').addEventListener('click', () => preview(true));
+byId('inspect-timeline').addEventListener('click', () => preview(false, undefined, undefined, true));
 showPlan();
 
 const selectExportType = byId('export-type');
@@ -614,7 +630,7 @@ byId('export').addEventListener('click', async () => {
     return;
   }
 
-  const controls = ['inputs', 'plan', 'download-plan', 'preview', 'preview-ending', 'export'].map(byId);
+  const controls = ['inputs', 'plan', 'download-plan', 'preview', 'preview-ending', 'inspect-timeline', 'export'].map(byId);
   controls.push(...document.querySelectorAll('.preview-scene'));
   controls.forEach(control => { control.disabled = true; });
   status.textContent = 'Preparing browser export…';
