@@ -48,3 +48,8 @@ figcaption { padding-top: .45rem; font-variant-numeric: tabular-nums; }
 .photo-order li > label { flex: 1 1 13rem; margin: .25rem 0; }
 .photo-order li > label[hidden] { display: none; }
 .photo-time input { max-width: 8rem; }
+
+#frame { container-type: inline-size; }
+.preview-title { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 8%; overflow-wrap: anywhere; background: rgba(0,0,0,.56); color: white; font-size: clamp(1rem, 7cqw, 2.8rem); line-height: 1.2; font-weight: 700; }
+.preview-title[hidden] { display: none; }
+.card-note { margin: 0; }

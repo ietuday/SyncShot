@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=photo-edit-2">
-  <script src="./demo.js?v=photo-edit-2" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=title-cards-1">
+  <script src="./demo.js?v=title-cards-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -65,6 +65,13 @@
             <option value="30">About 30 seconds per scene</option>
           </select>
         </label>
+        <label>Opening title
+          <input id="opening-title" type="text" maxlength="100" placeholder="Optional">
+        </label>
+        <label>End card
+          <input id="ending-title" type="text" maxlength="100" placeholder="Optional">
+        </label>
+        <p class="card-note">Titles appear over the first or last 2 seconds without changing the video length.</p>
         <label>Subtitles (.srt)
           <input id="captions" type="file" accept=".srt">
         </label>
@@ -76,6 +83,7 @@
       <div class="actions">
         <button id="plan">Plan scenes</button>
         <button id="preview">Preview 10 seconds</button>
+        <button id="preview-ending">Preview ending</button>
         <button id="export">Export WebM</button>
       </div>
       <div id="export-result" hidden>

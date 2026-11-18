@@ -314,7 +314,7 @@ byId('audio').addEventListener('change', () => {
   stopPreview();
   if (audio.src) URL.revokeObjectURL(audio.src);
   const file = byId('audio').files[0];
-  byId('preview').disabled = Boolean(file);
+  byId('preview').disabled = byId('preview-ending').disabled = Boolean(file);
   byId('plan').disabled = Boolean(file);
   byId('export').disabled = Boolean(file);
   if (file) audio.src = URL.createObjectURL(file);
@@ -334,7 +334,7 @@ audio.addEventListener('loadedmetadata', () => {
   }
   duration = audio.duration;
   showPhotoOrder();
-  byId('preview').disabled = byId('plan').disabled = byId('export').disabled = false;
+  byId('preview').disabled = byId('preview-ending').disabled = byId('plan').disabled = byId('export').disabled = false;
   showPlan();
 });
 audio.addEventListener('error', () => {
@@ -354,7 +354,49 @@ byId('pacing').addEventListener('change', () => {
   if (!byId('plan').disabled) showPlan();
 });
 byId('plan').addEventListener('click', showPlan);
-byId('preview').addEventListener('click', async () => {
+function readTitleCards() {
+  return {
+    opening: byId('opening-title').value.trim(),
+    ending: byId('ending-title').value.trim(),
+  };
+}
+
+function titleAt(cards, elapsed, total) {
+  const length = Math.min(2, total / (cards.opening && cards.ending ? 2 : 1));
+  if (elapsed < length && cards.opening) return cards.opening;
+  if (elapsed >= total - length) return cards.ending;
+  return '';
+}
+
+function paintTitle(context, title, width, height) {
+  if (!title) return;
+  context.save();
+  context.fillStyle = 'rgba(0, 0, 0, 0.56)';
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  const size = Math.round(Math.min(width, height) * 0.075);
+  context.font = '700 ' + size + 'px system-ui';
+  const maxWidth = width * 0.84;
+  const lines = [];
+  let line = '';
+  for (const word of title.split(/\s+/)) {
+    const next = line ? line + ' ' + word : word;
+    if (line && context.measureText(next).width > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  }
+  lines.push(line);
+  const lineHeight = size * 1.2;
+  lines.forEach((text, index) => {
+    context.fillText(text, width / 2, height / 2 + (index - (lines.length - 1) / 2) * lineHeight, maxWidth);
+  });
+  context.restore();
+}
+
+async function preview(ending = false) {
   stopPreview();
   const scenes = showPlan();
   if (!scenes) return;
@@ -362,9 +404,11 @@ byId('preview').addEventListener('click', async () => {
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
-  const limit = Math.min(duration, 10);
+  const cards = readTitleCards();
+  const limit = Math.min(duration, ending ? 3 : 10);
+  const offset = ending ? duration - limit : 0;
   if (byId('audio').files.length) {
-    audio.currentTime = 0;
+    audio.currentTime = offset;
     try {
       await audio.play();
     } catch {
@@ -384,7 +428,10 @@ byId('preview').addEventListener('click', async () => {
   const caption = document.createElement('div');
   caption.className = 'preview-caption';
   caption.hidden = true;
-  frame.replaceChildren(outgoing.layer, incoming.layer, caption);
+  const card = document.createElement('div');
+  card.className = 'preview-title';
+  card.hidden = true;
+  frame.replaceChildren(outgoing.layer, incoming.layer, card, caption);
 
   function drawLayer(slot, scene, elapsed) {
     if (slot.scene !== scene) {
@@ -407,7 +454,11 @@ byId('preview').addEventListener('click', async () => {
   }
 
   function draw(now) {
-    const elapsed = Math.min(limit, (now - started) / 1000);
+    const position = byId('audio').files.length ? audio.currentTime : offset + (now - started) / 1000;
+    const elapsed = Math.min(offset + limit, position);
+    const title = titleAt(cards, elapsed, duration);
+    if (card.textContent !== title) card.textContent = title;
+    card.hidden = !title;
     const { current, previous, alpha } = frameAt(scenes, elapsed, transition);
     drawLayer(incoming, current, elapsed);
     incoming.layer.style.opacity = alpha;
@@ -418,12 +469,14 @@ byId('preview').addEventListener('click', async () => {
     const text = captionAt(cues, elapsed);
     if (caption.textContent !== text) caption.textContent = text;
     caption.hidden = !text;
-    byId('time').textContent = elapsed.toFixed(1) + ' / ' + limit.toFixed(1) + ' seconds';
-    if (elapsed < limit) timer = requestAnimationFrame(draw);
+    byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
+    if (elapsed < offset + limit) timer = requestAnimationFrame(draw);
     else audio.pause();
   }
   timer = requestAnimationFrame(draw);
-});
+}
+byId('preview').addEventListener('click', () => preview());
+byId('preview-ending').addEventListener('click', () => preview(true));
 showPlan();
 
 let exportedUrl;
@@ -438,6 +491,7 @@ byId('export').addEventListener('click', async () => {
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
+  const cards = readTitleCards();
   if (duration > 300 || (audioFile && audioFile.size > 50 * 1024 * 1024)) {
     status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
     return;
@@ -450,7 +504,7 @@ byId('export').addEventListener('click', async () => {
     return;
   }
 
-  const controls = ['inputs', 'plan', 'preview', 'export'].map(byId);
+  const controls = ['inputs', 'plan', 'preview', 'preview-ending', 'export'].map(byId);
   controls.forEach(control => { control.disabled = true; });
   status.textContent = 'Preparing browser export…';
   byId('export-result').hidden = true;
@@ -510,6 +564,7 @@ byId('export').addEventListener('click', async () => {
       context.restore();
     };
     paint(context, scenes[0], 0);
+    paintTitle(context, titleAt(cards, 0, duration), canvas.width, canvas.height);
     paintCaption(context, captionAt(cues, 0), canvas.width, canvas.height);
     stream = canvas.captureStream(24);
     if (source) {
@@ -547,6 +602,7 @@ byId('export').addEventListener('click', async () => {
       } else {
         paint(context, current, elapsed);
       }
+      paintTitle(context, titleAt(cards, elapsed, duration), canvas.width, canvas.height);
       paintCaption(context, captionAt(cues, elapsed), canvas.width, canvas.height);
       if (elapsed >= duration) {
         recorder.stop();
