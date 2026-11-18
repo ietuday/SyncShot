@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
-  base: process.env.VITE_DEMO_MODE === 'true' ? '/SyncShot/' : '/',
+  base: process.env.VITE_DEMO_MODE === 'true' ? '/SyncShot/studio/' : '/',
   server: {
     host: '127.0.0.1',
     port: 5173,
