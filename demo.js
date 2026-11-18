@@ -4,12 +4,19 @@ const music = new Audio();
 music.loop = true;
 const musicControl = byId('music-volume');
 const musicGain = () => Number(musicControl.value) / 100;
+const musicFade = byId('music-fade');
+function fadeGain(position, duration, fadeLength) {
+  if (!fadeLength) return 1;
+  return Math.max(0, Math.min(1, position / fadeLength, (duration - position) / fadeLength));
+}
+const musicFadeLength = () => musicFade.checked ? Math.min(1, duration / 2) : 0;
 function updateMusicVolume() {
-  music.volume = musicGain();
+  music.volume = musicGain() * fadeGain(Number(byId('preview-position').value), duration, musicFadeLength());
   byId('music-volume-value').textContent = musicControl.value + '%';
 }
-updateMusicVolume();
 musicControl.addEventListener('input', updateMusicVolume);
+musicFade.addEventListener('change', updateMusicVolume);
+music.volume = musicGain();
 let musicUrl;
 byId('music').addEventListener('change', () => {
   stopPreview();
@@ -566,6 +573,7 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
     if (caption.textContent !== text) caption.textContent = text;
     caption.hidden = !text;
     slider.value = elapsed;
+    if (musicUrl) music.volume = musicGain() * fadeGain(elapsed, duration, musicFadeLength());
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
   }
 
@@ -594,6 +602,7 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
           throw new Error('Wait for the music file to load.');
         }
         music.currentTime = start % music.duration;
+        music.volume = musicGain() * fadeGain(start, duration, musicFadeLength());
       }
       if (hasAudio) {
         audio.currentTime = start;
@@ -785,7 +794,7 @@ byId('export').addEventListener('click', async () => {
   const musicFile = byId('music').files[0];
   const tracks = [
     { file: audioFile, gain: narrationGain(), loop: false },
-    { file: musicFile, gain: musicGain(), loop: true },
+    { file: musicFile, gain: musicGain(), loop: true, fade: musicFadeLength() },
   ].filter(track => track.file);
   const framing = byId('framing').value;
   const globalPosition = cropPosition(framing);
@@ -885,7 +894,8 @@ byId('export').addEventListener('click', async () => {
       const destination = audioContext.createMediaStreamDestination();
       for (const track of tracks) {
         const volume = audioContext.createGain();
-        volume.gain.value = track.gain;
+        volume.gain.value = track.fade ? 0 : track.gain;
+        track.volume = volume.gain;
         track.source.connect(volume);
         volume.connect(destination);
       }
@@ -908,7 +918,17 @@ byId('export').addEventListener('click', async () => {
     recorder.start(1000);
     const wallStart = performance.now();
     const audioStart = audioContext?.currentTime;
-    for (const track of tracks) track.source.start(audioStart);
+    for (const track of tracks) {
+      if (track.fade) {
+        track.volume.setValueAtTime(0, audioStart);
+        track.volume.linearRampToValueAtTime(track.gain, audioStart + track.fade);
+        if (duration > 2 * track.fade) {
+          track.volume.setValueAtTime(track.gain, audioStart + duration - track.fade);
+        }
+        track.volume.linearRampToValueAtTime(0, audioStart + duration);
+      }
+      track.source.start(audioStart);
+    }
     function draw(now) {
       const elapsed = audioContext ? audioContext.currentTime - audioStart : (now - wallStart) / 1000;
       const { current, previous, alpha } = frameAt(scenes, elapsed, transition);

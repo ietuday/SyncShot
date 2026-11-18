@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=music-1">
-  <script src="./demo.js?v=music-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=music-fade-1">
+  <script src="./demo.js?v=music-fade-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -25,6 +25,9 @@
         <label>Music volume
           <input id="music-volume" type="range" min="0" max="100" value="20" aria-describedby="music-volume-value">
           <output id="music-volume-value" for="music-volume">20%</output>
+        </label>
+        <label class="music-fade-label">
+          <input id="music-fade" type="checkbox"> Fade music in and out
         </label>
         <p class="card-note" id="music-status" role="status"></p>
         <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
