@@ -30,3 +30,7 @@ Set **Captions** to **Transcribe locally with Whisper**. Choose Hindi, English o
 ## GitHub Pages browser demo
 
 The `feature/studio-foundation` workflow builds Vite with `VITE_DEMO_MODE=true` and deploys the static frontend to `/SyncShot/`. In browser demo mode you can generate a sample 60-second scene plan, choose local photo names, adjust pacing and export CSV; it does not upload files, invoke Whisper, or produce MP4s. Real video rendering remains available only with the local Node/Go API. Enable **GitHub Actions** as the Pages build source in repository Settings → Pages if deployment is not active.
+
+## Browser scene editor
+
+In GitHub Pages demo mode, select sample photo names or upload images locally, plan scenes, then drag scene cards or use arrow buttons to reorder them. Per-scene duration fields recalculate all following scene timestamps and the CSV export. Uploaded thumbnails use temporary browser object URLs only and are revoked on change/unmount. These demo edits do **not** modify the Go renderer's live job settings, and the edited duration can differ from narration length.
