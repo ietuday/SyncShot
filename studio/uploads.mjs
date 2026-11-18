@@ -114,7 +114,9 @@ export async function receiveMedia(request, directory) {
   if (!audioName || !imageNames.size) throw new Error('Select one narration and at least one image.');
   const language = settings.get('transcribe');
   if (subtitles && language) throw new Error('Choose either an SRT file or automatic captions.');
-  if (timeline && settings.get('mode') !== 'full') throw new Error('Edited timelines support full rendering only.');
+  if (timeline && !['full', 'preview'].includes(settings.get('mode') ?? 'full')) {
+    throw new Error('Edited timelines support previews and full rendering only.');
+  }
   return {
     timeline, profile: settings.get('profile') ?? '720p', audio, images, audioName, audioPath, subtitles, imageNames, language,
     sceneLength: Number(settings.get('sceneLength')) || 0,
