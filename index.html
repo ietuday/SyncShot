@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=portable-settings-1">
-  <script src="./demo.js?v=portable-settings-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=volume-1">
+  <script src="./demo.js?v=volume-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -15,6 +15,10 @@
       <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. Export WebM or MP4 where supported. Run Studio locally for automatic captions.</p>
       <fieldset id="inputs">
         <label>Narration <input id="audio" type="file" accept="audio/*"></label>
+        <label>Narration volume
+          <input id="narration-volume" type="range" min="0" max="100" value="100" aria-describedby="volume-value">
+          <output id="volume-value" for="narration-volume">100%</output>
+        </label>
         <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
         <ol id="photo-order" class="photo-order" aria-label="Photo order" hidden></ol>
         <label>Photo motion

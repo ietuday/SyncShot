@@ -1,5 +1,12 @@
 const byId = id => document.getElementById(id);
 const audio = new Audio();
+const volumeControl = byId('narration-volume');
+const narrationGain = () => Number(volumeControl.value) / 100;
+function updateNarrationVolume() {
+  audio.volume = narrationGain();
+  byId('volume-value').textContent = volumeControl.value + '%';
+}
+volumeControl.addEventListener('input', updateNarrationVolume);
 const formats = {
   landscape: { width: 1280, height: 720 },
   portrait: { width: 720, height: 1280 },
@@ -832,7 +839,10 @@ byId('export').addEventListener('click', async () => {
     stream = canvas.captureStream(frameRate);
     if (source) {
       const destination = audioContext.createMediaStreamDestination();
-      source.connect(destination);
+      const volume = audioContext.createGain();
+      volume.gain.value = narrationGain();
+      source.connect(volume);
+      volume.connect(destination);
       for (const track of destination.stream.getAudioTracks()) stream.addTrack(track);
     }
 
