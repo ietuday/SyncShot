@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SyncShot Studio Demo</title>
+  <link rel="stylesheet" href="./studio.css">
+  <script src="./demo.js" type="module"></script>
+</head>
+<body>
+  <main>
+    <nav><strong>SyncShot</strong><a href="https://github.com/ietuday/SyncShot/tree/feature/studio-foundation/studio#run-locally">Run the full Studio</a></nav>
+    <section>
+      <h1>Video studio demo</h1>
+      <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. MP4 export and automatic captions are available in the local Studio.</p>
+      <fieldset>
+        <label>Narration <input id="audio" type="file" accept="audio/*"></label>
+        <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
+        <label>Scene pacing
+          <select id="pacing">
+            <option value="auto">By photo count</option>
+            <option value="8">About 8 seconds per scene</option>
+            <option value="15">About 15 seconds per scene</option>
+            <option value="30">About 30 seconds per scene</option>
+          </select>
+        </label>
+      </fieldset>
+      <div class="actions">
+        <button id="plan">Plan scenes</button>
+        <button id="preview">Preview 10 seconds</button>
+      </div>
+      <p id="status" role="status"></p>
+      <figure id="player" hidden>
+        <div id="frame"></div>
+        <figcaption id="time"></figcaption>
+      </figure>
+      <div class="scene-plan">
+        <table hidden>
+          <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
