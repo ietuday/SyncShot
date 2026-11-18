@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=ducking-1">
-  <script src="./demo.js?v=ducking-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=draft-1">
+  <script src="./demo.js?v=draft-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -127,6 +127,11 @@
           <input id="import-settings" type="file" accept=".json,application/json">
         </label>
         <p class="card-note" id="settings-status" role="status">Save a preset in this browser. Media files and titles are excluded.</p>
+        <div class="actions">
+          <button id="save-draft" type="button">Save draft</button>
+          <button id="resume-draft" type="button">Resume draft</button>
+        </div>
+        <p class="card-note" id="draft-status" role="status">Keep one project draft with its media in this browser.</p>
       </fieldset>
       <div class="actions">
         <button id="plan">Plan scenes</button>

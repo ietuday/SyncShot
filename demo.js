@@ -478,7 +478,7 @@ audio.addEventListener('error', () => {
 byId('photos').addEventListener('change', () => {
   stopPreview();
   for (const photo of photos) URL.revokeObjectURL(photo.url);
-  photos = Array.from(byId('photos').files, file => ({ name: file.name, url: URL.createObjectURL(file) }));
+  photos = Array.from(byId('photos').files, file => ({ file, name: file.name, url: URL.createObjectURL(file) }));
   showPhotoOrder();
   if (!byId('plan').disabled) showPlan();
 });
@@ -847,6 +847,119 @@ byId('import-settings').addEventListener('change', async event => {
     input.disabled = false;
   }
 });
+
+const draftStatus = byId('draft-status');
+const draftControls = ['save-draft', 'resume-draft'].map(byId);
+let draftBusy = false;
+
+async function draftStorage(mode, operation) {
+  const db = await new Promise((resolve, reject) => {
+    const request = indexedDB.open('syncshot-studio', 1);
+    request.onupgradeneeded = () => request.result.createObjectStore('drafts');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = db.transaction('drafts', mode);
+      transaction.onabort = () => reject(transaction.error);
+      const request = operation(transaction.objectStore('drafts'));
+      transaction.oncomplete = () => resolve(request.result);
+    });
+  } finally {
+    db.close();
+  }
+}
+
+function snapshotDraft() {
+  return {
+    version: 1,
+    settings: readSettings(),
+    titles: readTitleCards(),
+    levels: [volumeControl.value, musicControl.value],
+    fade: musicFade.checked,
+    duck: musicDuck.checked,
+    audio: byId('audio').files[0],
+    music: byId('music').files[0],
+    subtitle: byId('captions').files[0],
+    captions,
+    photos: photos.map(({file, position, seconds}) => ({file, position, seconds})),
+  };
+}
+
+function setDraftFiles(id, files) {
+  const transfer = new DataTransfer();
+  for (const file of files) if (file) transfer.items.add(file);
+  const input = byId(id);
+  input.files = transfer.files;
+  return input;
+}
+
+function restoreDraft(draft) {
+  stopPreview();
+  byId('opening-title').value = draft.titles.opening;
+  byId('ending-title').value = draft.titles.ending;
+  [volumeControl.value, musicControl.value] = draft.levels;
+  musicFade.checked = draft.fade;
+  musicDuck.checked = draft.duck;
+  updateNarrationVolume();
+  updateMusicVolume();
+  ++captionRequest;
+  const subtitleInput = setDraftFiles('captions', [draft.subtitle]);
+  captions = draft.captions;
+  if (draft.subtitle && !captions.length) subtitleInput.dispatchEvent(new Event('change'));
+  else byId('caption-status').textContent = captions.length
+    ? captions.length + ' captions ready.' : 'Subtitles off.';
+  const audioInput = setDraftFiles('audio', [draft.audio]);
+  const musicInput = setDraftFiles('music', [draft.music]);
+  for (const photo of photos) URL.revokeObjectURL(photo.url);
+  setDraftFiles('photos', draft.photos.map(photo => photo.file));
+  photos = draft.photos.map(photo => ({
+    ...photo, name: photo.file.name, url: URL.createObjectURL(photo.file),
+  }));
+  showPhotoOrder();
+  audioInput.dispatchEvent(new Event('change'));
+  musicInput.dispatchEvent(new Event('change'));
+  return applySavedSettings(draft.settings);
+}
+
+async function runDraftAction(action) {
+  if (draftBusy) return;
+  draftBusy = true;
+  draftControls.forEach(control => { control.disabled = true; });
+  try {
+    await action();
+  } catch (error) {
+    draftStatus.textContent = error?.name === 'QuotaExceededError'
+      ? 'This browser does not have enough storage for the draft.'
+      : 'Could not save or restore the draft in this browser.';
+  } finally {
+    draftBusy = false;
+    draftControls.forEach(control => { control.disabled = false; });
+  }
+}
+
+byId('save-draft').addEventListener('click', () => runDraftAction(async () => {
+  const draft = snapshotDraft();
+  await draftStorage('readwrite', store => store.put(draft, 'current'));
+  draftStatus.textContent = 'Draft saved with media in this browser.';
+}));
+
+byId('resume-draft').addEventListener('click', () => runDraftAction(async () => {
+  const draft = await draftStorage('readonly', store => store.get('current'));
+  if (!draft || draft.version !== 1) {
+    draftStatus.textContent = 'No saved draft in this browser yet.';
+    return;
+  }
+  if (byId('inputs').disabled) {
+    draftStatus.textContent = 'Resume the draft after export finishes.';
+    return;
+  }
+  const skipped = restoreDraft(draft);
+  draftStatus.textContent = skipped
+    ? 'Draft restored. Unavailable options were skipped.'
+    : 'Draft restored with media.';
+}));
 
 let exportedUrl;
 let activeExport;
