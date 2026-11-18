@@ -32,3 +32,4 @@ video { width: 100%; border-radius: .5rem; background: #101a16; }
 .scene-plan th, .scene-plan td { padding: .65rem .4rem; border-bottom: 1px solid #d7e1db; }
 .scene-plan td:nth-child(2), .scene-plan td:nth-child(3) { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .scene-plan td:last-child { overflow-wrap: anywhere; }
+.scene-plan .scene-narration { white-space: pre-line; min-width: 12rem; }

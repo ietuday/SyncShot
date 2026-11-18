@@ -57,7 +57,7 @@ function Studio() {
       body.append('motion', motion);
       body.append('transition', transition);
       body.append('sceneLength', sceneLength);
-      if (mode !== 'plan' && subtitlesEnabled) body.append('subtitles', subtitles);
+      if (subtitlesEnabled && subtitles) body.append('subtitles', subtitles);
       for (const image of images) body.append('images', image);
       await readJobs('POST', body);
       setJobs(await readJobs());
@@ -70,8 +70,7 @@ function Studio() {
 
   const latest = jobs[0];
   const busy = latest && ['checking inputs', 'rendering'].includes(latest.status);
-  const canPlan = connected && !submitting && !busy && audio && images.length;
-  const canRender = canPlan && (!subtitlesEnabled || subtitles);
+  const canRender = connected && !submitting && !busy && audio && images.length && (!subtitlesEnabled || subtitles);
   return <main>
     <nav><strong>SyncShot</strong><a href="/angular/">Render history</a></nav>
     <section>
@@ -124,14 +123,14 @@ function Studio() {
           <input type="checkbox" checked={subtitlesEnabled} onChange={event => {
             setSubtitlesEnabled(event.target.checked);
             setSubtitles(null);
-          }} /> Add subtitles from an SRT file
+          }} /> Use SRT captions for planning and subtitles
         </label>
         {subtitlesEnabled && <label>Subtitle file
           <input type="file" accept=".srt" onChange={event => setSubtitles(event.target.files[0] ?? null)} />
         </label>}
       </fieldset>
       <div className="actions">
-        <button onClick={() => start('plan')} disabled={!canPlan}>Plan scenes</button>
+        <button onClick={() => start('plan')} disabled={!canRender}>Plan scenes</button>
         <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>
         <button onClick={() => start('full')} disabled={!canRender}>Render video</button>
       </div>
@@ -150,15 +149,16 @@ function Studio() {
       </div>
       {latest?.scenes && <div className="scene-plan">
         <h2>Full video scene plan</h2>
-        <p>Timings use the files and settings from the last plan. Crossfade scenes overlap.</p>
+        <p>Crossfade scenes overlap. Each caption is listed under the scene where it starts.</p>
         <table>
-          <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th></tr></thead>
+          <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th>{latest.hasNarration && <th scope="col">Narration</th>}</tr></thead>
           <tbody>
             {latest.scenes.map((scene, index) => <tr key={index}>
               <td>{index + 1}</td>
               <td>{scene.start.toFixed(2)} s</td>
               <td>{scene.end.toFixed(2)} s</td>
               <td>{scene.image}</td>
+              {latest.hasNarration && <td className="scene-narration">{scene.narration?.join('\n') || '—'}</td>}
             </tr>)}
           </tbody>
         </table>

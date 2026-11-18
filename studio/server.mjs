@@ -47,10 +47,11 @@ async function render(job, upload) {
       '--output', join(directory, 'final.mp4'), '--memory-mode', 'low',
     ];
     if (job.mode === 'plan') {
-      const result = await run(renderer, [...args, '--plan-scenes', '--timeout', '20s'], { cwd: directory });
+      const result = await run(renderer, [...args, '--plan-scenes', '--timeout', '20s'], { cwd: directory, maxBuffer: 8 * 1024 * 1024 });
       job.scenes = JSON.parse(result.stdout).map(scene => ({
         ...scene, image: upload.imageNames.get(scene.image),
       }));
+      job.hasNarration = Boolean(upload.subtitles);
       job.status = 'completed';
       return;
     }
