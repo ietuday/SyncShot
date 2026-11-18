@@ -395,16 +395,20 @@ function sceneCSV(scenes) {
   return '\ufeff' + rows.map(row => row.map(field).join(',')).join('\r\n') + '\r\n';
 }
 
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 byId('download-plan').addEventListener('click', () => {
   const scenes = showPlan();
   if (!scenes) return;
   const csv = new Blob([sceneCSV(scenes)], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(csv);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'syncshot-scene-plan.csv';
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadBlob(csv, 'syncshot-scene-plan.csv');
   byId('status').textContent = 'Scene plan CSV downloaded (' + scenes.length + ' scenes).';
 });
 function readTitleCards() {
@@ -636,6 +640,7 @@ const settingFields = [
   'pacing', 'export-type', 'resolution', 'frame-rate',
 ];
 const settingsStatus = byId('settings-status');
+const readSettings = () => Object.fromEntries(settingFields.map(id => [id, byId(id).value]));
 
 function applySavedSettings(settings) {
   let skipped = 0;
@@ -661,8 +666,7 @@ function applySavedSettings(settings) {
 
 byId('save-settings').addEventListener('click', () => {
   try {
-    const settings = Object.fromEntries(settingFields.map(id => [id, byId(id).value]));
-    localStorage.setItem(settingsKey, JSON.stringify(settings));
+    localStorage.setItem(settingsKey, JSON.stringify(readSettings()));
     settingsStatus.textContent = 'Settings saved in this browser.';
   } catch {
     settingsStatus.textContent = 'This browser could not save your settings.';
@@ -684,6 +688,41 @@ byId('load-settings').addEventListener('click', () => {
       : 'Settings loaded.';
   } catch {
     settingsStatus.textContent = 'Saved settings could not be loaded.';
+  }
+});
+
+byId('download-settings').addEventListener('click', () => {
+  const preset = { format: 'syncshot-studio-preset', version: 1, settings: readSettings() };
+  const blob = new Blob([JSON.stringify(preset, null, 2) + '\n'], { type: 'application/json' });
+  downloadBlob(blob, 'syncshot-preset.json');
+  settingsStatus.textContent = 'Preset downloaded.';
+});
+
+byId('import-settings').addEventListener('change', async event => {
+  const input = event.currentTarget;
+  const file = input.files[0];
+  if (!file) return;
+  input.disabled = true;
+  try {
+    if (file.size > 16384) throw new Error('Choose a SyncShot preset under 16 KB.');
+    const preset = JSON.parse(await file.text());
+    if (preset?.format !== 'syncshot-studio-preset' || preset.version !== 1 ||
+        !preset.settings || typeof preset.settings !== 'object' || Array.isArray(preset.settings) ||
+        !settingFields.every(id => typeof preset.settings[id] === 'string')) {
+      throw new Error('This is not a supported SyncShot preset.');
+    }
+    if (byId('inputs').disabled) throw new Error('Import the preset after export finishes.');
+    const skipped = applySavedSettings(preset.settings);
+    settingsStatus.textContent = skipped
+      ? 'Preset imported. Unavailable options were skipped.'
+      : 'Preset imported.';
+  } catch (error) {
+    settingsStatus.textContent = error instanceof SyntaxError
+      ? 'The preset file is not valid JSON.'
+      : error.message || 'Could not import settings.';
+  } finally {
+    input.value = '';
+    input.disabled = false;
   }
 });
 

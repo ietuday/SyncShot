@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=saved-settings-1">
-  <script src="./demo.js?v=saved-settings-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=portable-settings-1">
+  <script src="./demo.js?v=portable-settings-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -103,7 +103,11 @@
         <div class="actions">
           <button id="save-settings" type="button">Save settings</button>
           <button id="load-settings" type="button">Load settings</button>
+          <button id="download-settings" type="button">Download preset</button>
         </div>
+        <label>Import preset (.json)
+          <input id="import-settings" type="file" accept=".json,application/json">
+        </label>
         <p class="card-note" id="settings-status" role="status">Save a preset in this browser. Media files and titles are excluded.</p>
       </fieldset>
       <div class="actions">
