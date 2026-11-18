@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { readJobs } from '../jobs.js';
+import { readJobs, cancelJob } from '../jobs.js';
 import '../studio.css';
 import { downloadScenePlan } from '../scene-export.js';
 import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.js';
@@ -18,6 +18,7 @@ function Studio() {
   const [motion, setMotion] = useState('zoom_in');
   const [sceneLength, setSceneLength] = useState('auto');
   const [transition, setTransition] = useState('fade');
+  const [profile, setProfile] = useState('720p');
   const [captionSource, setCaptionSource] = useState('off');
   const [language, setLanguage] = useState('auto');
   const [subtitles, setSubtitles] = useState(null);
@@ -111,6 +112,7 @@ function Studio() {
       body.append('mode', mode);
       body.append('motion', motion);
       body.append('transition', transition);
+      body.append('profile', profile);
       body.append('sceneLength', sceneLength);
       if (captionSource === 'srt') body.append('subtitles', subtitles);
       if (captionSource === 'whisper') body.append('transcribe', language);
@@ -148,7 +150,7 @@ function Studio() {
   useEffect(() => {
     setPreviewTime(previous => clampPreviewTime(previous, displayedScenes));
   }, [displayedScenes]);
-  const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
+  const busy = latest && ['checking inputs', 'transcribing', 'rendering', 'cancelling'].includes(latest.status);
   const canRender = demoMode
     ? connected && (sampleSelected || images.length > 0) && Number(demoDuration) > 0
     : connected && !submitting && !busy && audio && images.length && (captionSource !== 'srt' || subtitles);
@@ -201,6 +203,12 @@ function Studio() {
             <option value="pan_right">Pan right</option>
           </select>
         </label>
+        {!demoMode && <label>Output resolution
+          <select value={profile} onChange={event => setProfile(event.target.value)}>
+            <option value="720p">720p — lower memory</option>
+            <option value="1080p">1080p — higher quality</option>
+          </select>
+        </label>}
         <label>Transition
           <select value={transition} onChange={event => setTransition(event.target.value)}>
             <option value="fade">Crossfade</option>
@@ -234,6 +242,7 @@ function Studio() {
         {!demoMode && <button onClick={() => start('full')} disabled={!canRender}>Render video</button>}
         {!demoMode && editedScenes && <button type="button" onClick={() => start('full', true)} disabled={!canRender}>Render edited timeline</button>}
       </div>
+      {!demoMode && busy && latest?.status !== 'cancelling' && <button type="button" onClick={() => cancelJob(latest.id).catch(err => setError(err.message))}>Cancel active job</button>}
       {submitting && <p role="status">Uploading…</p>}
       {latest && latest.mode !== 'plan' && (busy || latest.status === 'completed') && <p>
         <progress aria-label="Render progress" max="100" value={latest.progress ?? 0} /> {latest.progress ?? 0}%
