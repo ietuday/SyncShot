@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=captions-1">
-  <script src="./demo.js?v=captions-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=formats-1">
+  <script src="./demo.js?v=formats-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -28,6 +28,13 @@
           <select id="transition">
             <option value="cut">Cut</option>
             <option value="fade">Crossfade</option>
+          </select>
+        </label>
+        <label>Video format
+          <select id="format">
+            <option value="landscape">Landscape · 16:9</option>
+            <option value="portrait">Portrait · 9:16</option>
+            <option value="square">Square · 1:1</option>
           </select>
         </label>
         <label>Scene pacing

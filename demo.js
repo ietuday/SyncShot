@@ -1,5 +1,21 @@
 const byId = id => document.getElementById(id);
 const audio = new Audio();
+const formats = {
+  landscape: { width: 1280, height: 720 },
+  portrait: { width: 720, height: 1280 },
+  square: { width: 720, height: 720 },
+};
+const selectedFormat = () => formats[byId('format').value] ?? formats.landscape;
+
+function applyPreviewFormat() {
+  const frame = byId('frame');
+  const { width, height } = selectedFormat();
+  frame.style.aspectRatio = width + ' / ' + height;
+  frame.style.maxWidth = Math.round(520 * width / height) + 'px';
+}
+
+byId('format').addEventListener('change', applyPreviewFormat);
+applyPreviewFormat();
 const sample = [
   { name: 'A road through the hills', color: '#325647' },
   { name: 'The river crossing', color: '#214e68' },
@@ -355,8 +371,9 @@ byId('export').addEventListener('click', async () => {
         images.set(photo, image);
       }
     }
-    canvas.width = 1280;
-    canvas.height = 720;
+    const { width, height } = selectedFormat();
+    canvas.width = width;
+    canvas.height = height;
     const context = canvas.getContext('2d');
     const overlay = document.createElement('canvas');
     overlay.width = canvas.width;
@@ -381,7 +398,7 @@ byId('export').addEventListener('click', async () => {
         context.font = '44px system-ui';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(scene.photo.name, canvas.width / 2, canvas.height / 2);
+        context.fillText(scene.photo.name, canvas.width / 2, canvas.height / 2, canvas.width * 0.85);
       }
       context.restore();
     };
@@ -436,7 +453,9 @@ byId('export').addEventListener('click', async () => {
     if (!video.size) throw new Error('The browser produced an empty recording.');
     if (exportedUrl) URL.revokeObjectURL(exportedUrl);
     exportedUrl = URL.createObjectURL(video);
-    byId('export-video').src = exportedUrl;
+    const resultPlayer = byId('export-video');
+    resultPlayer.style.maxWidth = Math.round(520 * canvas.width / canvas.height) + 'px';
+    resultPlayer.src = exportedUrl;
     byId('download').href = exportedUrl;
     byId('export-result').hidden = false;
     status.textContent = 'Export complete. Your WebM is ready to download.';
