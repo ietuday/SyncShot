@@ -44,3 +44,7 @@ figcaption { padding-top: .45rem; font-variant-numeric: tabular-nums; }
 #export-video { display: block; max-height: 520px; }
 
 #crop-control[hidden] { display: none; }
+
+.photo-order li > label { flex: 1 1 13rem; margin: .25rem 0; }
+.photo-order li > label[hidden] { display: none; }
+.photo-time input { max-width: 8rem; }

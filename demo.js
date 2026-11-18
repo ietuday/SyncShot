@@ -24,13 +24,17 @@ function cropPosition(framing) {
 function applyPreviewFraming() {
   const framing = byId('framing').value;
   const [x, y] = cropPosition(framing);
+  for (const control of document.querySelectorAll(".photo-crop")) control.hidden = framing !== "cover";
   byId('crop-control').hidden = framing !== 'cover';
   const frame = byId('frame');
   frame.style.setProperty('--photo-fit', framing);
   frame.style.setProperty('--photo-position', (x * 100) + '% ' + (y * 100) + '%');
 }
 
-byId('framing').addEventListener('change', applyPreviewFraming);
+byId('framing').addEventListener('change', () => {
+  stopPreview();
+  applyPreviewFraming();
+});
 byId('crop-position').addEventListener('change', applyPreviewFraming);
 applyPreviewFraming();
 
@@ -192,6 +196,8 @@ function frameAt(scenes, elapsed, transition) {
 function showPhotoOrder(focusIndex, direction) {
   const list = byId('photo-order');
   list.hidden = !photos.length;
+  byId("custom-pacing").disabled = !photos.length;
+  if (!photos.length && byId("pacing").value === "custom") byId("pacing").value = "auto";
   list.replaceChildren(...photos.map((photo, index) => {
     const row = document.createElement('li');
     const label = document.createElement('span');
@@ -212,7 +218,36 @@ function showPhotoOrder(focusIndex, direction) {
       });
       actions.append(button);
     }
-    row.append(label, actions);
+    const crop = document.createElement('label');
+    crop.className = 'photo-crop';
+    crop.hidden = byId('framing').value !== 'cover';
+    crop.textContent = 'Crop for ' + photo.name;
+    const position = byId('crop-position').cloneNode(true);
+    position.removeAttribute('id');
+    position.add(new Option('Use global crop', ''), 0);
+    position.value = photo.position ?? '';
+    position.addEventListener('change', () => {
+      photo.position = position.value;
+      stopPreview();
+    });
+    crop.append(position);
+
+    const time = document.createElement('label');
+    time.hidden = byId('pacing').value !== 'custom';
+    time.className = 'photo-time';
+    time.textContent = 'Seconds for ' + photo.name;
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = '0.01';
+    input.min = '0.05';
+    input.value = photo.seconds ?? (duration / photos.length).toFixed(2);
+    input.addEventListener('input', () => {
+      photo.seconds = input.value;
+      stopPreview();
+      if (!byId('plan').disabled) showPlan();
+    });
+    time.append(input);
+    row.append(label, actions, crop, time);
     return row;
   }));
   if (focusIndex !== undefined) {
@@ -226,6 +261,21 @@ function showPhotoOrder(focusIndex, direction) {
 function buildPlan() {
   const sources = photos.length ? photos : sample;
   const pacing = byId('pacing').value;
+  if (pacing === 'custom') {
+    let end = 0;
+    const scenes = photos.map(photo => {
+      const seconds = Number(photo.seconds ?? (duration / photos.length).toFixed(2));
+      if (!Number.isFinite(seconds) || seconds < 0.05) throw new Error('Enter at least 0.05 seconds for each photo.');
+      const start = end;
+      end += seconds;
+      return { photo, start, end };
+    });
+    if (Math.abs(end - duration) > 0.011 || scenes.at(-1).start >= duration) {
+      throw new Error('Photo times total ' + end.toFixed(2) + ' s. Match the narration duration of ' + duration.toFixed(2) + ' s.');
+    }
+    scenes.at(-1).end = duration;
+    return scenes;
+  }
   const count = Math.min(500, pacing === 'auto' ? sources.length : Math.ceil(duration / Number(pacing)));
   return Array.from({ length: count }, (_, index) => ({
     photo: sources[index % sources.length],
@@ -235,7 +285,14 @@ function buildPlan() {
 }
 
 function showPlan() {
-  const scenes = buildPlan();
+  let scenes;
+  try {
+    scenes = buildPlan();
+  } catch (error) {
+    document.querySelector('table').hidden = true;
+    byId('status').textContent = error.message;
+    return null;
+  }
   document.querySelector('tbody').replaceChildren(...scenes.map((scene, index) => {
     const row = document.createElement('tr');
     for (const value of [index + 1, scene.start.toFixed(2) + ' s', scene.end.toFixed(2) + ' s', scene.photo.name]) {
@@ -260,6 +317,7 @@ byId('audio').addEventListener('change', () => {
     audio.removeAttribute('src');
     audio.load();
     duration = 24;
+    showPhotoOrder();
     showPlan();
   }
 });
@@ -270,6 +328,7 @@ audio.addEventListener('loadedmetadata', () => {
     return;
   }
   duration = audio.duration;
+  showPhotoOrder();
   byId('preview').disabled = byId('plan').disabled = byId('export').disabled = false;
   showPlan();
 });
@@ -284,10 +343,16 @@ byId('photos').addEventListener('change', () => {
   showPhotoOrder();
   if (!byId('plan').disabled) showPlan();
 });
+byId('pacing').addEventListener('change', () => {
+  stopPreview();
+  showPhotoOrder();
+  if (!byId('plan').disabled) showPlan();
+});
 byId('plan').addEventListener('click', showPlan);
 byId('preview').addEventListener('click', async () => {
   stopPreview();
   const scenes = showPlan();
+  if (!scenes) return;
   const frame = byId('frame');
   const motion = byId('motion').value;
   const transition = byId('transition').value;
@@ -324,6 +389,10 @@ byId('preview').addEventListener('click', async () => {
       if (scene.photo.url) {
         slot.subject.src = scene.photo.url;
         slot.subject.alt = scene.photo.name;
+        if (scene.photo.position && byId('framing').value === 'cover') {
+          const [x, y] = scene.photo.position.split(',').map(Number);
+          slot.subject.style.objectPosition = (x * 100) + '% ' + (y * 100) + '%';
+        }
       } else {
         slot.subject.textContent = scene.photo.name;
       }
@@ -356,10 +425,11 @@ let exportedUrl;
 byId('export').addEventListener('click', async () => {
   stopPreview();
   const scenes = showPlan();
+  if (!scenes) return;
   const status = byId('status');
   const audioFile = byId('audio').files[0];
   const framing = byId('framing').value;
-  const position = cropPosition(framing);
+  const globalPosition = cropPosition(framing);
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
@@ -420,6 +490,9 @@ byId('export').addEventListener('click', async () => {
       context.translate(-canvas.width / 2, -canvas.height / 2);
       const image = images.get(scene.photo);
       if (image) {
+        const position = framing === 'cover' && scene.photo.position
+          ? scene.photo.position.split(',').map(Number)
+          : globalPosition;
         const bounds = photoBounds(image.naturalWidth, image.naturalHeight, canvas.width, canvas.height, framing, position);
         context.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height);
       } else {
