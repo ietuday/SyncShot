@@ -15,11 +15,26 @@ function applyPreviewFormat() {
 }
 
 byId('format').addEventListener('change', applyPreviewFormat);
-byId('framing').addEventListener('change', () => {
-  byId('frame').style.setProperty('--photo-fit', byId('framing').value);
-});
+function cropPosition(framing) {
+  return framing === 'cover'
+    ? byId('crop-position').value.split(',').map(Number)
+    : [0.5, 0.5];
+}
 
-function photoBounds(sourceWidth, sourceHeight, frameWidth, frameHeight, framing) {
+function applyPreviewFraming() {
+  const framing = byId('framing').value;
+  const [x, y] = cropPosition(framing);
+  byId('crop-control').hidden = framing !== 'cover';
+  const frame = byId('frame');
+  frame.style.setProperty('--photo-fit', framing);
+  frame.style.setProperty('--photo-position', (x * 100) + '% ' + (y * 100) + '%');
+}
+
+byId('framing').addEventListener('change', applyPreviewFraming);
+byId('crop-position').addEventListener('change', applyPreviewFraming);
+applyPreviewFraming();
+
+function photoBounds(sourceWidth, sourceHeight, frameWidth, frameHeight, framing, position) {
   const widthRatio = frameWidth / sourceWidth;
   const heightRatio = frameHeight / sourceHeight;
   const scale = framing === 'cover'
@@ -27,7 +42,7 @@ function photoBounds(sourceWidth, sourceHeight, frameWidth, frameHeight, framing
     : Math.min(widthRatio, heightRatio);
   const width = sourceWidth * scale;
   const height = sourceHeight * scale;
-  return { x: (frameWidth - width) / 2, y: (frameHeight - height) / 2, width, height };
+  return { x: (frameWidth - width) * position[0], y: (frameHeight - height) * position[1], width, height };
 }
 applyPreviewFormat();
 const sample = [
@@ -344,6 +359,7 @@ byId('export').addEventListener('click', async () => {
   const status = byId('status');
   const audioFile = byId('audio').files[0];
   const framing = byId('framing').value;
+  const position = cropPosition(framing);
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
@@ -404,7 +420,7 @@ byId('export').addEventListener('click', async () => {
       context.translate(-canvas.width / 2, -canvas.height / 2);
       const image = images.get(scene.photo);
       if (image) {
-        const bounds = photoBounds(image.naturalWidth, image.naturalHeight, canvas.width, canvas.height, framing);
+        const bounds = photoBounds(image.naturalWidth, image.naturalHeight, canvas.width, canvas.height, framing, position);
         context.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height);
       } else {
         context.fillStyle = 'white';

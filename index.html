@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=framing-1">
-  <script src="./demo.js?v=framing-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=position-1">
+  <script src="./demo.js?v=position-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -41,6 +41,19 @@
           <select id="framing">
             <option value="contain">Fit · show the whole photo</option>
             <option value="cover">Fill · crop to the frame</option>
+          </select>
+        </label>
+        <label id="crop-control" hidden>Crop position
+          <select id="crop-position">
+            <option value="0.5,0.5">Center</option>
+            <option value="0.5,0">Top</option>
+            <option value="0.5,1">Bottom</option>
+            <option value="0,0.5">Left</option>
+            <option value="1,0.5">Right</option>
+            <option value="0,0">Top left</option>
+            <option value="1,0">Top right</option>
+            <option value="0,1">Bottom left</option>
+            <option value="1,1">Bottom right</option>
           </select>
         </label>
         <label>Scene pacing
