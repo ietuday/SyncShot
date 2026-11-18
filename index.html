@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=scene-csv-1">
-  <script src="./demo.js?v=scene-csv-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=resolution-1">
+  <script src="./demo.js?v=resolution-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -85,6 +85,14 @@
             <option value="mp4" disabled>MP4</option>
           </select>
         </label>
+        <label>Export resolution
+          <select id="resolution" aria-describedby="export-dimensions">
+            <option value="480">480p</option>
+            <option value="720" selected>720p</option>
+            <option value="1080">1080p</option>
+          </select>
+        </label>
+        <p class="card-note" id="export-dimensions"></p>
         <p id="export-support" hidden></p>
       </fieldset>
       <div class="actions">

@@ -6,6 +6,18 @@ const formats = {
   square: { width: 720, height: 720 },
 };
 const selectedFormat = () => formats[byId('format').value] ?? formats.landscape;
+const exportResolutions = {
+  480: { edge: 480, longEdge: 854, bitrate: 1200000 },
+  720: { edge: 720, longEdge: 1280, bitrate: 2500000 },
+  1080: { edge: 1080, longEdge: 1920, bitrate: 5000000 },
+};
+
+function exportDimensions(format, resolution) {
+  const { edge, longEdge, bitrate } = resolution;
+  if (format === 'portrait') return { width: edge, height: longEdge, bitrate };
+  if (format === 'square') return { width: edge, height: edge, bitrate };
+  return { width: longEdge, height: edge, bitrate };
+}
 
 function applyPreviewFormat() {
   const frame = byId('frame');
@@ -119,7 +131,8 @@ function paintCaption(context, text, width, height) {
   if (!text) return;
   const maxWidth = width * 0.85;
   context.save();
-  context.font = '600 32px system-ui';
+  const scale = Math.min(width, height) / 720;
+  context.font = '600 ' + Math.round(32 * scale) + 'px system-ui';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   const lines = [];
@@ -136,13 +149,13 @@ function paintCaption(context, text, width, height) {
     }
     lines.push(line);
   }
-  const spacing = 40;
-  const firstY = height - 45 - (lines.length - 1) * spacing;
+  const spacing = 40 * scale;
+  const firstY = height - 45 * scale - (lines.length - 1) * spacing;
   lines.forEach((line, index) => {
     const y = firstY + index * spacing;
-    const boxWidth = Math.min(maxWidth, context.measureText(line).width) + 24;
+    const boxWidth = Math.min(maxWidth, context.measureText(line).width) + 24 * scale;
     context.fillStyle = 'rgba(0, 0, 0, 0.78)';
-    context.fillRect((width - boxWidth) / 2, y - 20, boxWidth, spacing);
+    context.fillRect((width - boxWidth) / 2, y - spacing / 2, boxWidth, spacing);
     context.fillStyle = 'white';
     context.fillText(line, width / 2, y, maxWidth);
   });
@@ -528,24 +541,41 @@ byId('preview').addEventListener('click', () => preview());
 byId('preview-ending').addEventListener('click', () => preview(true));
 showPlan();
 
-const exportTypes = {
-  webm: ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'],
-  mp4: ['video/mp4;codecs=avc1.42001f,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2'],
-};
 const selectExportType = byId('export-type');
-const supportedType = type => exportTypes[type]?.find(mime => globalThis.MediaRecorder?.isTypeSupported(mime));
-for (const option of selectExportType.options) option.disabled = !supportedType(option.value);
-selectExportType.value = supportedType('webm') ? 'webm' : supportedType('mp4') ? 'mp4' : '';
-if (!supportedType('mp4')) {
-  byId('export-support').hidden = false;
-  byId('export-support').textContent = 'MP4 with H.264 and AAC is unavailable in this browser.';
+const resolutionControl = byId('resolution');
+const currentResolution = () => exportResolutions[resolutionControl.value] ?? exportResolutions[720];
+
+function supportedType(type, resolution) {
+  const profile = resolution.edge === 1080 ? '420028' : '42001f';
+  const types = {
+    webm: ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'],
+    mp4: ['video/mp4;codecs=avc1.' + profile + ',mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2'],
+  };
+  return types[type]?.find(mime => globalThis.MediaRecorder?.isTypeSupported(mime));
 }
+
 function updateExportLabel() {
   const type = selectExportType.value;
   byId('export').textContent = type ? 'Export ' + (type === 'webm' ? 'WebM' : 'MP4') : 'Export video';
 }
+
+function updateExportOptions() {
+  const resolution = currentResolution();
+  const { width, height } = exportDimensions(byId('format').value, resolution);
+  byId('export-dimensions').textContent = width + ' × ' + height + ' pixels';
+  for (const option of selectExportType.options) option.disabled = !supportedType(option.value, resolution);
+  if (!supportedType(selectExportType.value, resolution)) {
+    selectExportType.value = supportedType('webm', resolution) ? 'webm' : supportedType('mp4', resolution) ? 'mp4' : '';
+  }
+  const support = byId('export-support');
+  support.hidden = Boolean(supportedType('mp4', resolution));
+  support.textContent = 'MP4 with H.264 and AAC is unavailable at this resolution in this browser.';
+  updateExportLabel();
+}
 selectExportType.addEventListener('change', updateExportLabel);
-updateExportLabel();
+resolutionControl.addEventListener('change', updateExportOptions);
+byId('format').addEventListener('change', updateExportOptions);
+updateExportOptions();
 
 let exportedUrl;
 let activeExport;
@@ -570,7 +600,9 @@ byId('export').addEventListener('click', async () => {
     return;
   }
   const fileType = selectExportType.value;
-  const mimeType = supportedType(fileType);
+  const resolution = currentResolution();
+  const outputSize = exportDimensions(byId('format').value, resolution);
+  const mimeType = supportedType(fileType, resolution);
   const label = fileType === 'mp4' ? 'MP4' : 'WebM';
   const canvas = document.createElement('canvas');
   if (!mimeType || !canvas.captureStream || (audioFile && !globalThis.AudioContext)) {
@@ -612,7 +644,7 @@ byId('export').addEventListener('click', async () => {
         images.set(photo, image);
       }
     }
-    const { width, height } = selectedFormat();
+    const { width, height, bitrate } = outputSize;
     canvas.width = width;
     canvas.height = height;
     const context = canvas.getContext('2d');
@@ -654,7 +686,7 @@ byId('export').addEventListener('click', async () => {
       for (const track of destination.stream.getAudioTracks()) stream.addTrack(track);
     }
 
-    recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2500000 });
+    recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitrate });
     const chunks = [];
     const output = new Promise((resolve, reject) => {
       recorder.ondataavailable = event => {
