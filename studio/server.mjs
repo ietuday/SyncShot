@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
 import { maxUploadBytes, receiveMedia } from './uploads.mjs';
 import { validateEditedTimeline } from './timeline-contract.js';
+import { trimManualTimeline } from './manual-preview.js';
 import { promisify } from 'node:util';
 
 const run = promisify(execFile);
@@ -48,9 +49,21 @@ async function render(job, upload) {
       ], { timeout: 2 * 60 * 60 * 1000, maxBuffer: 1024 * 1024, signal });
     }
     let timelinePath;
+    let renderAudioDir = audio;
     if (upload?.timeline) {
       const timeline = validateEditedTimeline(upload.timeline, upload.imageNames,
         job.media.durationSeconds, { crossfade: upload.crossfade, width: upload.profile === '1080p' ? 1920 : 1280, height: upload.profile === '1080p' ? 1080 : 720 });
+      if (job.mode === 'preview') {
+        const previewSeconds = Math.min(10, job.media.durationSeconds);
+        const previewDir = join(directory, 'preview-audio');
+        await mkdir(previewDir, { recursive: true });
+        await run('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
+          '-i', upload.audioPath, '-t', String(previewSeconds),
+          '-vn', '-ar', '48000', '-ac', '2', '-c:a', 'pcm_s16le',
+          join(previewDir, 'narration.wav')], { timeout: 120000, signal });
+        renderAudioDir = previewDir;
+        Object.assign(timeline, trimManualTimeline(timeline, previewSeconds));
+      }
       timeline.scenes = timeline.scenes.map(scene => ({
         ...scene, image: join(images, scene.image),
       }));
@@ -65,7 +78,7 @@ async function render(job, upload) {
         ClipSeconds: 0,
         ...(upload.profile ? { RenderProfile: upload.profile } : {}),
         ...(timelinePath ? { CinematicTimelinePath: timelinePath, CinematicChunkScenes: 0, RenderProfile: '' } : {}),
-        PreviewSeconds: job.mode === 'preview' ? 10 : 0,
+        PreviewSeconds: job.mode === 'preview' && !timelinePath ? 10 : 0,
         CinematicMotion: upload.motion,
         CinematicCrossfade: upload.crossfade,
         CinematicAutoSceneSeconds: upload.sceneLength || job.media.durationSeconds / job.media.images,
@@ -73,8 +86,8 @@ async function render(job, upload) {
       } : {}),
     }));
     const args = [
-      '--config', configPath, '--audio-dir', audio, '--images-dir', images,
-      '--output', join(directory, 'final.mp4'), '--memory-mode', 'low',
+      '--config', configPath, '--audio-dir', renderAudioDir, '--images-dir', images,
+      '--output', join(directory, timelinePath ? filename : 'final.mp4'), '--memory-mode', 'low',
     ];
     if (job.mode === 'plan') {
       const result = await run(renderer, [...args, '--plan-scenes', '--timeout', '20s'], { cwd: directory, maxBuffer: 8 * 1024 * 1024 });
