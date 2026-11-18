@@ -15,6 +15,20 @@ function applyPreviewFormat() {
 }
 
 byId('format').addEventListener('change', applyPreviewFormat);
+byId('framing').addEventListener('change', () => {
+  byId('frame').style.setProperty('--photo-fit', byId('framing').value);
+});
+
+function photoBounds(sourceWidth, sourceHeight, frameWidth, frameHeight, framing) {
+  const widthRatio = frameWidth / sourceWidth;
+  const heightRatio = frameHeight / sourceHeight;
+  const scale = framing === 'cover'
+    ? Math.max(widthRatio, heightRatio)
+    : Math.min(widthRatio, heightRatio);
+  const width = sourceWidth * scale;
+  const height = sourceHeight * scale;
+  return { x: (frameWidth - width) / 2, y: (frameHeight - height) / 2, width, height };
+}
 applyPreviewFormat();
 const sample = [
   { name: 'A road through the hills', color: '#325647' },
@@ -329,6 +343,7 @@ byId('export').addEventListener('click', async () => {
   const scenes = showPlan();
   const status = byId('status');
   const audioFile = byId('audio').files[0];
+  const framing = byId('framing').value;
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
@@ -389,10 +404,8 @@ byId('export').addEventListener('click', async () => {
       context.translate(-canvas.width / 2, -canvas.height / 2);
       const image = images.get(scene.photo);
       if (image) {
-        const scale = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
-        const width = image.naturalWidth * scale;
-        const height = image.naturalHeight * scale;
-        context.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+        const bounds = photoBounds(image.naturalWidth, image.naturalHeight, canvas.width, canvas.height, framing);
+        context.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height);
       } else {
         context.fillStyle = 'white';
         context.font = '44px system-ui';

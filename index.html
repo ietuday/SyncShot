@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=formats-1">
-  <script src="./demo.js?v=formats-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=framing-1">
+  <script src="./demo.js?v=framing-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -35,6 +35,12 @@
             <option value="landscape">Landscape · 16:9</option>
             <option value="portrait">Portrait · 9:16</option>
             <option value="square">Square · 1:1</option>
+          </select>
+        </label>
+        <label>Photo framing
+          <select id="framing">
+            <option value="contain">Fit · show the whole photo</option>
+            <option value="cover">Fill · crop to the frame</option>
           </select>
         </label>
         <label>Scene pacing
