@@ -499,6 +499,11 @@ selectExportType.addEventListener('change', updateExportLabel);
 updateExportLabel();
 
 let exportedUrl;
+let activeExport;
+const cancelExport = byId('cancel-export');
+cancelExport.addEventListener('click', () => {
+  activeExport?.abort(new DOMException('Export canceled.', 'AbortError'));
+});
 byId('export').addEventListener('click', async () => {
   stopPreview();
   const scenes = showPlan();
@@ -527,7 +532,13 @@ byId('export').addEventListener('click', async () => {
   const controls = ['inputs', 'plan', 'preview', 'preview-ending', 'export'].map(byId);
   controls.forEach(control => { control.disabled = true; });
   status.textContent = 'Preparing browser export…';
-  byId('export-result').hidden = true;
+  const controller = new AbortController();
+  activeExport = controller;
+  cancelExport.hidden = false;
+  const interrupted = new Promise((_, reject) => {
+    controller.signal.addEventListener('abort', () => reject(controller.signal.reason), { once: true });
+  });
+  const wait = task => Promise.race([task, interrupted]);
   let audioContext;
   let stream;
   let recorder;
@@ -537,9 +548,9 @@ byId('export').addEventListener('click', async () => {
     let source;
     if (audioFile) {
       audioContext = new AudioContext();
-      await audioContext.resume();
+      await wait(audioContext.resume());
       source = audioContext.createBufferSource();
-      source.buffer = await audioContext.decodeAudioData(await audioFile.arrayBuffer());
+      source.buffer = await wait(audioContext.decodeAudioData(await wait(audioFile.arrayBuffer())));
     }
 
     const images = new Map();
@@ -547,7 +558,7 @@ byId('export').addEventListener('click', async () => {
       if (photo.url && !images.has(photo)) {
         const image = new Image();
         image.src = photo.url;
-        await image.decode();
+        await wait(image.decode());
         images.set(photo, image);
       }
     }
@@ -632,7 +643,7 @@ byId('export').addEventListener('click', async () => {
       animation = requestAnimationFrame(draw);
     }
     animation = requestAnimationFrame(draw);
-    const video = await output;
+    const video = await wait(output);
     if (!video.size) throw new Error('The browser produced an empty recording.');
     if (exportedUrl) URL.revokeObjectURL(exportedUrl);
     exportedUrl = URL.createObjectURL(video);
@@ -646,8 +657,12 @@ byId('export').addEventListener('click', async () => {
     byId('export-result').hidden = false;
     status.textContent = 'Export complete. Your ' + label + ' is ready to download.';
   } catch (error) {
-    status.textContent = error.message || 'Browser export failed.';
+    status.textContent = error.name === 'AbortError' && exportedUrl
+      ? 'Export canceled. Your previous download is still available.'
+      : error.message || 'Browser export failed.';
   } finally {
+    activeExport = undefined;
+    cancelExport.hidden = true;
     cancelAnimationFrame(animation);
     if (onVisibility) document.removeEventListener('visibilitychange', onVisibility);
     if (recorder && recorder.state !== 'inactive') recorder.stop();
