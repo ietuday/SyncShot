@@ -6,6 +6,8 @@ import { downloadScenePlan } from '../scene-export.js';
 import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.js';
 import { reorderScenes, setSceneDuration } from '../scene-editor.js';
 import { sceneAtTime, clampPreviewTime } from '../scene-preview.js';
+import { recalculateScenes } from '../scene-editor.js';
+import { editedTimelinePayload } from '../timeline-contract.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -28,9 +30,10 @@ function Studio() {
   const [previewTime, setPreviewTime] = useState(0);
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const playbackRef = useRef(0);
+  const plannedJobRef = useRef(null);
 
   useEffect(() => {
-    if (!demoMode || !images.length) { setPhotoUrls({}); return; }
+    if (!images.length) { setPhotoUrls({}); return; }
     const urls = Object.fromEntries(images.map(file => [file.name, URL.createObjectURL(file)]));
     setPhotoUrls(urls);
     return () => Object.values(urls).forEach(url => URL.revokeObjectURL(url));
@@ -59,6 +62,22 @@ function Studio() {
     };
   }, []);
 
+  useEffect(() => {
+    if (demoMode) return;
+    const planJob = jobs.find(job => job.mode === 'plan' && job.status === 'completed' && job.scenes?.length);
+    if (!planJob || plannedJobRef.current === planJob.id) return;
+    plannedJobRef.current = planJob.id;
+    // The renderer's automatic plan includes crossfade overlap. For editing,
+    // scenes use non-overlapping visible intervals; the backend adds overlap.
+    const scenes = planJob.scenes.map((scene, i, list) => ({
+      ...scene,
+      duration: Number(((i + 1 < list.length ? list[i + 1].start : scene.end) - scene.start).toFixed(2)),
+    }));
+    setEditedScenes(recalculateScenes(scenes));
+    setPreviewPlaying(false);
+    setPreviewTime(0);
+  }, [jobs]);
+
   function movePhoto(index, direction) {
     setImages(current => {
       const reordered = [...current];
@@ -68,7 +87,7 @@ function Studio() {
     });
   }
 
-  async function start(mode) {
+  async function start(mode, useEdited = false) {
     if (demoMode) {
       if (mode !== 'plan') return;
       try {
@@ -95,6 +114,7 @@ function Studio() {
       body.append('sceneLength', sceneLength);
       if (captionSource === 'srt') body.append('subtitles', subtitles);
       if (captionSource === 'whisper') body.append('transcribe', language);
+      if (useEdited && editedScenes) body.append('timeline', JSON.stringify(editedTimelinePayload(editedScenes, motion)));
       for (const image of images) body.append('images', image);
       await readJobs('POST', body);
       setJobs(await readJobs());
@@ -106,12 +126,12 @@ function Studio() {
   }
 
   const latest = jobs[0];
-  const displayedScenes = demoMode ? editedScenes : latest?.scenes;
+  const displayedScenes = editedScenes ?? latest?.scenes;
   const moveScene = (from, to) => setEditedScenes(current => reorderScenes(current, from, to));
   const totalPreviewTime = displayedScenes?.at(-1)?.end ?? 0;
   const activePreview = sceneAtTime(displayedScenes, previewTime);
   useEffect(() => {
-    if (!demoMode || !previewPlaying || !totalPreviewTime) return;
+    if (!previewPlaying || !totalPreviewTime) return;
     playbackRef.current = performance.now();
     const timer = setInterval(() => {
       const now = performance.now();
@@ -126,7 +146,7 @@ function Studio() {
     return () => clearInterval(timer);
   }, [previewPlaying, totalPreviewTime, displayedScenes]);
   useEffect(() => {
-    if (demoMode) setPreviewTime(previous => clampPreviewTime(previous, displayedScenes));
+    setPreviewTime(previous => clampPreviewTime(previous, displayedScenes));
   }, [displayedScenes]);
   const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
   const canRender = demoMode
@@ -212,6 +232,7 @@ function Studio() {
         <button onClick={() => start('plan')} disabled={!canRender}>Plan scenes</button>
         {!demoMode && <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>}
         {!demoMode && <button onClick={() => start('full')} disabled={!canRender}>Render video</button>}
+        {!demoMode && editedScenes && <button type="button" onClick={() => start('full', true)} disabled={!canRender}>Render edited timeline</button>}
       </div>
       {submitting && <p role="status">Uploading…</p>}
       {latest && latest.mode !== 'plan' && (busy || latest.status === 'completed') && <p>
@@ -231,13 +252,13 @@ function Studio() {
           <h2>Full video scene plan</h2>
           <button type="button" onClick={() => downloadScenePlan(displayedScenes, latest?.hasNarration)}>Download scene plan CSV</button>
         </div>
-        <p>{demoMode ? 'Estimated scene timing for demonstration only. Actual renderer timing may differ.' : 'Crossfade scenes overlap. Each caption is listed under the scene where it starts.'}</p>
-        {demoMode && <div className="visual-editor">
+        <p>{demoMode ? 'Estimated scene timing for demonstration only.' : 'The edited timeline uses visible scene durations; the renderer adds the selected crossfade overlap. Each caption is listed where it starts.'}</p>
+        {editedScenes && <div className="visual-editor">
           <h3>Visual scene editor</h3>
-          <p>Drag scenes to reorder, or use the arrow buttons. Set each duration in seconds; the timeline and CSV update immediately. The edited total may differ from narration length.</p>
+          <p>Drag scenes to reorder, or use arrow buttons. For real rendering, the edited total must match your narration duration within 0.06 seconds.</p>
           <div className="scene-preview-panel">
             <h3>Interactive scene preview</h3>
-            <p>Browser-only slideshow preview. This is not an encoded video or an MP4 render; crossfades and audio are not applied.</p>
+            <p>Timeline slideshow (not encoded video). Use Render edited timeline with the local API to create an actual MP4. Audio is not played here.</p>
             <div className="preview-stage" aria-label="Current scene preview">
               {activePreview && (photoUrls[activePreview.scene.image]
                 ? <img src={photoUrls[activePreview.scene.image]} alt={activePreview.scene.image}
