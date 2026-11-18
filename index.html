@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=cancel-export-1">
-  <script src="./demo.js?v=cancel-export-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=scene-preview-1">
+  <script src="./demo.js?v=scene-preview-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -99,13 +99,13 @@
         <a id="download" download="syncshot.webm">Download WebM</a>
       </div>
       <p id="status" role="status"></p>
-      <figure id="player" hidden>
+      <figure id="player" tabindex="-1" aria-label="Scene preview" hidden>
         <div id="frame"></div>
         <figcaption id="time"></figcaption>
       </figure>
       <div class="scene-plan">
         <table hidden>
-          <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th></tr></thead>
+          <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th><th scope="col">Preview</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>

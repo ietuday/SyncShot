@@ -71,7 +71,9 @@ A river runs through the valley.
 As evening falls, the road grows quiet.`;
 let timer;
 
+let previewRequest = 0;
 function stopPreview() {
+  previewRequest++;
   cancelAnimationFrame(timer);
   audio.pause();
   byId('player').hidden = true;
@@ -303,6 +305,15 @@ function showPlan() {
     for (const value of [index + 1, scene.start.toFixed(2) + ' s', scene.end.toFixed(2) + ' s', scene.photo.name]) {
       row.insertCell().textContent = value;
     }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'preview-scene';
+    button.textContent = 'Play';
+    button.setAttribute('aria-label', 'Preview scene ' + (index + 1));
+    button.addEventListener('click', () => {
+      if (!byId('preview').disabled) void preview(false, scenes, scene);
+    });
+    row.insertCell().append(button);
     return row;
   }));
   document.querySelector('table').hidden = false;
@@ -396,27 +407,33 @@ function paintTitle(context, title, width, height) {
   context.restore();
 }
 
-async function preview(ending = false) {
+async function preview(ending = false, plannedScenes, selectedScene) {
   stopPreview();
-  const scenes = showPlan();
+  const request = previewRequest;
+  const scenes = plannedScenes ?? showPlan();
   if (!scenes) return;
   const frame = byId('frame');
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
   const cards = readTitleCards();
-  const limit = Math.min(duration, ending ? 3 : 10);
-  const offset = ending ? duration - limit : 0;
+  const segmentLength = selectedScene ? selectedScene.end - selectedScene.start : duration;
+  const limit = Math.min(segmentLength, ending ? 3 : 10);
+  const offset = selectedScene?.start ?? (ending ? duration - limit : 0);
+  const end = offset + limit;
   if (byId('audio').files.length) {
     audio.currentTime = offset;
     try {
       await audio.play();
     } catch {
-      byId('status').textContent = 'Audio playback could not start.';
+      if (request === previewRequest) byId('status').textContent = 'Audio playback could not start.';
       return;
     }
   }
-  byId('player').hidden = false;
+  if (request !== previewRequest) return;
+  const player = byId('player');
+  player.hidden = false;
+  if (selectedScene) player.focus();
   const started = performance.now();
   function createLayer() {
     const layer = document.createElement('div');
@@ -455,22 +472,25 @@ async function preview(ending = false) {
 
   function draw(now) {
     const position = byId('audio').files.length ? audio.currentTime : offset + (now - started) / 1000;
-    const elapsed = Math.min(offset + limit, position);
-    const title = titleAt(cards, elapsed, duration);
+    const elapsed = Math.min(end, Math.max(offset, position));
+    const frameTime = selectedScene && elapsed === selectedScene.end
+      ? Math.max(offset, elapsed - 0.000001)
+      : elapsed;
+    const title = titleAt(cards, frameTime, duration);
     if (card.textContent !== title) card.textContent = title;
     card.hidden = !title;
-    const { current, previous, alpha } = frameAt(scenes, elapsed, transition);
-    drawLayer(incoming, current, elapsed);
+    const { current, previous, alpha } = frameAt(scenes, frameTime, transition);
+    drawLayer(incoming, current, frameTime);
     incoming.layer.style.opacity = alpha;
     incoming.layer.setAttribute('aria-hidden', 'false');
     outgoing.layer.hidden = !previous;
     outgoing.layer.setAttribute('aria-hidden', 'true');
     if (previous) drawLayer(outgoing, previous, previous.end);
-    const text = captionAt(cues, elapsed);
+    const text = captionAt(cues, frameTime);
     if (caption.textContent !== text) caption.textContent = text;
     caption.hidden = !text;
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
-    if (elapsed < offset + limit) timer = requestAnimationFrame(draw);
+    if (elapsed < end) timer = requestAnimationFrame(draw);
     else audio.pause();
   }
   timer = requestAnimationFrame(draw);
@@ -530,6 +550,7 @@ byId('export').addEventListener('click', async () => {
   }
 
   const controls = ['inputs', 'plan', 'preview', 'preview-ending', 'export'].map(byId);
+  controls.push(...document.querySelectorAll('.preview-scene'));
   controls.forEach(control => { control.disabled = true; });
   status.textContent = 'Preparing browser export…';
   const controller = new AbortController();

@@ -53,3 +53,5 @@ figcaption { padding-top: .45rem; font-variant-numeric: tabular-nums; }
 .preview-title { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 8%; overflow-wrap: anywhere; background: rgba(0,0,0,.56); color: white; font-size: clamp(1rem, 7cqw, 2.8rem); line-height: 1.2; font-weight: 700; }
 .preview-title[hidden] { display: none; }
 .card-note { margin: 0; }
+
+.preview-scene { padding: .45rem .75rem; }
