@@ -34,3 +34,9 @@ video { width: 100%; border-radius: .5rem; background: #101a16; }
 
 .scene-plan-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
 .scene-plan-heading h2 { margin-bottom: .5rem; }
+
+.demo-notice { padding: 1rem; background: #e7f4eb; border: 1px solid #8ac8a3; border-radius: .6rem; margin-bottom: 1.25rem; }
+.demo-controls { display: grid; gap: 1rem; margin-bottom: 1rem; }
+.demo-controls label:has(input[type=checkbox]) { display: flex; align-items: center; gap: .6rem; }
+.demo-controls input[type=checkbox] { width: auto; }
+.demo-controls input[type=number] { max-width: 10rem; padding: .4rem; }
