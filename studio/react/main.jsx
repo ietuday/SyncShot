@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { readJobs } from '../jobs.js';
 import '../studio.css';
 import { downloadScenePlan } from '../scene-export.js';
 import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.js';
 import { reorderScenes, setSceneDuration } from '../scene-editor.js';
+import { sceneAtTime, clampPreviewTime } from '../scene-preview.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -24,6 +25,9 @@ function Studio() {
   const [editedScenes, setEditedScenes] = useState(null);
   const [photoUrls, setPhotoUrls] = useState({});
   const [dragIndex, setDragIndex] = useState(null);
+  const [previewTime, setPreviewTime] = useState(0);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+  const playbackRef = useRef(0);
 
   useEffect(() => {
     if (!demoMode || !images.length) { setPhotoUrls({}); return; }
@@ -73,6 +77,8 @@ function Studio() {
         const duration = Number(demoDuration);
         const scenes = planDemoScenes({ photos, duration, sceneLength, transition });
         setEditedScenes(scenes);
+        setPreviewPlaying(false);
+        setPreviewTime(0);
         setJobs([{ id: 'demo-' + Date.now(), mode: 'plan', status: 'completed', progress: 100,
           scenes, hasNarration: false, media: { audio: sampleSelected ? 'Demo narration (60s)' : audio?.name || 'Manual duration', durationSeconds: duration, images: photos.length } }, ...jobs]);
       } catch (err) { setError(err.message); }
@@ -102,6 +108,26 @@ function Studio() {
   const latest = jobs[0];
   const displayedScenes = demoMode ? editedScenes : latest?.scenes;
   const moveScene = (from, to) => setEditedScenes(current => reorderScenes(current, from, to));
+  const totalPreviewTime = displayedScenes?.at(-1)?.end ?? 0;
+  const activePreview = sceneAtTime(displayedScenes, previewTime);
+  useEffect(() => {
+    if (!demoMode || !previewPlaying || !totalPreviewTime) return;
+    playbackRef.current = performance.now();
+    const timer = setInterval(() => {
+      const now = performance.now();
+      const elapsed = (now - playbackRef.current) / 1000;
+      playbackRef.current = now;
+      setPreviewTime(previous => {
+        const next = clampPreviewTime(previous + elapsed, displayedScenes);
+        if (next >= totalPreviewTime) setPreviewPlaying(false);
+        return next;
+      });
+    }, 80);
+    return () => clearInterval(timer);
+  }, [previewPlaying, totalPreviewTime, displayedScenes]);
+  useEffect(() => {
+    if (demoMode) setPreviewTime(previous => clampPreviewTime(previous, displayedScenes));
+  }, [displayedScenes]);
   const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
   const canRender = demoMode
     ? connected && (sampleSelected || images.length > 0) && Number(demoDuration) > 0
@@ -209,6 +235,36 @@ function Studio() {
         {demoMode && <div className="visual-editor">
           <h3>Visual scene editor</h3>
           <p>Drag scenes to reorder, or use the arrow buttons. Set each duration in seconds; the timeline and CSV update immediately. The edited total may differ from narration length.</p>
+          <div className="scene-preview-panel">
+            <h3>Interactive scene preview</h3>
+            <p>Browser-only slideshow preview. This is not an encoded video or an MP4 render; crossfades and audio are not applied.</p>
+            <div className="preview-stage" aria-label="Current scene preview">
+              {activePreview && (photoUrls[activePreview.scene.image]
+                ? <img src={photoUrls[activePreview.scene.image]} alt={activePreview.scene.image}
+                    className={motion === 'static' ? 'preview-image' : 'preview-image preview-motion'}
+                    key={activePreview.index} />
+                : <div className="preview-placeholder">
+                    <strong>Scene {activePreview.index + 1}</strong>
+                    <span>{activePreview.scene.image}</span>
+                  </div>)}
+            </div>
+            <div className="preview-controls">
+              <button type="button" disabled={!totalPreviewTime} onClick={() => {
+                if (previewTime >= totalPreviewTime) setPreviewTime(0);
+                setPreviewPlaying(value => !value);
+              }}>{previewPlaying ? 'Pause' : 'Play'}</button>
+              <button type="button" disabled={!totalPreviewTime} onClick={() => {
+                setPreviewPlaying(false);
+                setPreviewTime(0);
+              }}>Restart</button>
+              <output aria-live="off">{previewTime.toFixed(1)} / {totalPreviewTime.toFixed(1)} s</output>
+            </div>
+            <label>Timeline playhead
+              <input type="range" min="0" max={Math.max(0.1, totalPreviewTime)} step="0.1"
+                value={Math.min(previewTime, totalPreviewTime)} aria-label="Seek through scenes"
+                onChange={event => { setPreviewPlaying(false); setPreviewTime(Number(event.target.value)); }} />
+            </label>
+          </div>
           <div className="timeline-strip" aria-label="Scene timeline">
             {displayedScenes.map((scene, index) => <div className="timeline-segment" key={index}
               style={{ flexGrow: scene.duration ?? (scene.end - scene.start) }} title={scene.image}>
