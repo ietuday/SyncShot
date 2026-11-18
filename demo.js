@@ -464,22 +464,17 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
   const offset = selectedScene?.start ?? (ending ? duration - limit : 0);
   const end = offset + limit;
   const hasAudio = Boolean(byId('audio').files.length);
-  if (hasAudio && !inspect) {
-    audio.currentTime = offset;
-    try {
-      await audio.play();
-    } catch {
-      if (request === previewRequest) byId('status').textContent = 'Audio playback could not start.';
-      return;
-    }
-  }
-  if (request !== previewRequest) return;
   const player = byId('player');
   player.hidden = false;
   if (selectedScene || inspect) player.focus();
   const slider = byId('preview-position');
   slider.max = duration;
-  const started = performance.now();
+  const play = byId('preview-play');
+  const updatePlayLabel = playing => {
+    play.textContent = playing ? 'Pause' : 'Play from here';
+  };
+  let isPlaying = false;
+  let playbackRequest = 0;
   function createLayer() {
     const layer = document.createElement('div');
     layer.className = 'preview-layer';
@@ -536,21 +531,60 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
   }
 
-  slider.oninput = () => {
+  function pause() {
+    playbackRequest++;
+    isPlaying = false;
     cancelAnimationFrame(timer);
     audio.pause();
+    updatePlayLabel(false);
+  }
+
+  slider.oninput = () => {
+    pause();
     renderPreview(Number(slider.value));
   };
 
-  function draw(now) {
-    const position = hasAudio ? audio.currentTime : offset + (now - started) / 1000;
-    const elapsed = Math.min(end, Math.max(offset, position));
-    renderPreview(elapsed, true);
-    if (elapsed < end) timer = requestAnimationFrame(draw);
-    else audio.pause();
+  async function startPlayback(start, finish, holdScene) {
+    const attempt = ++playbackRequest;
+    isPlaying = true;
+    updatePlayLabel(true);
+    if (hasAudio) {
+      audio.currentTime = start;
+      try {
+        await audio.play();
+      } catch {
+        if (attempt === playbackRequest && request === previewRequest) {
+          pause();
+          byId('status').textContent = 'Audio playback could not start.';
+        }
+        return;
+      }
+    }
+    if (attempt !== playbackRequest || request !== previewRequest) return;
+    const started = performance.now();
+    function draw(now) {
+      const position = hasAudio ? audio.currentTime : start + (now - started) / 1000;
+      const elapsed = Math.min(finish, Math.max(start, position));
+      renderPreview(elapsed, holdScene);
+      if (elapsed < finish) timer = requestAnimationFrame(draw);
+      else pause();
+    }
+    timer = requestAnimationFrame(draw);
   }
+
+  play.onclick = () => {
+    if (isPlaying) {
+      pause();
+    } else {
+      const position = Number(slider.value);
+      const start = position >= duration ? 0 : position;
+      if (start !== position) renderPreview(start);
+      void startPlayback(start, duration, false);
+    }
+  };
+  updatePlayLabel(false);
   renderPreview(offset);
-  if (!inspect) timer = requestAnimationFrame(draw);
+  if (!inspect) await startPlayback(offset, end, true);
 }
 byId('preview').addEventListener('click', () => preview());
 byId('preview-ending').addEventListener('click', () => preview(true));

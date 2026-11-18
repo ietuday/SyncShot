@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=timeline-scrub-1">
-  <script src="./demo.js?v=timeline-scrub-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=timeline-play-1">
+  <script src="./demo.js?v=timeline-play-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -122,6 +122,7 @@
             <input id="preview-position" type="range" min="0" max="0" step="any" value="0" aria-describedby="time">
           </label>
           <output id="time" for="preview-position"></output>
+          <div class="actions"><button id="preview-play" type="button">Play from here</button></div>
         </figcaption>
       </figure>
       <div class="scene-plan">
