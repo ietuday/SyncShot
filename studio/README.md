@@ -26,3 +26,7 @@ Run `npm run build` to compile both frontends. The dev server proxies `/api` to 
 Install `faster-whisper` into the Python environment used by Studio, for example with `python3 -m pip install faster-whisper` inside a virtual environment. Activate that environment when starting the API, or set `SYNCSHOT_PYTHON` to its Python executable.
 
 Set **Captions** to **Transcribe locally with Whisper**. Choose Hindi, English or automatic detection. Studio uses the multilingual tiny model with CPU int8 inference. The first automatic-caption job may download model weights. Subsequent jobs can use the cached model. Each plan, preview or render transcribes its uploaded narration before processing the captions.
+
+## GitHub Pages browser demo
+
+The `feature/studio-foundation` workflow builds Vite with `VITE_DEMO_MODE=true` and deploys the static frontend to `/SyncShot/`. In browser demo mode you can generate a sample 60-second scene plan, choose local photo names, adjust pacing and export CSV; it does not upload files, invoke Whisper, or produce MP4s. Real video rendering remains available only with the local Node/Go API. Enable **GitHub Actions** as the Pages build source in repository Settings → Pages if deployment is not active.
