@@ -58,3 +58,6 @@ figcaption { padding-top: .45rem; font-variant-numeric: tabular-nums; }
 
 .music-fade-label { display: flex; align-items: center; gap: .5rem; }
 .music-fade-label input { width: auto; }
+
+#constant-fps { margin-top: 1rem; }
+#constant-fps pre { overflow: auto; padding: .75rem; background: #edf3ef; }

@@ -671,7 +671,7 @@ function updateExportLabel() {
 function updateExportOptions() {
   const resolution = currentResolution();
   const { width, height } = exportDimensions(byId('format').value, resolution);
-  byId('export-dimensions').textContent = width + ' × ' + height + ' pixels · ' + currentFrameRate() + ' FPS';
+  byId('export-dimensions').textContent = width + ' × ' + height + ' pixels · ' + currentFrameRate() + ' FPS target';
   for (const option of selectExportType.options) option.disabled = !supportedType(option.value, resolution);
   if (!supportedType(selectExportType.value, resolution)) {
     selectExportType.value = supportedType('webm', resolution) ? 'webm' : supportedType('mp4', resolution) ? 'mp4' : '';
@@ -962,6 +962,15 @@ byId('export').addEventListener('click', async () => {
     download.href = exportedUrl;
     download.download = 'syncshot.' + fileType;
     download.textContent = 'Download ' + label;
+    const conversion = byId('constant-fps');
+    conversion.hidden = fileType !== 'webm';
+    if (fileType === 'webm') {
+      const seconds = duration.toFixed(6);
+      byId('constant-fps-command').textContent =
+        'ffmpeg -i syncshot.webm -vf "tpad=stop_mode=clone:stop_duration=' + seconds +
+        ',fps=' + frameRate + '" -t ' + seconds +
+        ' -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart syncshot-cfr.mp4';
+    }
     byId('export-result').hidden = false;
     status.textContent = 'Export complete. Your ' + label + ' is ready to download.';
   } catch (error) {

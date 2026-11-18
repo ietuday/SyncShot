@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=music-fade-1">
-  <script src="./demo.js?v=music-fade-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=cfr-export-1">
+  <script src="./demo.js?v=cfr-export-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -107,7 +107,7 @@
             <option value="1080">1080p</option>
           </select>
         </label>
-        <label>Export frame rate
+        <label>Target frame rate
           <select id="frame-rate" aria-describedby="export-dimensions">
             <option value="24" selected>24 FPS</option>
             <option value="30">30 FPS</option>
@@ -137,6 +137,11 @@
       <div id="export-result" hidden>
         <video id="export-video" controls preload="metadata" aria-label="Exported video"></video>
         <a id="download" download="syncshot.webm">Download WebM</a>
+        <details id="constant-fps" hidden>
+          <summary>Convert this WebM to constant-FPS MP4</summary>
+          <p>Download the WebM, then run this command with FFmpeg in the download folder.</p>
+          <pre><code id="constant-fps-command"></code></pre>
+        </details>
       </div>
       <p id="status" role="status"></p>
       <figure id="player" tabindex="-1" aria-label="Scene preview" hidden>
