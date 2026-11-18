@@ -18,14 +18,21 @@ const runs = resolve(process.env.SYNCSHOT_RUNS ?? join(root, 'output', 'studio')
 const renderer = resolve(process.env.SYNCSHOT_BIN ?? join(root, 'output', 'syncshot-studio-renderer'));
 const python = process.env.SYNCSHOT_PYTHON ?? 'python3';
 const jobs = new Map();
+const controllers = new Map();
+const allowedOrigins = request => !request.headers.origin || [
+  'http://localhost:5173', 'http://localhost:4200', 'http://127.0.0.1:5173',
+  'http://127.0.0.1:4200', 'http://' + request.headers.host,
+].includes(request.headers.origin);
 let active = false;
 
 async function render(job, upload) {
   const directory = join(runs, job.id);
+  const controller = controllers.get(job.id);
+  const signal = controller?.signal;
   try {
     const { audio, images } = upload ?? { audio: join(inputs, 'audio'), images: join(inputs, 'images') };
     const preflight = await run(python, [join(studio, 'preflight.py'), audio, images], {
-      timeout: 20000,
+      timeout: 20000, signal,
     });
     job.media = JSON.parse(preflight.stdout);
     if (upload) job.media.audio = upload.audioName;
@@ -38,12 +45,12 @@ async function render(job, upload) {
       await run(python, [
         join(root, 'scripts', 'transcribe-audio.py'), '--audio', upload.audioPath,
         '--output', subtitles, '--format', 'srt', '--language', upload.language,
-      ], { timeout: 2 * 60 * 60 * 1000, maxBuffer: 1024 * 1024 });
+      ], { timeout: 2 * 60 * 60 * 1000, maxBuffer: 1024 * 1024, signal });
     }
     let timelinePath;
     if (upload?.timeline) {
       const timeline = validateEditedTimeline(upload.timeline, upload.imageNames,
-        job.media.durationSeconds, { crossfade: upload.crossfade, width: 1280, height: 720 });
+        job.media.durationSeconds, { crossfade: upload.crossfade, width: upload.profile === '1080p' ? 1920 : 1280, height: upload.profile === '1080p' ? 1080 : 720 });
       timeline.scenes = timeline.scenes.map(scene => ({
         ...scene, image: join(images, scene.image),
       }));
@@ -56,6 +63,7 @@ async function render(job, upload) {
       OutShortsDir: join(directory, 'shorts'),
       ...(upload ? {
         ClipSeconds: 0,
+        ...(upload.profile ? { RenderProfile: upload.profile } : {}),
         ...(timelinePath ? { CinematicTimelinePath: timelinePath, CinematicChunkScenes: 0, RenderProfile: '' } : {}),
         PreviewSeconds: job.mode === 'preview' ? 10 : 0,
         CinematicMotion: upload.motion,
@@ -80,7 +88,7 @@ async function render(job, upload) {
 
     job.status = 'rendering';
     const process = run(renderer, [...args, '--json-progress', '--timeout', '2h'],
-      { cwd: directory, maxBuffer: 16 * 1024 * 1024 });
+      { cwd: directory, maxBuffer: 16 * 1024 * 1024, signal });
     const lines = createInterface({ input: process.child.stdout });
     lines.on('line', line => {
       const match = /^\{"renderProgress":(\d+\.\d+)\}$/.exec(line);
@@ -97,13 +105,14 @@ async function render(job, upload) {
     job.status = 'completed';
     job.videoUrl = '/api/jobs/' + job.id + '/video';
   } catch (error) {
-    job.status = 'failed';
-    job.error = (error.stderr?.trim() || error.message).slice(-2000);
+    job.status = signal?.aborted ? 'cancelled' : 'failed';
+    if (!signal?.aborted) job.error = (error.stderr?.trim() || error.message).slice(-2000);
   } finally {
     if (upload) {
       const temporary = job.mode === 'plan' ? directory : join(directory, 'uploads');
       await rm(temporary, { recursive: true, force: true }).catch(console.error);
     }
+    controllers.delete(job.id);
     active = false;
   }
 }
@@ -119,9 +128,7 @@ createServer(async (request, response) => {
     return json(response, 200, Array.from(jobs.values()).reverse());
   }
   if (url === '/api/jobs' && method === 'POST') {
-    const origin = request.headers.origin;
-    if (origin && !['http://localhost:5173', 'http://localhost:4200',
-      'http://127.0.0.1:5173', 'http://127.0.0.1:4200', 'http://' + request.headers.host].includes(origin)) {
+    if (!allowedOrigins(request)) {
       return json(response, 403, { error: 'Origin is not allowed.' });
     }
     if (active) return json(response, 409, { error: 'A render is already running.' });
@@ -147,9 +154,22 @@ createServer(async (request, response) => {
     }
     job.mode = upload?.mode ?? 'full';
     jobs.set(job.id, job);
+    controllers.set(job.id, new AbortController());
     json(response, 202, job);
     void render(job, upload);
     return;
+  }
+  const cancelMatch = url.match(/^\/api\/jobs\/([a-f0-9-]+)\/cancel$/);
+  if (method === 'POST' && cancelMatch) {
+    if (!allowedOrigins(request)) return json(response, 403, { error: 'Origin is not allowed.' });
+    const job = jobs.get(cancelMatch[1]);
+    const controller = controllers.get(cancelMatch[1]);
+    if (!job || !controller || !['checking inputs', 'transcribing', 'rendering'].includes(job.status)) {
+      return json(response, 409, { error: 'Job is not currently running.' });
+    }
+    controller.abort();
+    job.status = 'cancelling';
+    return json(response, 202, { id: job.id, status: job.status });
   }
   const match = url.match(/^\/api\/jobs\/([a-f0-9-]+)\/video$/);
   const job = match && jobs.get(match[1]);
