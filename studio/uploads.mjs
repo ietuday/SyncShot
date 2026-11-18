@@ -15,6 +15,7 @@ const transitions = new Map([['cut', 0], ['fade', 0.5]]);
 const modes = new Set(['preview', 'full', 'plan']);
 const languages = new Set(['auto', 'hi', 'en']);
 const sceneLengths = new Set(['auto', '8', '15', '30']);
+const profiles = new Set(['720p', '1080p']);
 const maxTimelineBytes = 128 * 1024;
 
 export async function receiveMedia(request, directory) {
@@ -23,7 +24,7 @@ export async function receiveMedia(request, directory) {
   await Promise.all([mkdir(audio, { recursive: true }), mkdir(images, { recursive: true })]);
   const parser = Busboy({
     headers: request.headers,
-    limits: { files: maxImages + 3, fields: 7, fieldSize: maxTimelineBytes, fileSize: maxUploadBytes },
+    limits: { files: maxImages + 3, fields: 8, fieldSize: maxTimelineBytes, fileSize: maxUploadBytes },
   });
   let received = 0;
   let audioName;
@@ -54,7 +55,7 @@ export async function receiveMedia(request, directory) {
       catch { reject('Edited timeline must be valid JSON.'); }
       return;
     }
-    const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths, transcribe: languages };
+    const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths, transcribe: languages, profile: profiles };
     if (valueTruncated || !Object.hasOwn(allowed, name) || !allowed[name].has(value) || settings.has(name)) {
       reject('Invalid render settings.');
       return;
@@ -113,7 +114,7 @@ export async function receiveMedia(request, directory) {
   if (subtitles && language) throw new Error('Choose either an SRT file or automatic captions.');
   if (timeline && settings.get('mode') !== 'full') throw new Error('Edited timelines support full rendering only.');
   return {
-    timeline, audio, images, audioName, audioPath, subtitles, imageNames, language,
+    timeline, profile: settings.get('profile') ?? '720p', audio, images, audioName, audioPath, subtitles, imageNames, language,
     sceneLength: Number(settings.get('sceneLength')) || 0,
     mode: settings.get('mode') ?? 'full',
     motion: settings.get('motion') ?? 'zoom_in',
