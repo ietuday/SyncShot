@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css">
-  <script src="./demo.js?v=webm-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=motion-1">
+  <script src="./demo.js?v=motion-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -16,6 +16,14 @@
       <fieldset id="inputs">
         <label>Narration <input id="audio" type="file" accept="audio/*"></label>
         <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
+        <ol id="photo-order" class="photo-order" aria-label="Photo order" hidden></ol>
+        <label>Photo motion
+          <select id="motion">
+            <option value="static">None</option>
+            <option value="zoom-in">Zoom in</option>
+            <option value="zoom-out">Zoom out</option>
+          </select>
+        </label>
         <label>Scene pacing
           <select id="pacing">
             <option value="auto">By photo count</option>

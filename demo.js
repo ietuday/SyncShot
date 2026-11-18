@@ -15,6 +15,47 @@ function stopPreview() {
   byId('player').hidden = true;
 }
 
+function zoomAt(scene, elapsed, motion) {
+  const fraction = Math.max(0, Math.min(1, (elapsed - scene.start) / (scene.end - scene.start)));
+  if (motion === 'zoom-in') return 1 + fraction * 0.15;
+  if (motion === 'zoom-out') return 1.15 - fraction * 0.15;
+  return 1;
+}
+
+function showPhotoOrder(focusIndex, direction) {
+  const list = byId('photo-order');
+  list.hidden = !photos.length;
+  list.replaceChildren(...photos.map((photo, index) => {
+    const row = document.createElement('li');
+    const label = document.createElement('span');
+    label.textContent = (index + 1) + '. ' + photo.name;
+    const actions = document.createElement('div');
+    for (const [delta, arrow, name] of [[-1, '↑', 'up'], [1, '↓', 'down']]) {
+      const target = index + delta;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = arrow;
+      button.setAttribute('aria-label', 'Move ' + photo.name + ' ' + name);
+      button.disabled = target < 0 || target >= photos.length;
+      button.addEventListener('click', () => {
+        stopPreview();
+        [photos[index], photos[target]] = [photos[target], photos[index]];
+        showPhotoOrder(target, delta);
+        if (!byId('plan').disabled) showPlan();
+      });
+      actions.append(button);
+    }
+    row.append(label, actions);
+    return row;
+  }));
+  if (focusIndex !== undefined) {
+    const buttons = list.children[focusIndex].querySelectorAll('button');
+    const preferred = direction < 0 ? buttons[0] : buttons[1];
+    const fallback = direction < 0 ? buttons[1] : buttons[0];
+    (preferred.disabled ? fallback : preferred).focus();
+  }
+}
+
 function buildPlan() {
   const sources = photos.length ? photos : sample;
   const pacing = byId('pacing').value;
@@ -73,6 +114,7 @@ byId('photos').addEventListener('change', () => {
   stopPreview();
   for (const photo of photos) URL.revokeObjectURL(photo.url);
   photos = Array.from(byId('photos').files, file => ({ name: file.name, url: URL.createObjectURL(file) }));
+  showPhotoOrder();
   if (!byId('plan').disabled) showPlan();
 });
 byId('plan').addEventListener('click', showPlan);
@@ -80,6 +122,7 @@ byId('preview').addEventListener('click', async () => {
   stopPreview();
   const scenes = showPlan();
   const frame = byId('frame');
+  const motion = byId('motion').value;
   const limit = Math.min(duration, 10);
   if (byId('audio').files.length) {
     audio.currentTime = 0;
@@ -93,20 +136,24 @@ byId('preview').addEventListener('click', async () => {
   byId('player').hidden = false;
   const started = performance.now();
   let shown;
+  let subject;
   function draw(now) {
     const elapsed = Math.min(limit, (now - started) / 1000);
     const scene = scenes.find(item => elapsed < item.end) ?? scenes.at(-1);
     if (scene !== shown) {
       frame.style.backgroundColor = scene.photo.color ?? '#19362d';
-      frame.textContent = scene.photo.name;
+      subject = document.createElement('span');
+      subject.textContent = scene.photo.name;
       if (scene.photo.url) {
         const image = new Image();
         image.src = scene.photo.url;
         image.alt = scene.photo.name;
-        frame.replaceChildren(image);
+        subject = image;
       }
+      frame.replaceChildren(subject);
       shown = scene;
     }
+    subject.style.transform = 'scale(' + zoomAt(scene, elapsed, motion) + ')';
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + limit.toFixed(1) + ' seconds';
     if (elapsed < limit) timer = requestAnimationFrame(draw);
     else audio.pause();
@@ -121,6 +168,7 @@ byId('export').addEventListener('click', async () => {
   const scenes = showPlan();
   const status = byId('status');
   const audioFile = byId('audio').files[0];
+  const motion = byId('motion').value;
   if (duration > 300 || (audioFile && audioFile.size > 50 * 1024 * 1024)) {
     status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
     return;
@@ -163,9 +211,14 @@ byId('export').addEventListener('click', async () => {
     canvas.width = 1280;
     canvas.height = 720;
     const context = canvas.getContext('2d');
-    const paint = scene => {
+    const paint = (scene, elapsed) => {
       context.fillStyle = scene.photo.color ?? '#19362d';
       context.fillRect(0, 0, canvas.width, canvas.height);
+      context.save();
+      const zoom = zoomAt(scene, elapsed, motion);
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.scale(zoom, zoom);
+      context.translate(-canvas.width / 2, -canvas.height / 2);
       const image = images.get(scene.photo);
       if (image) {
         const scale = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
@@ -179,8 +232,9 @@ byId('export').addEventListener('click', async () => {
         context.textBaseline = 'middle';
         context.fillText(scene.photo.name, canvas.width / 2, canvas.height / 2);
       }
+      context.restore();
     };
-    paint(scenes[0]);
+    paint(scenes[0], 0);
     stream = canvas.captureStream(24);
     if (source) {
       const destination = audioContext.createMediaStreamDestination();
@@ -208,7 +262,7 @@ byId('export').addEventListener('click', async () => {
     function draw(now) {
       const elapsed = source ? audioContext.currentTime - audioStart : (now - wallStart) / 1000;
       const scene = scenes.find(item => elapsed < item.end) ?? scenes.at(-1);
-      paint(scene);
+      paint(scene, elapsed);
       if (elapsed >= duration) {
         recorder.stop();
         return;
