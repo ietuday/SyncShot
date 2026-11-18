@@ -326,7 +326,7 @@ byId('audio').addEventListener('change', () => {
   if (audio.src) URL.revokeObjectURL(audio.src);
   const file = byId('audio').files[0];
   byId('preview').disabled = byId('preview-ending').disabled = Boolean(file);
-  byId('plan').disabled = Boolean(file);
+  byId('plan').disabled = byId('download-plan').disabled = Boolean(file);
   byId('export').disabled = Boolean(file);
   if (file) audio.src = URL.createObjectURL(file);
   else {
@@ -345,7 +345,7 @@ audio.addEventListener('loadedmetadata', () => {
   }
   duration = audio.duration;
   showPhotoOrder();
-  byId('preview').disabled = byId('preview-ending').disabled = byId('plan').disabled = byId('export').disabled = false;
+  byId('preview').disabled = byId('preview-ending').disabled = byId('plan').disabled = byId('download-plan').disabled = byId('export').disabled = false;
   showPlan();
 });
 audio.addEventListener('error', () => {
@@ -365,6 +365,35 @@ byId('pacing').addEventListener('change', () => {
   if (!byId('plan').disabled) showPlan();
 });
 byId('plan').addEventListener('click', showPlan);
+function sceneCSV(scenes) {
+  const field = value => {
+    const text = String(value);
+    const safe = /^[\s\u0000-\u001f]*[=+@-]/u.test(text) || /^[\t\r\n]/u.test(text)
+      ? "'" + text : text;
+    return '"' + safe.replaceAll('"', '""') + '"';
+  };
+  const rows = [['Scene', 'Start (s)', 'End (s)', 'Duration (s)', 'Photo']];
+  for (const [index, scene] of scenes.entries()) {
+    rows.push([
+      index + 1, scene.start.toFixed(3), scene.end.toFixed(3),
+      (scene.end - scene.start).toFixed(3), scene.photo.name,
+    ]);
+  }
+  return '\ufeff' + rows.map(row => row.map(field).join(',')).join('\r\n') + '\r\n';
+}
+
+byId('download-plan').addEventListener('click', () => {
+  const scenes = showPlan();
+  if (!scenes) return;
+  const csv = new Blob([sceneCSV(scenes)], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(csv);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'syncshot-scene-plan.csv';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  byId('status').textContent = 'Scene plan CSV downloaded (' + scenes.length + ' scenes).';
+});
 function readTitleCards() {
   return {
     opening: byId('opening-title').value.trim(),
@@ -549,7 +578,7 @@ byId('export').addEventListener('click', async () => {
     return;
   }
 
-  const controls = ['inputs', 'plan', 'preview', 'preview-ending', 'export'].map(byId);
+  const controls = ['inputs', 'plan', 'download-plan', 'preview', 'preview-ending', 'export'].map(byId);
   controls.push(...document.querySelectorAll('.preview-scene'));
   controls.forEach(control => { control.disabled = true; });
   status.textContent = 'Preparing browser export…';
