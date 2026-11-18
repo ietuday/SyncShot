@@ -31,3 +31,6 @@ video { width: 100%; border-radius: .5rem; background: #101a16; }
 .scene-plan td:nth-child(2), .scene-plan td:nth-child(3) { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .scene-plan td:last-child { overflow-wrap: anywhere; }
 .scene-plan .scene-narration { white-space: pre-line; min-width: 12rem; }
+
+.scene-plan-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+.scene-plan-heading h2 { margin-bottom: .5rem; }
