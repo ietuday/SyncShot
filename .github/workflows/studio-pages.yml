@@ -1,4 +1,4 @@
-name: Publish Studio demo to GitHub Pages
+name: Publish original SyncShot and Studio to GitHub Pages
 on:
   push:
     branches: [feature/studio-foundation]
@@ -15,7 +15,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out Studio source
+        uses: actions/checkout@v4
+      - name: Check out preserved original Pages site
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: original-pages
+          persist-credentials: false
+      - name: Verify original website files
+        run: |
+          test -s original-pages/index.html
+          test -s original-pages/demo.js
+          test -s original-pages/studio.css
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -25,14 +37,25 @@ jobs:
         working-directory: studio
       - run: node --test test/*.test.mjs
         working-directory: studio
-      - run: npm run build
+      - name: Build separate Studio application
+        run: npm run build
         working-directory: studio
         env:
           VITE_DEMO_MODE: 'true'
+      - name: Assemble original homepage and isolated Studio
+        run: |
+          mkdir -p pages/studio
+          cp original-pages/index.html original-pages/demo.js original-pages/studio.css pages/
+          touch pages/.nojekyll
+          cp -a studio/dist/. pages/studio/
+          test -s pages/index.html
+          test -s pages/demo.js
+          test -s pages/studio/index.html
+          test -s pages/studio/angular/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: studio/dist
+          path: pages
   deploy:
     environment:
       name: github-pages
