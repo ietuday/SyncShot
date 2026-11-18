@@ -122,6 +122,9 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
  cacheDir:=filepath.Join(filepath.Dir(output),".syncshot-chunk-cache")
  keep:=make(map[string]bool,len(chunks))
  args:=stitchFFmpegArgs()
+ totalWork:=t.Duration()
+ for _,chunk:=range chunks {totalWork+=chunk.Duration()}
+ completedWork:=0.0
  for i,chunk:=range chunks{
   if err:=ctx.Err();err!=nil{return err}
   key,err:=chunkCacheKey(chunk)
@@ -138,10 +141,13 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
    staging:=tmp.Name()
    if err:=tmp.Close();err!=nil{os.Remove(staging);return err}
    os.Remove(staging)
-   if err:=renderVisualChunk(ctx,log,chunk,staging);err!=nil{os.Remove(staging);return fmt.Errorf("render chunk %d: %w",i,err)}
+   chunkCtx:=utils.RenderProgressRange(ctx,completedWork/totalWork,(completedWork+chunk.Duration())/totalWork)
+   if err:=renderVisualChunk(chunkCtx,log,chunk,staging);err!=nil{os.Remove(staging);return fmt.Errorf("render chunk %d: %w",i,err)}
    if !validCachedChunk(ctx,staging,chunk.Duration()){os.Remove(staging);return fmt.Errorf("invalid rendered chunk %d",i)}
    if err:=os.Rename(staging,part);err!=nil{os.Remove(staging);return err}
   }
+  completedWork+=chunk.Duration()
+  utils.ReportRenderProgress(ctx,completedWork/totalWork)
   args=append(args,"-i",part)
  }
  args=append(args,"-i",audio)
@@ -202,9 +208,12 @@ func RenderChunkedEffects(ctx context.Context,log *utils.Logger,t Timeline,audio
   "-t",strconv.FormatFloat(t.Duration(),'f',6,64),
   "-c:v","libx264","-pix_fmt","yuv420p","-r",strconv.Itoa(t.FPS),
   "-c:a","aac","-b:a","192k","-movflags","+faststart")
+ if utils.HasRenderProgress(ctx) {args=append(args,"-progress","pipe:1","-nostats")}
  if subtitleIdx>=0{args=append(args,"-map",fmt.Sprintf("%d:0",subtitleIdx),"-c:s","mov_text","-metadata:s:s:0","language=und")}
  args=append(args,final)
- if err:=utils.RunFFmpegWithRetryContext(ctx,log,int(t.Duration()),args...);err!=nil{return fmt.Errorf("stitch cinematic chunks: %w",err)}
+ stitchCtx:=utils.RenderProgressRange(ctx,completedWork/totalWork,1)
+ stitchCtx=utils.WithRenderProgressDuration(stitchCtx,t.Duration())
+ if err:=utils.RunFFmpegWithRetryContext(stitchCtx,log,int(t.Duration()),args...);err!=nil{return fmt.Errorf("stitch cinematic chunks: %w",err)}
  info,err:=os.Stat(final);if err!=nil||info.Size()==0{return fmt.Errorf("empty stitched output: %v",err)}
  d,err:=utils.ProbeDurationPrecise(ctx,final);if err!=nil{return err}
  if math.Abs(d-t.Duration())>0.35{return fmt.Errorf("chunked duration drift %.3f vs %.3f",d,t.Duration())}

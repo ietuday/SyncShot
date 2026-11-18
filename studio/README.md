@@ -13,8 +13,10 @@ cd studio
 npm ci
 ```
 
-Put one narration file in `inputs/audio` and at least one image in `inputs/images`. Start `npm run api` and `npm run dev` in separate terminals from `studio`. Open http://127.0.0.1:5173/ for the studio and http://127.0.0.1:5173/angular/ for history.
+Start `npm run api` and `npm run dev` in separate terminals from `studio`. Open http://127.0.0.1:5173/ for the studio and http://127.0.0.1:5173/angular/ for history. Select one narration and up to 200 images in the studio, then click **Render video**. Each upload can total up to 512 MB. The studio sends images in filename order.
 
-The API binds to loopback and accepts one render at a time in low-memory mode. Job status is in memory and resets when the API restarts. Each run's MP4 stays under `output/studio/<job-id>/`. Set `SYNCSHOT_INPUTS`, `SYNCSHOT_RUNS`, or `SYNCSHOT_BIN` to override local paths.
+A bodyless `POST /api/jobs` still uses the original `inputs/audio` and `inputs/images` folders. The render bar tracks FFmpeg output time across visual chunks and the final stitch. It reaches 100% once the MP4 is available. Browser uploads generate the full MP4. Folder-based API jobs also generate Shorts.
+
+The API binds to loopback and accepts one render at a time in low-memory mode. Uploaded input files are removed when the job finishes. Job status is in memory and resets when the API restarts. Each run's MP4 stays under `output/studio/<job-id>/`. Set `SYNCSHOT_INPUTS`, `SYNCSHOT_RUNS`, or `SYNCSHOT_BIN` to override local paths.
 
 Run `npm run build` to compile both frontends. The dev server proxies `/api` to the local Node service.

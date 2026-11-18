@@ -15,3 +15,7 @@ button:disabled { opacity: .55; cursor: default; }
 ul { padding: 0; list-style: none; }
 li { padding: 1rem 0; border-top: 1px solid #d7e1db; }
 .error { color: #942e2e; }
+fieldset { display: grid; gap: 1rem; border: 0; margin: 0 0 1.2rem; padding: 0; }
+label { display: grid; gap: .4rem; font-weight: 600; }
+input { font: inherit; font-weight: normal; width: 100%; }
+progress { width: min(75%, 24rem); accent-color: #155640; }

@@ -55,7 +55,10 @@ func RunFFmpegWithProgressContext(ctx context.Context, log *Logger, totalSeconds
     us, parseErr := strconv.ParseInt(line[sep+1:], 10, 64)
     if parseErr != nil { continue }
     sec := float64(us) / 1000000
-    if totalSeconds > 0 {
+    if duration, ok := ctx.Value(renderProgressDurationKey{}).(float64); ok && duration > 0 {
+    ReportRenderProgress(ctx, sec / duration)
+   }
+   if totalSeconds > 0 {
      pct := int(sec / float64(totalSeconds) * 100)
      if pct < 0 { pct = 0 }
      if pct > 100 { pct = 100 }
@@ -77,6 +80,7 @@ func RunFFmpegWithProgressContext(ctx context.Context, log *Logger, totalSeconds
   return &FFmpegRunError{Cause: waitErr, Stderr: tail.String()}
  }
  if scanErr != nil { return fmt.Errorf("read ffmpeg progress: %w", scanErr) }
+ ReportRenderProgress(ctx, 1)
  if totalSeconds > 0 { log.Info("Rendering video " + FormatProgressBar(100)) }
  return nil
 }

@@ -45,7 +45,7 @@ Component({
             @for (job of jobs(); track job.id) {
               <li>
                 <strong>{{job.media?.audio ?? 'Render job'}}</strong>
-                <p>{{job.status}}</p>
+                <p>{{job.status}} · {{job.progress ?? 0}}%</p>
                 @if (job.error) { <p class="error">{{job.error}}</p> }
                 @if (job.videoUrl) { <a [href]="job.videoUrl">Download MP4</a> }
               </li>

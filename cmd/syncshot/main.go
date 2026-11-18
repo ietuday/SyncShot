@@ -78,6 +78,7 @@ func run(args []string)error{
  flags:=flag.NewFlagSet("syncshot",flag.ContinueOnError)
  configPath:=flags.String("config","","JSON configuration file")
  memoryMode:=flags.String("memory-mode","auto","render memory mode: auto, low or normal")
+ jsonProgress:=flags.Bool("json-progress",false,"emit machine-readable cinematic render progress on standard output")
  dryRun:=flags.Bool("dry-run",false,"validate configuration and media dependencies without rendering")
  audioDir:=flags.String("audio-dir","","override narration directory")
  imagesDir:=flags.String("images-dir","","override images directory")
@@ -111,6 +112,11 @@ func run(args []string)error{
  ctx,stop:=signal.NotifyContext(context.Background(),os.Interrupt,syscall.SIGTERM)
  defer stop()
  if *timeout>0 {var cancel context.CancelFunc;ctx,cancel=context.WithTimeout(ctx,*timeout);defer cancel()}
+ if *jsonProgress {
+  ctx=utils.WithRenderProgress(ctx,func(fraction float64){
+   fmt.Printf("{\"renderProgress\":%.6f}\n",fraction)
+  })
+ }
  log:=utils.NewLogger()
  log.Info("Starting SyncShot-Go")
  if lowMemory {log.Info("Low-memory rendering profile selected (override with --memory-mode normal)")}

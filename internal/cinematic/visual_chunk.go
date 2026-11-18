@@ -28,7 +28,8 @@ func renderVisualChunk(ctx context.Context,log *utils.Logger,t Timeline,output s
   "-t",strconv.FormatFloat(t.Duration(),'f',6,64),
   "-c:v","libx264","-pix_fmt","yuv420p","-r",strconv.Itoa(t.FPS),
   "-movflags","+faststart",output)
- if err:=utils.RunFFmpegWithRetryContext(ctx,log,int(t.Duration()),args...);err!=nil{return fmt.Errorf("render visual chunk: %w",err)}
+ if utils.HasRenderProgress(ctx) {args=append(args[:len(args)-1],"-progress","pipe:1","-nostats",args[len(args)-1])}
+ if err:=utils.RunFFmpegWithRetryContext(utils.WithRenderProgressDuration(ctx,t.Duration()),log,int(t.Duration()),args...);err!=nil{return fmt.Errorf("render visual chunk: %w",err)}
  stat,err:=os.Stat(output);if err!=nil{return err}
  if stat.Size()==0{return fmt.Errorf("empty visual chunk")}
  return ctx.Err()

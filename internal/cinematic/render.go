@@ -102,7 +102,7 @@ func RenderWithOverlays(ctx context.Context, log *utils.Logger, timeline Timelin
   args=append(args,"-map",fmt.Sprintf("%d:0",subtitleIndex),"-c:s","mov_text","-metadata:s:s:0","language=und")
  }
  args=append(args,staged)
- if err:=utils.RunFFmpegWithRetryContext(ctx,log,int(timeline.Duration()),args...);err!=nil {return fmt.Errorf("cinematic rendering: %w",err)}
+ if err:=utils.RunFFmpegWithRetryContext(utils.WithRenderProgressDuration(ctx,timeline.Duration()),log,int(timeline.Duration()),args...);err!=nil {return fmt.Errorf("cinematic rendering: %w",err)}
  if err:=ctx.Err();err!=nil {return err}
  info,err:=os.Stat(staged)
  if err!=nil || info.Size()==0 {return fmt.Errorf("rendered cinematic MP4 missing or empty: %v",err)}

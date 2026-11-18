@@ -1,10 +1,12 @@
 import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { mkdir, stat, writeFile } from 'node:fs/promises';
+import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createInterface } from 'node:readline';
+import { maxUploadBytes, receiveMedia } from './uploads.mjs';
 import { promisify } from 'node:util';
 
 const run = promisify(execFile);
@@ -16,34 +18,47 @@ const renderer = resolve(process.env.SYNCSHOT_BIN ?? join(root, 'output', 'syncs
 const jobs = new Map();
 let active = false;
 
-async function render(job) {
+async function render(job, upload) {
   const directory = join(runs, job.id);
   try {
-    const audio = join(inputs, 'audio');
-    const images = join(inputs, 'images');
+    const { audio, images } = upload ?? { audio: join(inputs, 'audio'), images: join(inputs, 'images') };
     const preflight = await run('python3', [join(studio, 'preflight.py'), audio, images], {
       timeout: 20000,
     });
     job.media = JSON.parse(preflight.stdout);
+    if (upload) job.media.audio = upload.audioName;
     await mkdir(directory, { recursive: true });
     const configPath = join(directory, 'config.json');
     await writeFile(configPath, JSON.stringify({
       WorkDir: join(directory, 'work'),
       OutShortsDir: join(directory, 'shorts'),
+      ...(upload ? { ClipSeconds: 0 } : {}),
     }));
     job.status = 'rendering';
-    await run(renderer, [
+    const process = run(renderer, [
       '--config', configPath, '--audio-dir', audio, '--images-dir', images,
-      '--output', join(directory, 'final.mp4'), '--memory-mode', 'low', '--timeout', '2h',
+      '--output', join(directory, 'final.mp4'), '--json-progress', '--memory-mode', 'low', '--timeout', '2h',
     ], { cwd: directory, maxBuffer: 16 * 1024 * 1024 });
+    const lines = createInterface({ input: process.child.stdout });
+    lines.on('line', line => {
+      const match = /^\{"renderProgress":(\d+\.\d+)\}$/.exec(line);
+      if (match) job.progress = Math.max(job.progress, Math.min(99, Math.floor(Number(match[1]) * 100)));
+    });
+    try {
+      await process;
+    } finally {
+      lines.close();
+    }
     const video = await stat(join(directory, 'final.mp4'));
     if (!video.isFile() || video.size === 0) throw new Error('Renderer produced no video.');
+    job.progress = 100;
     job.status = 'completed';
     job.videoUrl = '/api/jobs/' + job.id + '/video';
   } catch (error) {
     job.status = 'failed';
     job.error = (error.stderr?.trim() || error.message).slice(-2000);
   } finally {
+    if (upload) await rm(join(directory, 'uploads'), { recursive: true, force: true }).catch(console.error);
     active = false;
   }
 }
@@ -65,11 +80,29 @@ createServer(async (request, response) => {
       return json(response, 403, { error: 'Origin is not allowed.' });
     }
     if (active) return json(response, 409, { error: 'A render is already running.' });
+    const job = { id: randomUUID(), status: 'checking inputs', progress: 0 };
+    const contentType = request.headers['content-type'] ?? '';
+    if (Number(request.headers['content-length']) > maxUploadBytes) {
+      return json(response, 413, { error: 'Upload exceeds 512 MB.' });
+    }
     active = true;
-    const job = { id: randomUUID(), status: 'checking inputs' };
+    let upload;
+    if (contentType.startsWith('multipart/form-data')) {
+      const directory = join(runs, job.id);
+      try {
+        upload = await receiveMedia(request, join(directory, 'uploads'));
+      } catch (error) {
+        await rm(directory, { recursive: true, force: true }).catch(console.error);
+        active = false;
+        return json(response, 400, { error: error.message });
+      }
+    } else if (contentType || request.headers['transfer-encoding'] || Number(request.headers['content-length']) > 0) {
+      active = false;
+      return json(response, 415, { error: 'Send media as multipart form data.' });
+    }
     jobs.set(job.id, job);
     json(response, 202, job);
-    void render(job);
+    void render(job, upload);
     return;
   }
   const match = url.match(/^\/api\/jobs\/([a-f0-9-]+)\/video$/);
