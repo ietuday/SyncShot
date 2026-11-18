@@ -34,3 +34,7 @@ The `feature/studio-foundation` workflow builds Vite with `VITE_DEMO_MODE=true` 
 ## Browser scene editor
 
 In GitHub Pages demo mode, select sample photo names or upload images locally, plan scenes, then drag scene cards or use arrow buttons to reorder them. Per-scene duration fields recalculate all following scene timestamps and the CSV export. Uploaded thumbnails use temporary browser object URLs only and are revoked on change/unmount. These demo edits do **not** modify the Go renderer's live job settings, and the edited duration can differ from narration length.
+
+## Scene preview (browser demo only)
+
+After **Plan scenes**, the Visual scene editor has Play, Pause, Restart, and seek controls. It shows user-selected photos in order, or named sample placeholders, at the edited scene timings. This is an in-browser slideshow to review composition and pacing, not a produced video, and does not preview actual Go renderer crossfades or sound. It leaves the preserved original GitHub Pages homepage unchanged.
