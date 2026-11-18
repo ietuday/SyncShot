@@ -5,17 +5,82 @@ music.loop = true;
 const musicControl = byId('music-volume');
 const musicGain = () => Number(musicControl.value) / 100;
 const musicFade = byId('music-fade');
+const musicDuck = byId('music-duck');
+let previewDuck;
+let analysisRequest = 0;
+
+function duckingCurve(buffer, duration, narrationLevel) {
+  const count = Math.max(2, Math.ceil(duration * 50) + 1);
+  const interval = duration / (count - 1);
+  const channels = Array.from({ length: buffer.numberOfChannels }, (_, i) => buffer.getChannelData(i));
+  const curve = new Float32Array(count);
+  let gain = 1;
+  for (let i = 0; i < count; i++) {
+    const start = Math.floor(i * interval * buffer.sampleRate);
+    const end = Math.min(buffer.length, Math.floor((i + 1) * interval * buffer.sampleRate));
+    let squares = 0;
+    let samples = 0;
+    for (const channel of channels) {
+      for (let sample = start; sample < end; sample += 4) {
+        squares += channel[sample] ** 2;
+        samples++;
+      }
+    }
+    const active = samples && Math.sqrt(squares / samples) * narrationLevel >= 0.02;
+    const target = active ? 0.25 : 1;
+    gain += (target - gain) * (1 - Math.exp(-interval / (active ? 0.055 : 0.18)));
+    curve[i] = gain;
+  }
+  return curve;
+}
+
+function duckGain(curve, position, duration) {
+  if (!curve) return 1;
+  const index = Math.max(0, Math.min(curve.length - 1, position / duration * (curve.length - 1)));
+  const start = Math.floor(index);
+  const end = Math.min(curve.length - 1, start + 1);
+  return curve[start] + (curve[end] - curve[start]) * (index - start);
+}
+
+async function analyzePreviewNarration() {
+  const request = ++analysisRequest;
+  previewDuck = undefined;
+  const file = byId('audio').files[0];
+  if (!musicDuck.checked || !musicUrl || !file || narrationGain() === 0) return;
+  const status = byId('music-status');
+  status.textContent = 'Analyzing narration for music ducking…';
+  try {
+    const context = new OfflineAudioContext(1, 1, 8000);
+    const buffer = await context.decodeAudioData(await file.arrayBuffer());
+    if (request !== analysisRequest) return;
+    previewDuck = duckingCurve(buffer, buffer.duration, narrationGain());
+    status.textContent = 'Music ducking ready.';
+  } catch {
+    if (request === analysisRequest) status.textContent = 'Narration analysis is unavailable for preview.';
+  }
+}
+
+function previewMusicLevel(position) {
+  return musicGain() * fadeGain(position, duration, musicFadeLength()) *
+    duckGain(musicDuck.checked ? previewDuck : undefined, position, duration);
+}
+
 function fadeGain(position, duration, fadeLength) {
   if (!fadeLength) return 1;
   return Math.max(0, Math.min(1, position / fadeLength, (duration - position) / fadeLength));
 }
 const musicFadeLength = () => musicFade.checked ? Math.min(1, duration / 2) : 0;
 function updateMusicVolume() {
-  music.volume = musicGain() * fadeGain(Number(byId('preview-position').value), duration, musicFadeLength());
+  music.volume = previewMusicLevel(Number(byId('preview-position').value));
   byId('music-volume-value').textContent = musicControl.value + '%';
 }
 musicControl.addEventListener('input', updateMusicVolume);
 musicFade.addEventListener('change', updateMusicVolume);
+musicDuck.addEventListener('change', () => {
+  byId('music-status').textContent = '';
+  void analyzePreviewNarration();
+  updateMusicVolume();
+});
 music.volume = musicGain();
 let musicUrl;
 byId('music').addEventListener('change', () => {
@@ -29,6 +94,7 @@ byId('music').addEventListener('change', () => {
     music.removeAttribute('src');
     music.load();
   }
+  void analyzePreviewNarration();
 });
 music.addEventListener('error', () => {
   if (musicUrl) byId('music-status').textContent = 'This browser could not read the background music.';
@@ -40,6 +106,7 @@ function updateNarrationVolume() {
   byId('volume-value').textContent = volumeControl.value + '%';
 }
 volumeControl.addEventListener('input', updateNarrationVolume);
+volumeControl.addEventListener('change', analyzePreviewNarration);
 const formats = {
   landscape: { width: 1280, height: 720 },
   portrait: { width: 720, height: 1280 },
@@ -377,6 +444,8 @@ function showPlan() {
 
 byId('audio').addEventListener('change', () => {
   stopPreview();
+  byId('music-status').textContent = '';
+  void analyzePreviewNarration();
   if (audio.src) URL.revokeObjectURL(audio.src);
   const file = byId('audio').files[0];
   byId('preview').disabled = byId('preview-ending').disabled = byId('inspect-timeline').disabled = Boolean(file);
@@ -573,7 +642,7 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
     if (caption.textContent !== text) caption.textContent = text;
     caption.hidden = !text;
     slider.value = elapsed;
-    if (musicUrl) music.volume = musicGain() * fadeGain(elapsed, duration, musicFadeLength());
+    if (musicUrl) music.volume = previewMusicLevel(elapsed);
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + duration.toFixed(1) + ' seconds';
   }
 
@@ -602,7 +671,7 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
           throw new Error('Wait for the music file to load.');
         }
         music.currentTime = start % music.duration;
-        music.volume = musicGain() * fadeGain(start, duration, musicFadeLength());
+        music.volume = previewMusicLevel(start);
       }
       if (hasAudio) {
         audio.currentTime = start;
@@ -794,7 +863,7 @@ byId('export').addEventListener('click', async () => {
   const musicFile = byId('music').files[0];
   const tracks = [
     { file: audioFile, gain: narrationGain(), loop: false },
-    { file: musicFile, gain: musicGain(), loop: true, fade: musicFadeLength() },
+    { file: musicFile, gain: musicGain(), loop: true, fade: musicFadeLength(), duck: musicDuck.checked },
   ].filter(track => track.file);
   const framing = byId('framing').value;
   const globalPosition = cropPosition(framing);
@@ -918,8 +987,16 @@ byId('export').addEventListener('click', async () => {
     recorder.start(1000);
     const wallStart = performance.now();
     const audioStart = audioContext?.currentTime;
+    const narration = tracks.find(track => !track.loop);
     for (const track of tracks) {
-      if (track.fade) {
+      if (track.duck && narration && narration.gain > 0) {
+        const curve = duckingCurve(narration.source.buffer, duration, narration.gain);
+        for (let i = 0; i < curve.length; i++) {
+          const time = i * duration / (curve.length - 1);
+          curve[i] *= track.gain * fadeGain(time, duration, track.fade);
+        }
+        track.volume.setValueCurveAtTime(curve, audioStart, duration);
+      } else if (track.fade) {
         track.volume.setValueAtTime(0, audioStart);
         track.volume.linearRampToValueAtTime(track.gain, audioStart + track.fade);
         if (duration > 2 * track.fade) {
