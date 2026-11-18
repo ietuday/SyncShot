@@ -37,5 +37,7 @@ jobs:
         run: go test ./cmd/syncshot ./internal/cinematic ./internal/pipeline
       - name: Build Go renderer
         run: mkdir -p output && go build -o output/syncshot-studio-renderer ./cmd/syncshot
+      - name: Install FFmpeg and FFprobe for real-media validation
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Real audio and image -> edited MP4 preview and full render
         run: node studio/test/real-media-smoke.mjs
