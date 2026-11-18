@@ -2,14 +2,17 @@ import '@angular/compiler';
 import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { readJobs } from '../jobs.js';
+import { demoMode } from '../demo.js';
 import '../studio.css';
 
 class Jobs {
   jobs = signal([]);
+  demoMode = demoMode;
   connected = signal(false);
   stopped = false;
 
   async refresh() {
+    if (demoMode) { this.connected.set(true); return; }
     try {
       this.jobs.set(await readJobs());
       this.connected.set(true);
@@ -35,10 +38,11 @@ Component({
   standalone: true,
   template: `
     <main>
-      <nav><strong>SyncShot</strong><a href="/">Video studio</a></nav>
+      <nav><strong>SyncShot</strong><a href="../">Video studio</a></nav>
       <section>
         <h1>Render history</h1>
-        @if (!connected()) {
+        @if (demoMode) { <p>Browser demo: job history is available only when running the local API. Create a sample scene plan in Video studio.</p> }
+        @else if (!connected()) {
           <p role="status">Waiting for the local job API.</p>
         } @else {
           <ul aria-label="Render jobs">
