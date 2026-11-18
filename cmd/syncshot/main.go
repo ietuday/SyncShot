@@ -79,6 +79,7 @@ func run(args []string)error{
  configPath:=flags.String("config","","JSON configuration file")
  memoryMode:=flags.String("memory-mode","auto","render memory mode: auto, low or normal")
  jsonProgress:=flags.Bool("json-progress",false,"emit machine-readable cinematic render progress on standard output")
+ planScenes:=flags.Bool("plan-scenes",false,"print the automatic full-render scene plan as JSON")
  dryRun:=flags.Bool("dry-run",false,"validate configuration and media dependencies without rendering")
  audioDir:=flags.String("audio-dir","","override narration directory")
  imagesDir:=flags.String("images-dir","","override images directory")
@@ -104,6 +105,7 @@ func run(args []string)error{
  if *timeout<0{return fmt.Errorf("timeout must not be negative")}
  if err:=cfg.Validate();err!=nil{return fmt.Errorf("invalid configuration: %w",err)}
  if err:=checkDependencies();err!=nil{return err}
+ if *planScenes && *dryRun {return fmt.Errorf("--plan-scenes and --dry-run cannot be combined")}
  if *dryRun{
   images,err:=os.ReadDir(cfg.ImagesDir);if err!=nil{return err}
   fmt.Printf("Dry run OK: %d image directory entries, FPS=%d, chunk scenes=%d, output=%s (no rendering)\n",len(images),cfg.FPS,cfg.CinematicChunkScenes,cfg.OutVideoPath)
@@ -112,6 +114,7 @@ func run(args []string)error{
  ctx,stop:=signal.NotifyContext(context.Background(),os.Interrupt,syscall.SIGTERM)
  defer stop()
  if *timeout>0 {var cancel context.CancelFunc;ctx,cancel=context.WithTimeout(ctx,*timeout);defer cancel()}
+ if *planScenes {return printScenePlan(ctx,cfg,os.Stdout)}
  if *jsonProgress {
   ctx=utils.WithRenderProgress(ctx,func(fraction float64){
    fmt.Printf("{\"renderProgress\":%.6f}\n",fraction)

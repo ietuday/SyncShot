@@ -34,14 +34,7 @@ func RenderCinematicChunkedProfile(ctx context.Context,log *utils.Logger,imagesD
  if err!=nil {return err}
  sort.Strings(images)
  if len(images)==0 {return fmt.Errorf("no processed scenes in %s",imagesDir)}
- duration,err:=utils.ProbeDurationPrecise(ctx,audio)
- if err!=nil {return fmt.Errorf("probe narration: %w",err)}
- var timeline cinematic.Timeline
- if targetSceneSeconds>0 {
-  timeline,err=cinematic.PlanScenes(images,duration,fps,width,height,fade,motion,targetSceneSeconds)
- } else {
-  timeline,err=cinematic.FromImages(images,duration,fps,width,height,fade,motion)
- }
+ timeline,duration,err:=PlanCinematicTimeline(ctx,images,audio,fps,fade,motion,targetSceneSeconds,width,height)
  if err!=nil {return err}
  log.Info(fmt.Sprintf("Scene plan: %d scene(s) from %d image(s), narration %.2fs, planned %.2fs, fade %.2fs",len(timeline.Scenes),len(images),duration,timeline.Duration(),fade))
  if err:=recoverPublishedPath(output);err!=nil {return err}
@@ -49,6 +42,19 @@ func RenderCinematicChunkedProfile(ctx context.Context,log *utils.Logger,imagesD
  return cinematic.RenderWithOverlays(ctx,log,timeline,audio,output,overlays,promoteVideo)
 }
 
+
+// PlanCinematicTimeline builds the timeline used for automatic renders.
+func PlanCinematicTimeline(ctx context.Context,images []string,audio string,fps int,fade float64,motion cinematic.Motion,targetSceneSeconds float64,width,height int) (cinematic.Timeline,float64,error) {
+ duration,err:=utils.ProbeDurationPrecise(ctx,audio)
+ if err!=nil {return cinematic.Timeline{},0,fmt.Errorf("probe narration: %w",err)}
+ var timeline cinematic.Timeline
+ if targetSceneSeconds>0 {
+  timeline,err=cinematic.PlanScenes(images,duration,fps,width,height,fade,motion,targetSceneSeconds)
+ } else {
+  timeline,err=cinematic.FromImages(images,duration,fps,width,height,fade,motion)
+ }
+ return timeline,duration,err
+}
  
 // RenderCinematicTimeline renders a user-authored JSON timeline.
 func RenderCinematicTimeline(ctx context.Context, log *utils.Logger, configPath, audio, output string) error {

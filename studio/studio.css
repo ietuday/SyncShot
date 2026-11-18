@@ -27,3 +27,8 @@ progress { width: min(75%, 24rem); accent-color: #155640; }
 .checkbox input { width: auto; }
 select { font: inherit; padding: .35rem; max-width: 14rem; }
 video { width: 100%; border-radius: .5rem; background: #101a16; }
+.scene-plan { overflow-x: auto; }
+.scene-plan table { width: 100%; border-collapse: collapse; text-align: left; }
+.scene-plan th, .scene-plan td { padding: .65rem .4rem; border-bottom: 1px solid #d7e1db; }
+.scene-plan td:nth-child(2), .scene-plan td:nth-child(3) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.scene-plan td:last-child { overflow-wrap: anywhere; }

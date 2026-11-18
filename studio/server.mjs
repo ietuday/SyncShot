@@ -38,15 +38,26 @@ async function render(job, upload) {
         PreviewSeconds: job.mode === 'preview' ? 10 : 0,
         CinematicMotion: upload.motion,
         CinematicCrossfade: upload.crossfade,
-        CinematicAutoSceneSeconds: job.media.durationSeconds / job.media.images,
+        CinematicAutoSceneSeconds: upload.sceneLength || job.media.durationSeconds / job.media.images,
         ...(upload.subtitles ? { SubtitleSRTPath: upload.subtitles } : {}),
       } : {}),
     }));
-    job.status = 'rendering';
-    const process = run(renderer, [
+    const args = [
       '--config', configPath, '--audio-dir', audio, '--images-dir', images,
-      '--output', join(directory, 'final.mp4'), '--json-progress', '--memory-mode', 'low', '--timeout', '2h',
-    ], { cwd: directory, maxBuffer: 16 * 1024 * 1024 });
+      '--output', join(directory, 'final.mp4'), '--memory-mode', 'low',
+    ];
+    if (job.mode === 'plan') {
+      const result = await run(renderer, [...args, '--plan-scenes', '--timeout', '20s'], { cwd: directory });
+      job.scenes = JSON.parse(result.stdout).map(scene => ({
+        ...scene, image: upload.imageNames.get(scene.image),
+      }));
+      job.status = 'completed';
+      return;
+    }
+
+    job.status = 'rendering';
+    const process = run(renderer, [...args, '--json-progress', '--timeout', '2h'],
+      { cwd: directory, maxBuffer: 16 * 1024 * 1024 });
     const lines = createInterface({ input: process.child.stdout });
     lines.on('line', line => {
       const match = /^\{"renderProgress":(\d+\.\d+)\}$/.exec(line);
@@ -66,7 +77,10 @@ async function render(job, upload) {
     job.status = 'failed';
     job.error = (error.stderr?.trim() || error.message).slice(-2000);
   } finally {
-    if (upload) await rm(join(directory, 'uploads'), { recursive: true, force: true }).catch(console.error);
+    if (upload) {
+      const temporary = job.mode === 'plan' ? directory : join(directory, 'uploads');
+      await rm(temporary, { recursive: true, force: true }).catch(console.error);
+    }
     active = false;
   }
 }
@@ -116,7 +130,7 @@ createServer(async (request, response) => {
   }
   const match = url.match(/^\/api\/jobs\/([a-f0-9-]+)\/video$/);
   const job = match && jobs.get(match[1]);
-  if (method === 'GET' && job?.status === 'completed') {
+  if (method === 'GET' && job?.status === 'completed' && job.videoUrl) {
     const preview = job.mode === 'preview';
     const filename = preview ? 'preview.mp4' : 'final.mp4';
     const stream = createReadStream(join(runs, job.id, filename));

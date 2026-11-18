@@ -45,7 +45,11 @@ Component({
             @for (job of jobs(); track job.id) {
               <li>
                 <strong>{{job.media?.audio ?? 'Render job'}}</strong>
-                <p>{{job.mode === 'preview' ? 'Preview' : 'Full render'}} · {{job.status}} · {{job.progress ?? 0}}%</p>
+                <p>
+                  {{job.mode === 'plan' ? 'Scene plan' : job.mode === 'preview' ? 'Preview' : 'Full render'}}
+                  · {{job.status}}
+                  @if (job.mode !== 'plan') { · {{job.progress ?? 0}}% }
+                </p>
                 @if (job.error) { <p class="error">{{job.error}}</p> }
                 @if (job.videoUrl) { <a [href]="job.videoUrl">{{job.mode === 'preview' ? 'Open preview' : 'Download MP4'}}</a> }
               </li>
