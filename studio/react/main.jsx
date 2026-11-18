@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { readJobs } from '../jobs.js';
 import '../studio.css';
+import { downloadScenePlan } from '../scene-export.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -161,7 +162,10 @@ function Studio() {
           : <a href={latest.videoUrl}>Download MP4</a>)}
       </div>
       {latest?.scenes && <div className="scene-plan">
-        <h2>Full video scene plan</h2>
+        <div className="scene-plan-heading">
+          <h2>Full video scene plan</h2>
+          <button type="button" onClick={() => downloadScenePlan(latest.scenes, latest.hasNarration)}>Download scene plan CSV</button>
+        </div>
         <p>Crossfade scenes overlap. Each caption is listed under the scene where it starts.</p>
         <table>
           <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th>{latest.hasNarration && <th scope="col">Narration</th>}</tr></thead>
