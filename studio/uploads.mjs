@@ -51,8 +51,10 @@ export async function receiveMedia(request, directory) {
         reject('Edited timeline is too large or duplicated.');
         return;
       }
-      try { timeline = JSON.parse(value); }
-      catch { reject('Edited timeline must be valid JSON.'); }
+      try {
+        timeline = JSON.parse(value);
+        if (!timeline || typeof timeline !== 'object') reject('Edited timeline must be a JSON object.');
+      } catch { reject('Edited timeline must be valid JSON.'); }
       return;
     }
     const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths, transcribe: languages, profile: profiles };
