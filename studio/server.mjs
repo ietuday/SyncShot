@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
 import { maxUploadBytes, receiveMedia } from './uploads.mjs';
+import { validateEditedTimeline } from './timeline-contract.js';
 import { promisify } from 'node:util';
 
 const run = promisify(execFile);
@@ -39,12 +40,23 @@ async function render(job, upload) {
         '--output', subtitles, '--format', 'srt', '--language', upload.language,
       ], { timeout: 2 * 60 * 60 * 1000, maxBuffer: 1024 * 1024 });
     }
+    let timelinePath;
+    if (upload?.timeline) {
+      const timeline = validateEditedTimeline(upload.timeline, upload.imageNames,
+        job.media.durationSeconds, { crossfade: upload.crossfade, width: 1280, height: 720 });
+      timeline.scenes = timeline.scenes.map(scene => ({
+        ...scene, image: join(images, scene.image),
+      }));
+      timelinePath = join(directory, 'edited-timeline.json');
+      await writeFile(timelinePath, JSON.stringify(timeline));
+    }
     const configPath = join(directory, 'config.json');
     await writeFile(configPath, JSON.stringify({
       WorkDir: join(directory, 'work'),
       OutShortsDir: join(directory, 'shorts'),
       ...(upload ? {
         ClipSeconds: 0,
+        ...(timelinePath ? { CinematicTimelinePath: timelinePath, CinematicChunkScenes: 0, RenderProfile: '' } : {}),
         PreviewSeconds: job.mode === 'preview' ? 10 : 0,
         CinematicMotion: upload.motion,
         CinematicCrossfade: upload.crossfade,
