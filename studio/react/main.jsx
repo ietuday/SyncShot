@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { readJobs } from '../jobs.js';
 import '../studio.css';
 import { downloadScenePlan } from '../scene-export.js';
+import { demoMode, sampleDuration, samplePhotos, planDemoScenes } from '../demo.js';
 
 function Studio() {
   const [jobs, setJobs] = useState([]);
@@ -17,8 +18,11 @@ function Studio() {
   const [language, setLanguage] = useState('auto');
   const [subtitles, setSubtitles] = useState(null);
   const [error, setError] = useState('');
+  const [sampleSelected, setSampleSelected] = useState(false);
+  const [demoDuration, setDemoDuration] = useState(String(sampleDuration));
 
   useEffect(() => {
+    if (demoMode) { setConnected(true); return; }
     let mounted = true;
     async function refresh() {
       try {
@@ -50,6 +54,18 @@ function Studio() {
   }
 
   async function start(mode) {
+    if (demoMode) {
+      if (mode !== 'plan') return;
+      try {
+        setError('');
+        const photos = sampleSelected ? samplePhotos : images.map(file => file.name);
+        const duration = Number(demoDuration);
+        const scenes = planDemoScenes({ photos, duration, sceneLength, transition });
+        setJobs([{ id: 'demo-' + Date.now(), mode: 'plan', status: 'completed', progress: 100,
+          scenes, hasNarration: false, media: { audio: sampleSelected ? 'Demo narration (60s)' : audio?.name || 'Manual duration', durationSeconds: duration, images: photos.length } }, ...jobs]);
+      } catch (err) { setError(err.message); }
+      return;
+    }
     setSubmitting(true);
     setError('');
     try {
@@ -73,21 +89,30 @@ function Studio() {
 
   const latest = jobs[0];
   const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
-  const canRender = connected && !submitting && !busy && audio && images.length && (captionSource !== 'srt' || subtitles);
+  const canRender = demoMode
+    ? connected && (sampleSelected || images.length > 0) && Number(demoDuration) > 0
+    : connected && !submitting && !busy && audio && images.length && (captionSource !== 'srt' || subtitles);
   return <main>
-    <nav><strong>SyncShot</strong><a href="/angular/">Render history</a></nav>
+    <nav><strong>SyncShot</strong><a href={`${import.meta.env.BASE_URL}angular/`}>Render history</a></nav>
     <section>
       <h1>Video studio</h1>
-      <p>Select a narration and the photos for your video. Uploads can total up to 512 MB.</p>
+      {demoMode && <div className="demo-notice" role="status"><strong>Browser demo mode</strong> — scene planning works here, but this site cannot render MP4s or transcribe audio. Your selected files remain in your browser.</div>}
+      <p>{demoMode ? 'Try sample scenes or choose your own photos for a local timeline preview.' : 'Select a narration and the photos for your video. Uploads can total up to 512 MB.'}</p>
+      {demoMode && <div className="demo-controls">
+        <label><input type="checkbox" checked={sampleSelected} onChange={event => setSampleSelected(event.target.checked)} /> Use four sample photos (60-second example)</label>
+        <label>Narration duration (seconds)
+          <input type="number" min="1" max="7200" step="1" value={demoDuration} onChange={event => setDemoDuration(event.target.value)} />
+        </label>
+      </div>}
       <fieldset disabled={submitting || busy}>
-        <label>Narration
+        {!demoMode && <label>Narration
           <input type="file" accept=".mp3,.wav,.m4a,.aac,.flac,.ogg"
             onChange={event => setAudio(event.target.files[0] ?? null)} />
-        </label>
-        <label>Photos
+        </label>}
+        {!sampleSelected && <label>Photos
           <input type="file" accept=".jpg,.jpeg,.png,.webp,.bmp" multiple
             onChange={event => setImages(Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name)))} />
-        </label>
+        </label>}
         {!!images.length && <ol className="photo-order" aria-label="Photo order">
           {images.map((image, index) => <li key={`${image.name}-${image.lastModified}-${index}`}>
             <span>{index + 1}. {image.name}</span>
@@ -122,7 +147,7 @@ function Studio() {
             <option value="cut">Cut</option>
           </select>
         </label>
-        <label>Captions
+        {!demoMode && <label>Captions
           <select value={captionSource} onChange={event => {
             setCaptionSource(event.target.value);
             setSubtitles(null);
@@ -131,29 +156,29 @@ function Studio() {
             <option value="srt">Use an SRT file</option>
             <option value="whisper">Transcribe locally with Whisper</option>
           </select>
-        </label>
-        {captionSource === 'whisper' && <label>Narration language
+        </label>}
+        {!demoMode && captionSource === 'whisper' && <label>Narration language
           <select value={language} onChange={event => setLanguage(event.target.value)}>
             <option value="auto">Detect automatically</option>
             <option value="hi">Hindi</option>
             <option value="en">English</option>
           </select>
         </label>}
-        {captionSource === 'srt' && <label>Subtitle file
+        {!demoMode && captionSource === 'srt' && <label>Subtitle file
           <input type="file" accept=".srt" onChange={event => setSubtitles(event.target.files[0] ?? null)} />
         </label>}
       </fieldset>
       <div className="actions">
         <button onClick={() => start('plan')} disabled={!canRender}>Plan scenes</button>
-        <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>
-        <button onClick={() => start('full')} disabled={!canRender}>Render video</button>
+        {!demoMode && <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>}
+        {!demoMode && <button onClick={() => start('full')} disabled={!canRender}>Render video</button>}
       </div>
       {submitting && <p role="status">Uploading…</p>}
       {latest && latest.mode !== 'plan' && (busy || latest.status === 'completed') && <p>
         <progress aria-label="Render progress" max="100" value={latest.progress ?? 0} /> {latest.progress ?? 0}%
       </p>}
       <div aria-live="polite">
-        {!connected && <p>Waiting for the local job API.</p>}
+        {!connected && !demoMode && <p>Waiting for the local job API.</p>}
         {latest && <p>{({ plan: 'Scene plan', preview: 'Preview', full: 'Full render' })[latest.mode] ?? 'Full render'}: {latest.status}</p>}
         {latest?.media && <p>{latest.media.audio} · {Math.round(latest.media.durationSeconds)} s · {latest.media.images} images</p>}
         {(error || latest?.error) && <p className="error">{error || latest.error}</p>}
@@ -166,7 +191,7 @@ function Studio() {
           <h2>Full video scene plan</h2>
           <button type="button" onClick={() => downloadScenePlan(latest.scenes, latest.hasNarration)}>Download scene plan CSV</button>
         </div>
-        <p>Crossfade scenes overlap. Each caption is listed under the scene where it starts.</p>
+        <p>{demoMode ? 'Estimated scene timing for demonstration only. Actual renderer timing may differ.' : 'Crossfade scenes overlap. Each caption is listed under the scene where it starts.'}</p>
         <table>
           <thead><tr><th scope="col">Scene</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Photo</th>{latest.hasNarration && <th scope="col">Narration</th>}</tr></thead>
           <tbody>
