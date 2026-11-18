@@ -40,3 +40,19 @@ video { width: 100%; border-radius: .5rem; background: #101a16; }
 .demo-controls label:has(input[type=checkbox]) { display: flex; align-items: center; gap: .6rem; }
 .demo-controls input[type=checkbox] { width: auto; }
 .demo-controls input[type=number] { max-width: 10rem; padding: .4rem; }
+
+.visual-editor { margin: 1.5rem 0; }
+.timeline-strip { display: flex; gap: 2px; overflow: hidden; border-radius: .5rem; height: 2.5rem; }
+.timeline-segment { min-width: 1.2rem; background: #b6dac8; display: grid; place-items: center; font-size: .8rem; border: 1px solid #619c80; }
+.timeline-segment:nth-child(even) { background: #d5e7f5; border-color: #94b4cb; }
+.scene-cards { padding: 0; list-style: none; }
+.scene-card { display: flex; align-items: center; gap: .75rem; border: 1px solid #d7e1db; padding: .7rem; margin: .6rem 0; border-radius: .6rem; background: #fafcfb; cursor: grab; }
+.scene-thumb { width: 100px; height: 75px; flex: none; object-fit: cover; border-radius: .4rem; }
+.scene-thumb.placeholder { display: grid; place-items: center; text-align: center; font-size: .8rem; background: #d5e7f5; }
+.scene-details { flex: 1; min-width: 0; display: grid; gap: .3rem; overflow-wrap: anywhere; }
+.scene-details small { color: #4f655b; }
+.scene-details label { font-size: .8rem; }
+.scene-details input { max-width: 8rem; padding: .3rem; }
+.scene-reorder { display: grid; gap: .3rem; }
+.scene-reorder button { padding: .35rem .65rem; }
+@media(max-width:500px) { .scene-thumb { width: 68px; height: 68px; } .scene-card { gap: .5rem; } }
