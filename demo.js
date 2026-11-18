@@ -46,6 +46,7 @@ byId('audio').addEventListener('change', () => {
   const file = byId('audio').files[0];
   byId('preview').disabled = Boolean(file);
   byId('plan').disabled = Boolean(file);
+  byId('export').disabled = Boolean(file);
   if (file) audio.src = URL.createObjectURL(file);
   else {
     audio.removeAttribute('src');
@@ -61,7 +62,7 @@ audio.addEventListener('loadedmetadata', () => {
     return;
   }
   duration = audio.duration;
-  byId('preview').disabled = byId('plan').disabled = false;
+  byId('preview').disabled = byId('plan').disabled = byId('export').disabled = false;
   showPlan();
 });
 audio.addEventListener('error', () => {
@@ -113,3 +114,125 @@ byId('preview').addEventListener('click', async () => {
   timer = requestAnimationFrame(draw);
 });
 showPlan();
+
+let exportedUrl;
+byId('export').addEventListener('click', async () => {
+  stopPreview();
+  const scenes = showPlan();
+  const status = byId('status');
+  const audioFile = byId('audio').files[0];
+  if (duration > 300 || (audioFile && audioFile.size > 50 * 1024 * 1024)) {
+    status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
+    return;
+  }
+  const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
+    .find(type => globalThis.MediaRecorder?.isTypeSupported(type));
+  const canvas = document.createElement('canvas');
+  if (!mimeType || !canvas.captureStream || (audioFile && !globalThis.AudioContext)) {
+    status.textContent = 'WebM export requires a supported browser such as Chrome or Edge.';
+    return;
+  }
+
+  const controls = ['inputs', 'plan', 'preview', 'export'].map(byId);
+  controls.forEach(control => { control.disabled = true; });
+  status.textContent = 'Preparing browser export…';
+  byId('export-result').hidden = true;
+  let audioContext;
+  let stream;
+  let recorder;
+  let animation;
+  let onVisibility;
+  try {
+    let source;
+    if (audioFile) {
+      audioContext = new AudioContext();
+      await audioContext.resume();
+      source = audioContext.createBufferSource();
+      source.buffer = await audioContext.decodeAudioData(await audioFile.arrayBuffer());
+    }
+
+    const images = new Map();
+    for (const { photo } of scenes) {
+      if (photo.url && !images.has(photo)) {
+        const image = new Image();
+        image.src = photo.url;
+        await image.decode();
+        images.set(photo, image);
+      }
+    }
+    canvas.width = 1280;
+    canvas.height = 720;
+    const context = canvas.getContext('2d');
+    const paint = scene => {
+      context.fillStyle = scene.photo.color ?? '#19362d';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      const image = images.get(scene.photo);
+      if (image) {
+        const scale = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+        const width = image.naturalWidth * scale;
+        const height = image.naturalHeight * scale;
+        context.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+      } else {
+        context.fillStyle = 'white';
+        context.font = '44px system-ui';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(scene.photo.name, canvas.width / 2, canvas.height / 2);
+      }
+    };
+    paint(scenes[0]);
+    stream = canvas.captureStream(24);
+    if (source) {
+      const destination = audioContext.createMediaStreamDestination();
+      source.connect(destination);
+      for (const track of destination.stream.getAudioTracks()) stream.addTrack(track);
+    }
+
+    recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2500000 });
+    const chunks = [];
+    const output = new Promise((resolve, reject) => {
+      recorder.ondataavailable = event => {
+        if (event.data.size) chunks.push(event.data);
+      };
+      recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+      recorder.onerror = event => reject(event.error);
+      onVisibility = () => {
+        if (document.hidden) reject(new Error('Keep this tab visible during the export.'));
+      };
+      document.addEventListener('visibilitychange', onVisibility);
+    });
+    recorder.start(1000);
+    const wallStart = performance.now();
+    const audioStart = audioContext?.currentTime;
+    source?.start();
+    function draw(now) {
+      const elapsed = source ? audioContext.currentTime - audioStart : (now - wallStart) / 1000;
+      const scene = scenes.find(item => elapsed < item.end) ?? scenes.at(-1);
+      paint(scene);
+      if (elapsed >= duration) {
+        recorder.stop();
+        return;
+      }
+      status.textContent = 'Exporting ' + Math.floor(elapsed / duration * 100) + '% · Keep this tab visible.';
+      animation = requestAnimationFrame(draw);
+    }
+    animation = requestAnimationFrame(draw);
+    const video = await output;
+    if (!video.size) throw new Error('The browser produced an empty recording.');
+    if (exportedUrl) URL.revokeObjectURL(exportedUrl);
+    exportedUrl = URL.createObjectURL(video);
+    byId('export-video').src = exportedUrl;
+    byId('download').href = exportedUrl;
+    byId('export-result').hidden = false;
+    status.textContent = 'Export complete. Your WebM is ready to download.';
+  } catch (error) {
+    status.textContent = error.message || 'Browser export failed.';
+  } finally {
+    cancelAnimationFrame(animation);
+    if (onVisibility) document.removeEventListener('visibilitychange', onVisibility);
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    stream?.getTracks().forEach(track => track.stop());
+    if (audioContext) void audioContext.close().catch(() => {});
+    controls.forEach(control => { control.disabled = false; });
+  }
+});

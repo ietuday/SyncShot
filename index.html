@@ -12,8 +12,8 @@
     <nav><strong>SyncShot</strong><a href="https://github.com/ietuday/SyncShot/tree/feature/studio-foundation/studio#run-locally">Run the full Studio</a></nav>
     <section>
       <h1>Video studio demo</h1>
-      <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. MP4 export and automatic captions are available in the local Studio.</p>
-      <fieldset>
+      <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. Export a WebM here, or run Studio locally for MP4 and automatic captions.</p>
+      <fieldset id="inputs">
         <label>Narration <input id="audio" type="file" accept="audio/*"></label>
         <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
         <label>Scene pacing
@@ -28,6 +28,11 @@
       <div class="actions">
         <button id="plan">Plan scenes</button>
         <button id="preview">Preview 10 seconds</button>
+        <button id="export">Export WebM</button>
+      </div>
+      <div id="export-result" hidden>
+        <video id="export-video" controls preload="metadata" aria-label="Exported video"></video>
+        <a id="download" download="syncshot.webm">Download WebM</a>
       </div>
       <p id="status" role="status"></p>
       <figure id="player" hidden>
