@@ -193,6 +193,11 @@ function frameAt(scenes, elapsed, transition) {
   return { current, previous: alpha < 1 ? previous : undefined, alpha };
 }
 
+function defaultPhotoSeconds(index) {
+  const step = duration * 100 / photos.length;
+  return ((Math.round((index + 1) * step) - Math.round(index * step)) / 100).toFixed(2);
+}
+
 function showPhotoOrder(focusIndex, direction) {
   const list = byId('photo-order');
   list.hidden = !photos.length;
@@ -240,7 +245,7 @@ function showPhotoOrder(focusIndex, direction) {
     input.type = 'number';
     input.step = '0.01';
     input.min = '0.05';
-    input.value = photo.seconds ?? (duration / photos.length).toFixed(2);
+    input.value = photo.seconds ?? defaultPhotoSeconds(index);
     input.addEventListener('input', () => {
       photo.seconds = input.value;
       stopPreview();
@@ -263,8 +268,8 @@ function buildPlan() {
   const pacing = byId('pacing').value;
   if (pacing === 'custom') {
     let end = 0;
-    const scenes = photos.map(photo => {
-      const seconds = Number(photo.seconds ?? (duration / photos.length).toFixed(2));
+    const scenes = photos.map((photo, index) => {
+      const seconds = Number(photo.seconds ?? defaultPhotoSeconds(index));
       if (!Number.isFinite(seconds) || seconds < 0.05) throw new Error('Enter at least 0.05 seconds for each photo.');
       const start = end;
       end += seconds;
