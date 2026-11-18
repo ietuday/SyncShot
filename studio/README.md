@@ -1,0 +1,20 @@
+# SyncShot Studio
+
+React starts jobs and downloads the generated MP4. Angular shows the current API session's render history. Node runs the existing Go renderer after Python checks the narration and image inputs.
+
+## Run locally
+
+Install Go 1.22 or later, Node.js 22.22.3+, 24.15+, or 26+ (supported release lines), Python 3, and FFmpeg (including ffprobe). From the repository root:
+
+```sh
+mkdir -p inputs/audio inputs/images output
+go build -o output/syncshot-studio-renderer ./cmd/syncshot
+cd studio
+npm ci
+```
+
+Put one narration file in `inputs/audio` and at least one image in `inputs/images`. Start `npm run api` and `npm run dev` in separate terminals from `studio`. Open http://127.0.0.1:5173/ for the studio and http://127.0.0.1:5173/angular/ for history.
+
+The API binds to loopback and accepts one render at a time in low-memory mode. Job status is in memory and resets when the API restarts. Each run's MP4 stays under `output/studio/<job-id>/`. Set `SYNCSHOT_INPUTS`, `SYNCSHOT_RUNS`, or `SYNCSHOT_BIN` to override local paths.
+
+Run `npm run build` to compile both frontends. The dev server proxies `/api` to the local Node service.
