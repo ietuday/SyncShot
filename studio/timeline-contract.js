@@ -66,3 +66,19 @@ export function editedTimelinePayload(scenes, defaultMotion = 'zoom_in') {
     })),
   };
 }
+
+export function downloadEditedTimeline(scenes, motion) {
+  const content = JSON.stringify(editedTimelinePayload(scenes, motion), null, 2) + '\n';
+  const blob = new Blob([content], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'syncshot-timeline.json';
+  try {
+    document.body.append(link);
+    link.click();
+  } finally {
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+}
