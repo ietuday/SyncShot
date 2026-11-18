@@ -46,3 +46,7 @@ When the Node/Go API is running locally, upload an audio file and photos, then *
 ### Output, cancellation, and timeline export
 
 The local Studio offers 720p and 1080p output presets. 1080p rendering uses more CPU and RAM. While a local render is active, **Cancel active job** sends a cancellation request to the Node API, which aborts the Go child process and marks the job cancelled. Cancelled jobs do not publish a completed MP4. The scene editor also has **Export timeline JSON** for saving the browser-authored, version 1 timeline. JSON uses uploaded photo **names** rather than filesystem paths; the Node API maps those names to files from the new upload and refuses unknown or duplicated names. A saved JSON file is a portable description, not an automatically restored Studio session.
+
+## Phase 4 edited-timeline MP4 preview
+
+With the local Node/Go API running, create a scene plan, edit its order or durations, and click **Preview edited 10 seconds**. Node validates the complete edited timeline against the narration, trims a disposable WAV narration prefix with FFmpeg, and renders the corresponding prefix of the authored Go timeline to an isolated `preview.mp4` (up to 10 seconds). Scene transitions are retained where possible. The previous browser-only timeline preview and the original Pages video creator are unchanged. Preview rendering needs the local backend, CPU, FFmpeg, and available memory; GitHub Pages itself cannot perform Go renders.
