@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=title-cards-1">
-  <script src="./demo.js?v=title-cards-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=mp4-export-1">
+  <script src="./demo.js?v=mp4-export-1" type="module"></script>
 </head>
 <body>
   <main>
     <nav><strong>SyncShot</strong><a href="https://github.com/ietuday/SyncShot/tree/feature/studio-foundation/studio#run-locally">Run the full Studio</a></nav>
     <section>
       <h1>Video studio demo</h1>
-      <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. Export a WebM here, or run Studio locally for MP4 and automatic captions.</p>
+      <p>Try the scene planner with the sample story, or select your own audio and photos. Files stay in your browser. Export WebM or MP4 where supported. Run Studio locally for automatic captions.</p>
       <fieldset id="inputs">
         <label>Narration <input id="audio" type="file" accept="audio/*"></label>
         <label>Photos <input id="photos" type="file" accept="image/*" multiple></label>
@@ -79,6 +79,13 @@
           <button type="button" id="sample-captions">Use sample captions</button>
         </div>
         <p id="caption-status" role="status">Subtitles off.</p>
+        <label>Export file type
+          <select id="export-type">
+            <option value="webm">WebM</option>
+            <option value="mp4" disabled>MP4</option>
+          </select>
+        </label>
+        <p id="export-support" hidden></p>
       </fieldset>
       <div class="actions">
         <button id="plan">Plan scenes</button>

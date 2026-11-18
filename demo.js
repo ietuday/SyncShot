@@ -479,6 +479,25 @@ byId('preview').addEventListener('click', () => preview());
 byId('preview-ending').addEventListener('click', () => preview(true));
 showPlan();
 
+const exportTypes = {
+  webm: ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'],
+  mp4: ['video/mp4;codecs=avc1.42001f,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2'],
+};
+const selectExportType = byId('export-type');
+const supportedType = type => exportTypes[type]?.find(mime => globalThis.MediaRecorder?.isTypeSupported(mime));
+for (const option of selectExportType.options) option.disabled = !supportedType(option.value);
+selectExportType.value = supportedType('webm') ? 'webm' : supportedType('mp4') ? 'mp4' : '';
+if (!supportedType('mp4')) {
+  byId('export-support').hidden = false;
+  byId('export-support').textContent = 'MP4 with H.264 and AAC is unavailable in this browser.';
+}
+function updateExportLabel() {
+  const type = selectExportType.value;
+  byId('export').textContent = type ? 'Export ' + (type === 'webm' ? 'WebM' : 'MP4') : 'Export video';
+}
+selectExportType.addEventListener('change', updateExportLabel);
+updateExportLabel();
+
 let exportedUrl;
 byId('export').addEventListener('click', async () => {
   stopPreview();
@@ -496,11 +515,12 @@ byId('export').addEventListener('click', async () => {
     status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
     return;
   }
-  const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
-    .find(type => globalThis.MediaRecorder?.isTypeSupported(type));
+  const fileType = selectExportType.value;
+  const mimeType = supportedType(fileType);
+  const label = fileType === 'mp4' ? 'MP4' : 'WebM';
   const canvas = document.createElement('canvas');
   if (!mimeType || !canvas.captureStream || (audioFile && !globalThis.AudioContext)) {
-    status.textContent = 'WebM export requires a supported browser such as Chrome or Edge.';
+    status.textContent = 'This export type is unavailable in your browser.';
     return;
   }
 
@@ -579,7 +599,7 @@ byId('export').addEventListener('click', async () => {
       recorder.ondataavailable = event => {
         if (event.data.size) chunks.push(event.data);
       };
-      recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+      recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/' + fileType }));
       recorder.onerror = event => reject(event.error);
       onVisibility = () => {
         if (document.hidden) reject(new Error('Keep this tab visible during the export.'));
@@ -619,9 +639,12 @@ byId('export').addEventListener('click', async () => {
     const resultPlayer = byId('export-video');
     resultPlayer.style.maxWidth = Math.round(520 * canvas.width / canvas.height) + 'px';
     resultPlayer.src = exportedUrl;
-    byId('download').href = exportedUrl;
+    const download = byId('download');
+    download.href = exportedUrl;
+    download.download = 'syncshot.' + fileType;
+    download.textContent = 'Download ' + label;
     byId('export-result').hidden = false;
-    status.textContent = 'Export complete. Your WebM is ready to download.';
+    status.textContent = 'Export complete. Your ' + label + ' is ready to download.';
   } catch (error) {
     status.textContent = error.message || 'Browser export failed.';
   } finally {
