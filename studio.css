@@ -38,3 +38,5 @@ figcaption { padding-top: .45rem; font-variant-numeric: tabular-nums; }
 #frame { position: relative; }
 .preview-layer { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }
 .preview-layer[hidden] { display: none; }
+.preview-caption { position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%); width: max-content; max-width: 85%; text-align: center; white-space: pre-line; overflow-wrap: anywhere; padding: .25em .5em; background: rgba(0, 0, 0, .78); color: white; font-size: clamp(.75rem, 2.45vw, 1.25rem); font-weight: 600; }
+#caption-status { margin: 0; }

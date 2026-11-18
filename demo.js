@@ -7,6 +7,19 @@ const sample = [
 ];
 let duration = 24;
 let photos = [];
+let captions = [];
+let captionRequest = 0;
+const sampleSrt = `1
+00:00:00,500 --> 00:00:04,000
+The road climbs into the hills.
+
+2
+00:00:08,000 --> 00:00:12,000
+A river runs through the valley.
+
+3
+00:00:16,500 --> 00:00:21,000
+As evening falls, the road grows quiet.`;
 let timer;
 
 function stopPreview() {
@@ -14,6 +27,105 @@ function stopPreview() {
   audio.pause();
   byId('player').hidden = true;
 }
+
+function parseSrt(source) {
+  const normalized = source.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').trim();
+  if (!normalized) throw new Error('The SRT file is empty.');
+  const timing = /^(\d{2,}:[0-5]\d:[0-5]\d,\d{3})\s+-->\s+(\d{2,}:[0-5]\d:[0-5]\d,\d{3})(?:\s+.*)?$/;
+  function seconds(value) {
+    const [hours, minutes, secs, millis] = value.split(/[:,]/).map(Number);
+    return hours * 3600 + minutes * 60 + secs + millis / 1000;
+  }
+  let previousEnd = 0;
+  return normalized.split(/\n[ \t]*\n+/).map((block, index) => {
+    const lines = block.split('\n');
+    const position = /^\d+$/.test(lines[0].trim()) ? 1 : 0;
+    const times = lines[position]?.trim().match(timing);
+    const text = lines.slice(position + 1).join('\n').trim();
+    if (!times || !text) throw new Error('Invalid SRT caption at block ' + (index + 1) + '.');
+    const start = seconds(times[1]);
+    const end = seconds(times[2]);
+    if (!Number.isFinite(end) || end <= start || start < previousEnd) {
+      throw new Error('Invalid or overlapping SRT times at block ' + (index + 1) + '.');
+    }
+    previousEnd = end;
+    return { start, end, text };
+  });
+}
+
+function captionAt(cues, elapsed) {
+  let start = 0;
+  let end = cues.length;
+  while (start < end) {
+    const mid = Math.floor((start + end) / 2);
+    if (cues[mid].end <= elapsed) start = mid + 1;
+    else end = mid;
+  }
+  return cues[start]?.start <= elapsed ? cues[start].text : '';
+}
+
+function paintCaption(context, text, width, height) {
+  if (!text) return;
+  const maxWidth = width * 0.85;
+  context.save();
+  context.font = '600 32px system-ui';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  const lines = [];
+  for (const paragraph of text.split('\n')) {
+    let line = '';
+    for (const word of paragraph.split(/\s+/)) {
+      const candidate = line ? line + ' ' + word : word;
+      if (line && context.measureText(candidate).width > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
+      }
+    }
+    lines.push(line);
+  }
+  const spacing = 40;
+  const firstY = height - 45 - (lines.length - 1) * spacing;
+  lines.forEach((line, index) => {
+    const y = firstY + index * spacing;
+    const boxWidth = Math.min(maxWidth, context.measureText(line).width) + 24;
+    context.fillStyle = 'rgba(0, 0, 0, 0.78)';
+    context.fillRect((width - boxWidth) / 2, y - 20, boxWidth, spacing);
+    context.fillStyle = 'white';
+    context.fillText(line, width / 2, y, maxWidth);
+  });
+  context.restore();
+}
+
+function useCaptions(content) {
+  captions = parseSrt(content);
+  byId('caption-status').textContent = captions.length + ' captions ready.';
+}
+
+byId('captions').addEventListener('change', async event => {
+  const request = ++captionRequest;
+  stopPreview();
+  captions = [];
+  const file = event.target.files[0];
+  const status = byId('caption-status');
+  status.textContent = file ? 'Reading captions…' : 'Subtitles off.';
+  if (!file) return;
+  try {
+    if (file.size > 1024 * 1024) throw new Error('Use an SRT file up to 1 MB.');
+    const content = await file.text();
+    if (request === captionRequest) useCaptions(content);
+  } catch (error) {
+    if (request === captionRequest) status.textContent = error.message;
+  }
+});
+
+byId('sample-captions').addEventListener('click', () => {
+  stopPreview();
+  ++captionRequest;
+  byId('captions').value = '';
+  useCaptions(sampleSrt);
+});
 
 function zoomAt(scene, elapsed, motion) {
   const fraction = Math.max(0, Math.min(1, (elapsed - scene.start) / (scene.end - scene.start)));
@@ -134,6 +246,7 @@ byId('preview').addEventListener('click', async () => {
   const frame = byId('frame');
   const motion = byId('motion').value;
   const transition = byId('transition').value;
+  const cues = captions;
   const limit = Math.min(duration, 10);
   if (byId('audio').files.length) {
     audio.currentTime = 0;
@@ -153,7 +266,10 @@ byId('preview').addEventListener('click', async () => {
   }
   const incoming = createLayer();
   const outgoing = createLayer();
-  frame.replaceChildren(outgoing.layer, incoming.layer);
+  const caption = document.createElement('div');
+  caption.className = 'preview-caption';
+  caption.hidden = true;
+  frame.replaceChildren(outgoing.layer, incoming.layer, caption);
 
   function drawLayer(slot, scene, elapsed) {
     if (slot.scene !== scene) {
@@ -180,6 +296,9 @@ byId('preview').addEventListener('click', async () => {
     outgoing.layer.hidden = !previous;
     outgoing.layer.setAttribute('aria-hidden', 'true');
     if (previous) drawLayer(outgoing, previous, previous.end);
+    const text = captionAt(cues, elapsed);
+    if (caption.textContent !== text) caption.textContent = text;
+    caption.hidden = !text;
     byId('time').textContent = elapsed.toFixed(1) + ' / ' + limit.toFixed(1) + ' seconds';
     if (elapsed < limit) timer = requestAnimationFrame(draw);
     else audio.pause();
@@ -196,6 +315,7 @@ byId('export').addEventListener('click', async () => {
   const audioFile = byId('audio').files[0];
   const motion = byId('motion').value;
   const transition = byId('transition').value;
+  const cues = captions;
   if (duration > 300 || (audioFile && audioFile.size > 50 * 1024 * 1024)) {
     status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
     return;
@@ -266,6 +386,7 @@ byId('export').addEventListener('click', async () => {
       context.restore();
     };
     paint(context, scenes[0], 0);
+    paintCaption(context, captionAt(cues, 0), canvas.width, canvas.height);
     stream = canvas.captureStream(24);
     if (source) {
       const destination = audioContext.createMediaStreamDestination();
@@ -302,6 +423,7 @@ byId('export').addEventListener('click', async () => {
       } else {
         paint(context, current, elapsed);
       }
+      paintCaption(context, captionAt(cues, elapsed), canvas.width, canvas.height);
       if (elapsed >= duration) {
         recorder.stop();
         return;

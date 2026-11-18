@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=fade-1">
-  <script src="./demo.js?v=fade-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=captions-1">
+  <script src="./demo.js?v=captions-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -38,6 +38,13 @@
             <option value="30">About 30 seconds per scene</option>
           </select>
         </label>
+        <label>Subtitles (.srt)
+          <input id="captions" type="file" accept=".srt">
+        </label>
+        <div class="actions">
+          <button type="button" id="sample-captions">Use sample captions</button>
+        </div>
+        <p id="caption-status" role="status">Subtitles off.</p>
       </fieldset>
       <div class="actions">
         <button id="plan">Plan scenes</button>
