@@ -56,3 +56,14 @@ video { width: 100%; border-radius: .5rem; background: #101a16; }
 .scene-reorder { display: grid; gap: .3rem; }
 .scene-reorder button { padding: .35rem .65rem; }
 @media(max-width:500px) { .scene-thumb { width: 68px; height: 68px; } .scene-card { gap: .5rem; } }
+
+.scene-preview-panel { margin: 1.4rem 0; border: 1px solid #d7e1db; padding: 1rem; border-radius: .8rem; }
+.preview-stage { aspect-ratio: 16 / 9; background: #132b23; border-radius: .65rem; overflow: hidden; display: grid; place-items: center; }
+.preview-image { height: 100%; width: 100%; object-fit: contain; }
+.preview-motion { animation: studio-preview-zoom 12s linear both; }
+@keyframes studio-preview-zoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .preview-motion { animation: none; } }
+.preview-placeholder { padding: 1rem; color: #e8f6ee; text-align: center; display: grid; gap: .6rem; overflow-wrap: anywhere; }
+.preview-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; margin: .8rem 0; }
+.preview-controls output { font-variant-numeric: tabular-nums; }
+.scene-preview-panel input[type=range] { accent-color: #155640; }
