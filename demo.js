@@ -543,6 +543,8 @@ showPlan();
 
 const selectExportType = byId('export-type');
 const resolutionControl = byId('resolution');
+const frameRateControl = byId('frame-rate');
+const currentFrameRate = () => frameRateControl.value === '30' ? 30 : 24;
 const currentResolution = () => exportResolutions[resolutionControl.value] ?? exportResolutions[720];
 
 function supportedType(type, resolution) {
@@ -562,7 +564,7 @@ function updateExportLabel() {
 function updateExportOptions() {
   const resolution = currentResolution();
   const { width, height } = exportDimensions(byId('format').value, resolution);
-  byId('export-dimensions').textContent = width + ' × ' + height + ' pixels';
+  byId('export-dimensions').textContent = width + ' × ' + height + ' pixels · ' + currentFrameRate() + ' FPS';
   for (const option of selectExportType.options) option.disabled = !supportedType(option.value, resolution);
   if (!supportedType(selectExportType.value, resolution)) {
     selectExportType.value = supportedType('webm', resolution) ? 'webm' : supportedType('mp4', resolution) ? 'mp4' : '';
@@ -574,6 +576,7 @@ function updateExportOptions() {
 }
 selectExportType.addEventListener('change', updateExportLabel);
 resolutionControl.addEventListener('change', updateExportOptions);
+frameRateControl.addEventListener('change', updateExportOptions);
 byId('format').addEventListener('change', updateExportOptions);
 updateExportOptions();
 
@@ -601,6 +604,7 @@ byId('export').addEventListener('click', async () => {
   }
   const fileType = selectExportType.value;
   const resolution = currentResolution();
+  const frameRate = currentFrameRate();
   const outputSize = exportDimensions(byId('format').value, resolution);
   const mimeType = supportedType(fileType, resolution);
   const label = fileType === 'mp4' ? 'MP4' : 'WebM';
@@ -679,7 +683,7 @@ byId('export').addEventListener('click', async () => {
     paint(context, scenes[0], 0);
     paintTitle(context, titleAt(cards, 0, duration), canvas.width, canvas.height);
     paintCaption(context, captionAt(cues, 0), canvas.width, canvas.height);
-    stream = canvas.captureStream(24);
+    stream = canvas.captureStream(frameRate);
     if (source) {
       const destination = audioContext.createMediaStreamDestination();
       source.connect(destination);

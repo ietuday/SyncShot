@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SyncShot Studio Demo</title>
-  <link rel="stylesheet" href="./studio.css?v=resolution-1">
-  <script src="./demo.js?v=resolution-1" type="module"></script>
+  <link rel="stylesheet" href="./studio.css?v=frame-rate-1">
+  <script src="./demo.js?v=frame-rate-1" type="module"></script>
 </head>
 <body>
   <main>
@@ -90,6 +90,12 @@
             <option value="480">480p</option>
             <option value="720" selected>720p</option>
             <option value="1080">1080p</option>
+          </select>
+        </label>
+        <label>Export frame rate
+          <select id="frame-rate" aria-describedby="export-dimensions">
+            <option value="24" selected>24 FPS</option>
+            <option value="30">30 FPS</option>
           </select>
         </label>
         <p class="card-note" id="export-dimensions"></p>
