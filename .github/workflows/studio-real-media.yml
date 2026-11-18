@@ -1,0 +1,41 @@
+name: Studio real-media integration smoke
+on:
+  push:
+    branches: [feature/studio-foundation]
+    paths:
+      - 'studio/**'
+      - 'cmd/**'
+      - 'internal/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/studio-real-media.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install Studio dependencies
+        run: npm ci
+        working-directory: studio
+      - name: Run JavaScript tests
+        run: node --test test/*.test.mjs
+        working-directory: studio
+      - name: Validate Go code
+        run: go test ./cmd/syncshot ./internal/cinematic ./internal/pipeline
+      - name: Build Go renderer
+        run: mkdir -p output && go build -o output/syncshot-studio-renderer ./cmd/syncshot
+      - name: Real audio and image -> edited MP4 preview and full render
+        run: node studio/test/real-media-smoke.mjs
