@@ -240,6 +240,7 @@ function Studio() {
         <button onClick={() => start('plan')} disabled={!canRender}>Plan scenes</button>
         {!demoMode && <button onClick={() => start('preview')} disabled={!canRender}>Preview 10 seconds</button>}
         {!demoMode && <button onClick={() => start('full')} disabled={!canRender}>Render video</button>}
+        {!demoMode && editedScenes && <button type="button" onClick={() => start('preview', true)} disabled={!canRender}>Preview edited 10 seconds</button>}
         {!demoMode && editedScenes && <button type="button" onClick={() => start('full', true)} disabled={!canRender}>Render edited timeline</button>}
       </div>
       {!demoMode && busy && latest?.status !== 'cancelling' && <button type="button" onClick={() => cancelJob(latest.id).catch(err => setError(err.message))}>Cancel active job</button>}
