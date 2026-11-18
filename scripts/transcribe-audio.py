@@ -59,12 +59,39 @@ def transcribe(audio: Path, model_size: str, language: str, duration: float):
     return build_transcript(audio, duration, result)
 
 
-def save_new(destination: Path, content: dict):
+def format_timestamp(milliseconds: int) -> str:
+    seconds, milliseconds = divmod(milliseconds, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours:02}:{minutes:02}:{seconds:02},{milliseconds:03}"
+
+
+def format_srt(transcript: dict) -> str:
+    captions = []
+    previous_end = 0
+    for segment in transcript["segments"]:
+        start = max(previous_end, round(segment["start"] * 1000))
+        end = round(segment["end"] * 1000)
+        if end <= start:
+            continue
+        text = " ".join(segment["text"].split())
+        captions.append(f"{len(captions) + 1}\n"
+                        f"{format_timestamp(start)} --> {format_timestamp(end)}\n{text}")
+        previous_end = end
+    if not captions:
+        raise ValueError("transcription produced no valid captions")
+    return "\n\n".join(captions) + "\n"
+
+
+def save_new(destination: Path, content: dict, output_format: str = "json"):
     # O_EXCL prevents accidental overwriting, including a concurrently created path.
     with destination.open("x", encoding="utf-8") as stream:
         try:
-            json.dump(content, stream, indent=2, ensure_ascii=False)
-            stream.write("\n")
+            if output_format == "srt":
+                stream.write(format_srt(content))
+            else:
+                json.dump(content, stream, indent=2, ensure_ascii=False)
+                stream.write("\n")
         except Exception:
             stream.close()
             destination.unlink(missing_ok=True)
@@ -77,6 +104,7 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", choices=["tiny", "base", "small"], default="tiny")
     parser.add_argument("--language", choices=["auto", "hi", "en"], default="auto")
+    parser.add_argument("--format", choices=["json", "srt"], default="json")
     args = parser.parse_args(argv)
     if not args.audio.is_file():
         parser.error("audio input file not found")
@@ -85,7 +113,7 @@ def main(argv=None):
     try:
         duration = probe_duration(args.audio)
         result = transcribe(args.audio, args.model, args.language, duration)
-        save_new(args.output, result)
+        save_new(args.output, result, args.format)
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as exc:
         parser.exit(1, f"transcription failed: {exc}\n")
     print(f"Saved {len(result['segments'])} segments in {args.output}")

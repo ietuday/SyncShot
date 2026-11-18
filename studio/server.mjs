@@ -15,6 +15,7 @@ const root = resolve(studio, '..');
 const inputs = resolve(process.env.SYNCSHOT_INPUTS ?? join(root, 'inputs'));
 const runs = resolve(process.env.SYNCSHOT_RUNS ?? join(root, 'output', 'studio'));
 const renderer = resolve(process.env.SYNCSHOT_BIN ?? join(root, 'output', 'syncshot-studio-renderer'));
+const python = process.env.SYNCSHOT_PYTHON ?? 'python3';
 const jobs = new Map();
 let active = false;
 
@@ -22,13 +23,22 @@ async function render(job, upload) {
   const directory = join(runs, job.id);
   try {
     const { audio, images } = upload ?? { audio: join(inputs, 'audio'), images: join(inputs, 'images') };
-    const preflight = await run('python3', [join(studio, 'preflight.py'), audio, images], {
+    const preflight = await run(python, [join(studio, 'preflight.py'), audio, images], {
       timeout: 20000,
     });
     job.media = JSON.parse(preflight.stdout);
     if (upload) job.media.audio = upload.audioName;
     const filename = job.mode === 'preview' ? 'preview.mp4' : 'final.mp4';
     await mkdir(directory, { recursive: true });
+    let subtitles = upload?.subtitles;
+    if (upload?.language) {
+      job.status = 'transcribing';
+      subtitles = join(directory, 'uploads', 'generated.srt');
+      await run(python, [
+        join(root, 'scripts', 'transcribe-audio.py'), '--audio', upload.audioPath,
+        '--output', subtitles, '--format', 'srt', '--language', upload.language,
+      ], { timeout: 2 * 60 * 60 * 1000, maxBuffer: 1024 * 1024 });
+    }
     const configPath = join(directory, 'config.json');
     await writeFile(configPath, JSON.stringify({
       WorkDir: join(directory, 'work'),
@@ -39,7 +49,7 @@ async function render(job, upload) {
         CinematicMotion: upload.motion,
         CinematicCrossfade: upload.crossfade,
         CinematicAutoSceneSeconds: upload.sceneLength || job.media.durationSeconds / job.media.images,
-        ...(upload.subtitles ? { SubtitleSRTPath: upload.subtitles } : {}),
+        ...(subtitles ? { SubtitleSRTPath: subtitles } : {}),
       } : {}),
     }));
     const args = [
@@ -51,7 +61,7 @@ async function render(job, upload) {
       job.scenes = JSON.parse(result.stdout).map(scene => ({
         ...scene, image: upload.imageNames.get(scene.image),
       }));
-      job.hasNarration = Boolean(upload.subtitles);
+      job.hasNarration = Boolean(subtitles);
       job.status = 'completed';
       return;
     }

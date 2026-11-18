@@ -12,7 +12,8 @@ function Studio() {
   const [motion, setMotion] = useState('zoom_in');
   const [sceneLength, setSceneLength] = useState('auto');
   const [transition, setTransition] = useState('fade');
-  const [subtitlesEnabled, setSubtitlesEnabled] = useState(false);
+  const [captionSource, setCaptionSource] = useState('off');
+  const [language, setLanguage] = useState('auto');
   const [subtitles, setSubtitles] = useState(null);
   const [error, setError] = useState('');
 
@@ -57,7 +58,8 @@ function Studio() {
       body.append('motion', motion);
       body.append('transition', transition);
       body.append('sceneLength', sceneLength);
-      if (subtitlesEnabled && subtitles) body.append('subtitles', subtitles);
+      if (captionSource === 'srt') body.append('subtitles', subtitles);
+      if (captionSource === 'whisper') body.append('transcribe', language);
       for (const image of images) body.append('images', image);
       await readJobs('POST', body);
       setJobs(await readJobs());
@@ -69,8 +71,8 @@ function Studio() {
   }
 
   const latest = jobs[0];
-  const busy = latest && ['checking inputs', 'rendering'].includes(latest.status);
-  const canRender = connected && !submitting && !busy && audio && images.length && (!subtitlesEnabled || subtitles);
+  const busy = latest && ['checking inputs', 'transcribing', 'rendering'].includes(latest.status);
+  const canRender = connected && !submitting && !busy && audio && images.length && (captionSource !== 'srt' || subtitles);
   return <main>
     <nav><strong>SyncShot</strong><a href="/angular/">Render history</a></nav>
     <section>
@@ -119,13 +121,24 @@ function Studio() {
             <option value="cut">Cut</option>
           </select>
         </label>
-        <label className="checkbox">
-          <input type="checkbox" checked={subtitlesEnabled} onChange={event => {
-            setSubtitlesEnabled(event.target.checked);
+        <label>Captions
+          <select value={captionSource} onChange={event => {
+            setCaptionSource(event.target.value);
             setSubtitles(null);
-          }} /> Use SRT captions for planning and subtitles
+          }}>
+            <option value="off">Off</option>
+            <option value="srt">Use an SRT file</option>
+            <option value="whisper">Transcribe locally with Whisper</option>
+          </select>
         </label>
-        {subtitlesEnabled && <label>Subtitle file
+        {captionSource === 'whisper' && <label>Narration language
+          <select value={language} onChange={event => setLanguage(event.target.value)}>
+            <option value="auto">Detect automatically</option>
+            <option value="hi">Hindi</option>
+            <option value="en">English</option>
+          </select>
+        </label>}
+        {captionSource === 'srt' && <label>Subtitle file
           <input type="file" accept=".srt" onChange={event => setSubtitles(event.target.files[0] ?? null)} />
         </label>}
       </fieldset>

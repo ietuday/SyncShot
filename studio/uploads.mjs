@@ -13,6 +13,7 @@ const maxSubtitleBytes = 1024 * 1024;
 const motions = new Set(['static', 'zoom_in', 'zoom_out', 'pan_left', 'pan_right']);
 const transitions = new Map([['cut', 0], ['fade', 0.5]]);
 const modes = new Set(['preview', 'full', 'plan']);
+const languages = new Set(['auto', 'hi', 'en']);
 const sceneLengths = new Set(['auto', '8', '15', '30']);
 
 export async function receiveMedia(request, directory) {
@@ -21,10 +22,11 @@ export async function receiveMedia(request, directory) {
   await Promise.all([mkdir(audio, { recursive: true }), mkdir(images, { recursive: true })]);
   const parser = Busboy({
     headers: request.headers,
-    limits: { files: maxImages + 3, fields: 5, fieldSize: 32, fileSize: maxUploadBytes },
+    limits: { files: maxImages + 3, fields: 6, fieldSize: 32, fileSize: maxUploadBytes },
   });
   let received = 0;
   let audioName;
+  let audioPath;
   let subtitles;
   const settings = new Map();
   const imageNames = new Map();
@@ -41,7 +43,7 @@ export async function receiveMedia(request, directory) {
 
   parser.on('fieldsLimit', () => reject('Unexpected upload field.'));
   parser.on('field', (name, value, { valueTruncated }) => {
-    const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths };
+    const allowed = { motion: motions, transition: transitions, mode: modes, sceneLength: sceneLengths, transcribe: languages };
     if (valueTruncated || !Object.hasOwn(allowed, name) || !allowed[name].has(value) || settings.has(name)) {
       reject('Invalid render settings.');
       return;
@@ -54,7 +56,8 @@ export async function receiveMedia(request, directory) {
     let target;
     if (field === 'audio' && !audioName && audioTypes.has(suffix)) {
       audioName = filename;
-      target = join(audio, 'narration' + suffix);
+      audioPath = join(audio, 'narration' + suffix);
+      target = audioPath;
     } else if (field === 'images' && imageNames.size < maxImages && imageTypes.has(suffix)) {
       const storedName = String(imageNames.size + 1).padStart(4, '0') + suffix;
       imageNames.set(storedName, filename);
@@ -95,8 +98,10 @@ export async function receiveMedia(request, directory) {
   }
   if (failure) throw failure;
   if (!audioName || !imageNames.size) throw new Error('Select one narration and at least one image.');
+  const language = settings.get('transcribe');
+  if (subtitles && language) throw new Error('Choose either an SRT file or automatic captions.');
   return {
-    audio, images, audioName, subtitles, imageNames,
+    audio, images, audioName, audioPath, subtitles, imageNames, language,
     sceneLength: Number(settings.get('sceneLength')) || 0,
     mode: settings.get('mode') ?? 'full',
     motion: settings.get('motion') ?? 'zoom_in',

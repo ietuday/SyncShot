@@ -23,8 +23,6 @@ progress { width: min(75%, 24rem); accent-color: #155640; }
 .photo-order { margin: 0; list-style: none; padding: 0; }
 .photo-order li { align-items: center; justify-content: space-between; overflow-wrap: anywhere; }
 .photo-order button { padding: .4rem .65rem; }
-.checkbox { display: flex; align-items: center; }
-.checkbox input { width: auto; }
 select { font: inherit; padding: .35rem; max-width: 14rem; }
 video { width: 100%; border-radius: .5rem; background: #101a16; }
 .scene-plan { overflow-x: auto; }
