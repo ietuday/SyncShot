@@ -16,10 +16,13 @@ let api;
 try {
   const audioPath = join(temp, 'narration.wav');
   const photoPath = join(temp, 'one.jpg');
+  const secondPhotoPath = join(temp, 'two.jpg');
   await exec('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi',
     '-i', 'sine=frequency=440:duration=1.5', '-ac', '1', '-ar', '48000', audioPath]);
   await exec('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
     '-f', 'lavfi', '-i', 'color=c=blue:s=640x360', '-frames:v', '1', '-update', '1', photoPath]);
+  await exec('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
+    '-f', 'lavfi', '-i', 'color=c=red:s=640x360', '-frames:v', '1', '-update', '1', secondPhotoPath]);
   const { stdout: probe } = await exec('ffprobe', ['-v', 'error', '-show_entries',
     'format=duration', '-of', 'default=nw=1:nk=1', audioPath]);
   const seconds = Number(probe.trim());
@@ -46,15 +49,22 @@ try {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
-  for (const mode of ['preview', 'full']) {
+  for (const variant of [
+    { mode: 'preview', transition: 'cut', scenes: [{ image:'one.jpg', duration:seconds, motion:'static' }] },
+    { mode: 'full', transition: 'cut', scenes: [{ image:'one.jpg', duration:seconds, motion:'static' }] },
+    { mode: 'full', transition: 'fade', scenes: [
+      { image:'two.jpg', duration:seconds / 2, motion:'static' },
+      { image:'one.jpg', duration:seconds / 2, motion:'static' },
+    ] },
+  ]) {
+    const { mode, transition, scenes } = variant;
     const form = new FormData();
     form.append('audio', new Blob([await readFile(audioPath)], { type: 'audio/wav' }), 'narration.wav');
     form.append('images', new Blob([await readFile(photoPath)], { type: 'image/jpeg' }), 'one.jpg');
-    for (const [key, value] of Object.entries({ mode, motion:'static', transition:'cut',
+    if (scenes.length > 1) form.append('images', new Blob([await readFile(secondPhotoPath)], { type: 'image/jpeg' }), 'two.jpg');
+    for (const [key, value] of Object.entries({ mode, motion:'static', transition,
       sceneLength:'auto', profile:'720p' })) form.append(key, value);
-    form.append('timeline', JSON.stringify({ version:1, scenes:[
-      { image:'one.jpg', duration:seconds, motion:'static' },
-    ] }));
+    form.append('timeline', JSON.stringify({ version:1, scenes }));
     const job = await request('POST', '/api/jobs', form);
     let final;
     for (let i = 0; i < 240; i++) {
@@ -74,7 +84,7 @@ try {
     if (Math.abs(Number(stdout.trim()) - seconds) > 0.20) {
       throw new Error(mode + ' duration mismatch: ' + stdout);
     }
-    console.log(mode + ' MP4 smoke passed (' + info.size + ' bytes)');
+    console.log(mode + ' (' + scenes.length + ' scenes, ' + transition + ') MP4 smoke passed (' + info.size + ' bytes)');
   }
 } finally {
   if (api && api.exitCode === null) {
