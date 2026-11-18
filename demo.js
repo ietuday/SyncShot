@@ -1,5 +1,31 @@
 const byId = id => document.getElementById(id);
 const audio = new Audio();
+const music = new Audio();
+music.loop = true;
+const musicControl = byId('music-volume');
+const musicGain = () => Number(musicControl.value) / 100;
+function updateMusicVolume() {
+  music.volume = musicGain();
+  byId('music-volume-value').textContent = musicControl.value + '%';
+}
+updateMusicVolume();
+musicControl.addEventListener('input', updateMusicVolume);
+let musicUrl;
+byId('music').addEventListener('change', () => {
+  stopPreview();
+  const file = byId('music').files[0];
+  if (musicUrl) URL.revokeObjectURL(musicUrl);
+  musicUrl = file ? URL.createObjectURL(file) : undefined;
+  byId('music-status').textContent = '';
+  if (musicUrl) music.src = musicUrl;
+  else {
+    music.removeAttribute('src');
+    music.load();
+  }
+});
+music.addEventListener('error', () => {
+  if (musicUrl) byId('music-status').textContent = 'This browser could not read the background music.';
+});
 const volumeControl = byId('narration-volume');
 const narrationGain = () => Number(volumeControl.value) / 100;
 function updateNarrationVolume() {
@@ -95,6 +121,7 @@ function stopPreview() {
   previewRequest++;
   cancelAnimationFrame(timer);
   audio.pause();
+  music.pause();
   byId('player').hidden = true;
 }
 
@@ -547,6 +574,7 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
     isPlaying = false;
     cancelAnimationFrame(timer);
     audio.pause();
+    music.pause();
     updatePlayLabel(false);
   }
 
@@ -559,17 +587,26 @@ async function preview(ending = false, plannedScenes, selectedScene, inspect = f
     const attempt = ++playbackRequest;
     isPlaying = true;
     updatePlayLabel(true);
-    if (hasAudio) {
-      audio.currentTime = start;
-      try {
-        await audio.play();
-      } catch {
-        if (attempt === playbackRequest && request === previewRequest) {
-          pause();
-          byId('status').textContent = 'Audio playback could not start.';
+    try {
+      const playback = [];
+      if (musicUrl) {
+        if (!Number.isFinite(music.duration) || music.duration <= 0) {
+          throw new Error('Wait for the music file to load.');
         }
-        return;
+        music.currentTime = start % music.duration;
       }
+      if (hasAudio) {
+        audio.currentTime = start;
+        playback.push(audio.play());
+      }
+      if (musicUrl) playback.push(music.play());
+      await Promise.all(playback);
+    } catch {
+      if (attempt === playbackRequest && request === previewRequest) {
+        pause();
+        byId('status').textContent = 'Audio playback could not start.';
+      }
+      return;
     }
     if (attempt !== playbackRequest || request !== previewRequest) return;
     const started = performance.now();
@@ -745,14 +782,19 @@ byId('export').addEventListener('click', async () => {
   if (!scenes) return;
   const status = byId('status');
   const audioFile = byId('audio').files[0];
+  const musicFile = byId('music').files[0];
+  const tracks = [
+    { file: audioFile, gain: narrationGain(), loop: false },
+    { file: musicFile, gain: musicGain(), loop: true },
+  ].filter(track => track.file);
   const framing = byId('framing').value;
   const globalPosition = cropPosition(framing);
   const motion = byId('motion').value;
   const transition = byId('transition').value;
   const cues = captions;
   const cards = readTitleCards();
-  if (duration > 300 || (audioFile && audioFile.size > 50 * 1024 * 1024)) {
-    status.textContent = 'Use up to 5 minutes of narration and a 50 MB audio file for browser export.';
+  if (duration > 300 || tracks.some(track => track.file.size > 50 * 1024 * 1024)) {
+    status.textContent = 'Use up to 5 minutes of narration and up to 50 MB per audio file for browser export.';
     return;
   }
   const fileType = selectExportType.value;
@@ -762,7 +804,7 @@ byId('export').addEventListener('click', async () => {
   const mimeType = supportedType(fileType, resolution);
   const label = fileType === 'mp4' ? 'MP4' : 'WebM';
   const canvas = document.createElement('canvas');
-  if (!mimeType || !canvas.captureStream || (audioFile && !globalThis.AudioContext)) {
+  if (!mimeType || !canvas.captureStream || (tracks.length && !globalThis.AudioContext)) {
     status.textContent = 'This export type is unavailable in your browser.';
     return;
   }
@@ -784,12 +826,14 @@ byId('export').addEventListener('click', async () => {
   let animation;
   let onVisibility;
   try {
-    let source;
-    if (audioFile) {
+    if (tracks.length) {
       audioContext = new AudioContext();
       await wait(audioContext.resume());
-      source = audioContext.createBufferSource();
-      source.buffer = await wait(audioContext.decodeAudioData(await wait(audioFile.arrayBuffer())));
+      for (const track of tracks) {
+        track.source = audioContext.createBufferSource();
+        track.source.buffer = await wait(audioContext.decodeAudioData(await wait(track.file.arrayBuffer())));
+        track.source.loop = track.loop;
+      }
     }
 
     const images = new Map();
@@ -837,12 +881,14 @@ byId('export').addEventListener('click', async () => {
     paintTitle(context, titleAt(cards, 0, duration), canvas.width, canvas.height);
     paintCaption(context, captionAt(cues, 0), canvas.width, canvas.height);
     stream = canvas.captureStream(frameRate);
-    if (source) {
+    if (audioContext) {
       const destination = audioContext.createMediaStreamDestination();
-      const volume = audioContext.createGain();
-      volume.gain.value = narrationGain();
-      source.connect(volume);
-      volume.connect(destination);
+      for (const track of tracks) {
+        const volume = audioContext.createGain();
+        volume.gain.value = track.gain;
+        track.source.connect(volume);
+        volume.connect(destination);
+      }
       for (const track of destination.stream.getAudioTracks()) stream.addTrack(track);
     }
 
@@ -862,9 +908,9 @@ byId('export').addEventListener('click', async () => {
     recorder.start(1000);
     const wallStart = performance.now();
     const audioStart = audioContext?.currentTime;
-    source?.start();
+    for (const track of tracks) track.source.start(audioStart);
     function draw(now) {
-      const elapsed = source ? audioContext.currentTime - audioStart : (now - wallStart) / 1000;
+      const elapsed = audioContext ? audioContext.currentTime - audioStart : (now - wallStart) / 1000;
       const { current, previous, alpha } = frameAt(scenes, elapsed, transition);
       if (previous) {
         paint(context, previous, previous.end);
